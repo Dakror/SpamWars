@@ -14,7 +14,7 @@ public class UpdateThread extends Updater
 	
 	@Override
 	public void update()
-	{	
-		
+	{
+		Game.currentGame.world.update(tick);
 	}
 }

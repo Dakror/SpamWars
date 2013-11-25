@@ -1,23 +1,29 @@
 package de.dakror.spamwars.game.world;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Drawable;
+import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Entity;
 
 /**
  * @author Dakror
  */
-public class World implements Drawable
+public class World extends EventListener implements Drawable
 {
 	public int x, y, width, height;
 	
 	public int[][] data;
 	
 	BufferedImage render;
+	
+	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	
 	public World(int width, int height)
 	{
@@ -78,9 +84,34 @@ public class World implements Drawable
 	public void draw(Graphics2D g)
 	{
 		g.drawImage(render, x, y, Game.w);
+		
+		for (Entity e : entities)
+			e.draw(g);
 	}
 	
 	@Override
-	public void update(int e)
-	{}
+	public void update(int tick)
+	{
+		for (Entity e : entities)
+			e.update(tick);
+	}
+	
+	public void addEntity(Entity e)
+	{
+		entities.add(e);
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		for (Entity e1 : entities)
+			e1.keyPressed(e);
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		for (Entity e1 : entities)
+			e1.keyReleased(e);
+	}
 }
