@@ -18,10 +18,15 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void draw(Graphics2D e)
-	{}
+	public void draw(Graphics2D g)
+	{
+		world.draw(g);
+	}
 	
 	@Override
 	public void initGame()
-	{}
+	{
+		world = new World(getClass().getResource("/map/map.txt"));
+		world.render();
+	}
 }

@@ -1,67 +1,181 @@
 package de.dakror.spamwars.game.world;
 
-import java.awt.Graphics2D;
-
-import de.dakror.spamwars.game.Game;
-
 /**
  * @author Dakror
  */
-public class Tile
+public enum Tile
 {
+	air,
+	box,
+	boxAlt,
+	boxCoin,
+	boxCoinAlt,
+	boxCoinAlt_disabled,
+	boxCoin_disabled,
+	boxEmpty,
+	boxExplosive,
+	boxExplosiveAlt,
+	boxExplosive_disabled,
+	boxItem,
+	boxItemAlt,
+	boxItemAlt_disabled,
+	boxItem_disabled,
+	boxWarning,
+	brickWall,
+	bridge,
+	bridgeLogs,
+	castle,
+	castleCenter,
+	castleCenter_rounded,
+	castleCliffLeft,
+	castleCliffLeftAlt,
+	castleCliffRight,
+	castleCliffRightAlt,
+	castleHalf,
+	castleHalfLeft,
+	castleHalfMid,
+	castleHalfRight,
+	castleHillLeft,
+	castleHillLeft2,
+	castleHillRight,
+	castleHillRight2,
+	castleLedgeLeft,
+	castleLedgeRight,
+	castleLeft,
+	castleMid,
+	castleRight,
+	dirt,
+	dirtCenter,
+	dirtCenter_rounded,
+	dirtCliffLeft,
+	dirtCliffLeftAlt,
+	dirtCliffRight,
+	dirtCliffRightAlt,
+	dirtHalf,
+	dirtHalfLeft,
+	dirtHalfMid,
+	dirtHalfRight,
+	dirtHillLeft,
+	dirtHillLeft2,
+	dirtHillRight,
+	dirtHillRight2,
+	dirtLedgeLeft,
+	dirtLedgeRight,
+	dirtLeft,
+	dirtMid,
+	dirtRight,
+	door_closedMid,
+	door_closedTop,
+	door_openMid,
+	door_openTop,
+	fence,
+	fenceBroken,
+	grass,
+	grassCenter,
+	grassCenter_rounded,
+	grassCliffLeft,
+	grassCliffLeftAlt,
+	grassCliffRight,
+	grassCliffRightAlt,
+	grassHalf,
+	grassHalfLeft,
+	grassHalfMid,
+	grassHalfRight,
+	grassHillLeft,
+	grassHillLeft2,
+	grassHillRight,
+	grassHillRight2,
+	grassLedgeLeft,
+	grassLedgeRight,
+	grassLeft,
+	grassMid,
+	grassRight,
+	ladder_mid,
+	ladder_top,
+	liquidLava,
+	liquidLavaTop,
+	liquidLavaTop_mid,
+	liquidWater,
+	liquidWaterTop,
+	liquidWaterTop_mid,
+	lock_blue,
+	lock_green,
+	lock_red,
+	lock_yellow,
+	rockHillLeft,
+	rockHillRight,
+	ropeAttached,
+	ropeHorizontal,
+	ropeVertical,
+	sand,
+	sandCenter,
+	sandCenter_rounded,
+	sandCliffLeft,
+	sandCliffLeftAlt,
+	sandCliffRight,
+	sandCliffRightAlt,
+	sandHalf,
+	sandHalfLeft,
+	sandHalfMid,
+	sandHalfRight,
+	sandHillLeft,
+	sandHillLeft2,
+	sandHillRight,
+	sandHillRight2,
+	sandLedgeLeft,
+	sandLedgeRight,
+	sandLeft,
+	sandMid,
+	sandRight,
+	sign,
+	signExit,
+	signLeft,
+	signRight,
+	snow,
+	snowCenter,
+	snowCenter_rounded,
+	snowCliffLeft,
+	snowCliffLeftAlt,
+	snowCliffRight,
+	snowCliffRightAlt,
+	snowHalf,
+	snowHalfLeft,
+	snowHalfMid,
+	snowHalfRight,
+	snowHillLeft,
+	snowHillLeft2,
+	snowHillRight,
+	snowHillRight2,
+	snowLedgeLeft,
+	snowLedgeRight,
+	snowLeft,
+	snowMid,
+	snowRight,
+	stone,
+	stoneCenter,
+	stoneCenter_rounded,
+	stoneCliffLeft,
+	stoneCliffLeftAlt,
+	stoneCliffRight,
+	stoneCliffRightAlt,
+	stoneHalf,
+	stoneHalfLeft,
+	stoneHalfMid,
+	stoneHalfRight,
+	stoneHillLeft2,
+	stoneHillRight2,
+	stoneLedgeLeft,
+	stoneLedgeRight,
+	stoneLeft,
+	stoneMid,
+	stoneRight,
+	stoneWall,
+	tochLit,
+	tochLit2,
+	torch,
+	window
+	
+	;
+	
 	public static final int SIZE = 70;
-	public static final int TILES = 256;
-	private static Tile[] tileList = new Tile[TILES];
-	
-	public static Tile air = new Tile(0, "Luft", null);
-	
-	protected String name = "Unnamed";
-	protected String tileset;
-	protected byte id;
-	
-	public Tile(int id, String name, String tileset)
-	{
-		register(id);
-		
-		this.name = name;
-		this.tileset = tileset;
-	}
-	
-	private void register(int id)
-	{
-		if (tileList[id] == null) tileList[id] = this;
-		this.id = (byte) (id - 128);
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public String getTileset()
-	{
-		return tileset;
-	}
-	
-	public byte getId()
-	{
-		return id;
-	}
-	
-	public void drawTile(int cx, int cy, int i, int j, Graphics2D g)
-	{
-		if (tileset == null) return;
-		
-		g.drawImage(Game.getImage("tile/" + tileset + ".png"), i * SIZE, j * SIZE, Game.w);
-	}
-	
-	public static Tile getTileForId(byte id)
-	{
-		return tileList[id + 128];
-	}
-	
-	public static Tile getTileForId(int id)
-	{
-		return tileList[id];
-	}
 }
