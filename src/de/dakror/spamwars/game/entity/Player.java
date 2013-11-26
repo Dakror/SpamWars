@@ -46,11 +46,7 @@ public class Player extends Entity
 			}
 			case KeyEvent.VK_W:
 			{
-				if (!airborne)
-				{
-					velocity.y = -15;
-					airborne = true;
-				}
+				velocity.y = -15;
 				up = true;
 				break;
 			}
@@ -101,7 +97,7 @@ public class Player extends Entity
 		if (left) nx -= speed;
 		if (right) nx += speed;
 		// if (up) ny -= speed;
-		if (down) ny += speed;
+		// if (down) ny += speed;
 		
 		x = nx;
 		y = ny;

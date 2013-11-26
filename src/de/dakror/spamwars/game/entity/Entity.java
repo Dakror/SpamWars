@@ -2,12 +2,12 @@ package de.dakror.spamwars.game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
-import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.world.Tile;
 
 
@@ -25,6 +25,8 @@ public abstract class Entity extends EventListener implements Drawable
 	
 	protected Rectangle bump;
 	
+	Polygon p;
+	
 	public Entity(float x, float y, int width, int height)
 	{
 		this.x = x;
@@ -37,13 +39,13 @@ public abstract class Entity extends EventListener implements Drawable
 	protected void drawBump(Graphics2D g)
 	{
 		Color o = g.getColor();
-		g.setColor(Color.green);
-		g.translate(x, y);
-		g.draw(bump);
-		g.translate(-x, -y);
 		
 		g.setColor(Color.yellow);
-		g.draw(getTileSizeBump(0, 0));
+		g.draw(getBump(0, 0));
+		
+		g.setColor(Color.cyan);
+		g.draw(getBump(velocity.x, velocity.y));
+		
 		g.setColor(o);
 	}
 	
@@ -87,53 +89,13 @@ public abstract class Entity extends EventListener implements Drawable
 		float nx = x + velocity.x;
 		float ny = y + velocity.y;
 		
-		boolean subs = false;
-		
-		Rectangle gridBump = getGridBump(velocity.x, velocity.y);
-		
-		for (int i = gridBump.x; i < gridBump.x + gridBump.width; i++)
-		{
-			for (int j = gridBump.y; j < gridBump.y + gridBump.height; j++)
-			{
-				Tile t = Tile.values()[Game.world.getTileId(i, j)];
-				if (t.getBump() != null)
-				{
-					Rectangle r = (Rectangle) bump.clone();
-					r.translate((int) nx, (int) ny);
-					
-					Rectangle b = (Rectangle) t.getBump().clone();
-					b.translate(i * Tile.SIZE, j * Tile.SIZE);
-					
-					Rectangle is = r.intersection(b);
-					
-					subs = true;
-					
-					if (is.width > is.height) // vertical
-					{
-						if (is.height >= 0)
-						{
-							if (is.y != r.y) ny -= is.height;
-							else ny += is.height;
-						}
-					}
-					else
-					{
-						if (is.width >= 0)
-						{
-							if (is.x != r.x) nx -= is.width;
-							else nx += is.width;
-						}
-					}
-				}
-			}
-		}
-		
 		if (x == nx) velocity.x = 0;
-		if (y == ny)
-		{
-			velocity.y = 0;
-			if (subs) airborne = false;
-		}
+		if (y == ny) velocity.y = 0;
+		
+		Rectangle r = getBump(0, 0);
+		Rectangle next = getBump(velocity.x, velocity.y);
+		
+		
 		
 		x = nx;
 		y = ny;
@@ -144,6 +106,15 @@ public abstract class Entity extends EventListener implements Drawable
 		float g = 0.5f;
 		
 		velocity.y += g;
+	}
+	
+	public Rectangle getBump(float tX, float tY)
+	{
+		Rectangle r = (Rectangle) bump.clone();
+		r.translate((int) x, (int) y);
+		r.translate((int) tX, (int) tY);
+		
+		return r;
 	}
 	
 	public Vector getPos()
