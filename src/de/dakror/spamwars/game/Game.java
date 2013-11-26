@@ -12,7 +12,7 @@ import de.dakror.spamwars.game.world.World;
  */
 public class Game extends GameFrame
 {
-	public World world;
+	public static World world;
 	public static Game currentGame;
 	
 	
@@ -34,7 +34,7 @@ public class Game extends GameFrame
 		world = new World(getClass().getResource("/map/map.txt"));
 		world.render();
 		
-		world.addEntity(new Player(300, 538));
+		world.addEntity(new Player(300, 538 - 200));
 	}
 	
 	@Override

@@ -75,9 +75,30 @@ public class World extends EventListener implements Drawable
 			for (int j = 0; j < data[0].length; j++)
 			{
 				if (data[i][j] == 0) continue;
-				g.drawImage(Game.getImage("tile/" + Tile.values()[data[i][j]] + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, Game.w);
+				
+				Tile t = Tile.values()[data[i][j]];
+				
+				g.drawImage(Game.getImage("tile/" + t.name() + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, Game.w);
+				
+				if (t.getBump() != null)
+				{
+					g.translate(i * Tile.SIZE, j * Tile.SIZE);
+					g.draw(t.getBump());
+					g.translate(-i * Tile.SIZE, -j * Tile.SIZE);
+				}
+				if (t.getLeftY() >= 0)
+				{
+					g.drawLine(i * Tile.SIZE, j * Tile.SIZE + t.getLeftY(), i * Tile.SIZE + Tile.SIZE, j * Tile.SIZE + t.getRightY());
+				}
 			}
 		}
+	}
+	
+	public int getTileId(int x, int y)
+	{
+		if (x < 0 || y < 0 || x >= data.length || y >= data[0].length) return Tile.air.ordinal(); // outside of world = air
+		
+		return data[x][y];
 	}
 	
 	@Override
