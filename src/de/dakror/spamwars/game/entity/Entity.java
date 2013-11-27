@@ -2,6 +2,7 @@ package de.dakror.spamwars.game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
@@ -26,8 +27,6 @@ public abstract class Entity extends EventListener implements Drawable
 	
 	protected Rectangle bump;
 	
-	Rectangle is, bm;
-	
 	public Entity(float x, float y, int width, int height)
 	{
 		this.x = x;
@@ -44,12 +43,8 @@ public abstract class Entity extends EventListener implements Drawable
 		g.setColor(Color.yellow);
 		g.draw(getBump(0, 0));
 		
-		g.setColor(Color.blue);
-		if (bm != null) g.draw(bm);
 		g.setColor(Color.red);
 		g.draw(getBump(velocity.x, velocity.y));
-		g.setColor(Color.cyan);
-		if (is != null) g.draw(is);
 		
 		g.setColor(o);
 	}
@@ -93,24 +88,16 @@ public abstract class Entity extends EventListener implements Drawable
 		float nx = velocity.x;
 		float ny = velocity.y;
 		
-		Rectangle g = getGridBump(nx, ny);
-		if (!Game.world.isFree(g))
-		{
-			for (int i = 0; i < 1; i++)
-			{
-				Point2D nn = checkAndResolveCollisions(nx, ny);
-				nx = (float) nn.getX();
-				ny = (float) nn.getY();
-			}
-		}
-		else airborne = true;
+		Point2D nn = checkAndResolveCollisions(nx, ny);
+		nx = (float) nn.getX();
+		ny = (float) nn.getY();
 		
-		
-		if (gravity && airborne) affectByGravity();
+		if (gravity) affectByGravity();
 		else velocity.y = 0;
 		
 		x += nx;
 		y += ny;
+		
 	}
 	
 	/**
@@ -128,29 +115,79 @@ public abstract class Entity extends EventListener implements Drawable
 			{
 				Tile t = Tile.values()[Game.world.getTileId(i, j)];
 				
-				if (t.getBump() == null) continue; // TODO: handle slopes
-				
-				Rectangle b = (Rectangle) t.getBump().clone();
-				b.translate(i * Tile.SIZE, j * Tile.SIZE);
+				if (t.getBump() == null && t.getLeftY() < 0) continue;
 				
 				Rectangle bump = getBump(x, y);
+				if ((bump.y + bump.height) % Tile.SIZE == 0) bump.y--;
 				
-				Rectangle is = bump.intersection(b);
-				
-				if (is.height < 0 || is.width < 0) continue; // no intersection
-				
-				if (is.height < is.width)
+				if (t.getBump() == null) // slope
 				{
-					y += is.y == bump.y ? is.height : -is.height;
+					float m = (t.getRightY() - t.getLeftY()) / (float) Tile.SIZE;
 					
-					if (is.y == bump.y)
+					Polygon p = new Polygon();
+					p.addPoint(0, t.getLeftY());
+					p.addPoint(Tile.SIZE, t.getRightY());
+					p.addPoint(Tile.SIZE, Tile.SIZE);
+					p.addPoint(0, Tile.SIZE);
+					p.translate(i * Tile.SIZE, j * Tile.SIZE);
+					
+					int mx = 0;
+					int my = 0;
+					
+					if (p.contains(bump.x, bump.y))
 					{
-						airborne = true;
-						velocity.y = 0;
+						mx = bump.x;
+						my = bump.y;
 					}
-					else airborne = false;
+					if (p.contains(bump.x + bump.width, bump.y))
+					{
+						mx = bump.x + bump.width;
+						my = bump.y;
+					}
+					if (p.contains(bump.x, bump.y + bump.height))
+					{
+						mx = bump.x;
+						my = bump.y + bump.height;
+					}
+					if (p.contains(bump.x + bump.width, bump.y + bump.height))
+					{
+						mx = bump.x + bump.width;
+						my = bump.y + bump.height;
+					}
+					
+					if (mx + my != 0)
+					{
+						int xInSlope = mx % Tile.SIZE;
+						int yInSlope = my % Tile.SIZE;
+						float yInSlopeM = m * xInSlope;
+						
+						if (t.getLeftY() < t.getRightY()) y -= yInSlope - yInSlopeM;
+						else y -= yInSlope - (Tile.SIZE + yInSlopeM);
+						velocity.y = 0;
+						airborne = false;
+					}
 				}
-				else x += is.x == bump.x ? is.width : -is.width;
+				else
+				{
+					Rectangle b = (Rectangle) t.getBump().clone();
+					b.translate(i * Tile.SIZE, j * Tile.SIZE);
+					
+					Rectangle is = bump.intersection(b);
+					
+					if (is.height < 0 || is.width < 0) continue; // no intersection
+					if (is.height <= is.width)
+					{
+						y += is.y == bump.y ? is.height : -is.height;
+						
+						if (is.y == bump.y)
+						{
+							airborne = true;
+							velocity.y = 0;
+						}
+						else airborne = false;
+					}
+					else x += is.x == bump.x ? is.width : -is.width;
+				}
 			}
 		}
 		
@@ -159,9 +196,21 @@ public abstract class Entity extends EventListener implements Drawable
 	
 	public void affectByGravity()
 	{
-		float g = 0.5f;
+		float G = 0.5f;
 		
-		velocity.y += g;
+		Rectangle g = getGridBump(0, velocity.y + 2 * G);
+		Rectangle b = getBump(0, velocity.y + 2 * G);
+		
+		if (!Game.world.intersects(g, b))
+		{
+			airborne = true;
+			velocity.y += G;
+		}
+		else
+		{
+			airborne = false;
+			velocity.y = 0;
+		}
 	}
 	
 	public Rectangle getBump(float tX, float tY)

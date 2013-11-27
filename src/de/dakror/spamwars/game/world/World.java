@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game.world;
 
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
@@ -13,6 +14,7 @@ import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.Player;
 
 /**
  * @author Dakror
@@ -24,6 +26,8 @@ public class World extends EventListener implements Drawable
 	public int[][] data;
 	
 	BufferedImage render;
+	
+	public Player player;
 	
 	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	
@@ -82,16 +86,16 @@ public class World extends EventListener implements Drawable
 				
 				g.drawImage(Game.getImage("tile/" + t.name() + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, Game.w);
 				
-				if (t.getBump() != null)
-				{
-					g.translate(i * Tile.SIZE, j * Tile.SIZE);
-					g.draw(t.getBump());
-					g.translate(-i * Tile.SIZE, -j * Tile.SIZE);
-				}
-				if (t.getLeftY() >= 0)
-				{
-					g.drawLine(i * Tile.SIZE, j * Tile.SIZE + t.getLeftY(), i * Tile.SIZE + Tile.SIZE, j * Tile.SIZE + t.getRightY());
-				}
+				// if (t.getBump() != null)
+				// {
+				// g.translate(i * Tile.SIZE, j * Tile.SIZE);
+				// g.draw(t.getBump());
+				// g.translate(-i * Tile.SIZE, -j * Tile.SIZE);
+				// }
+				// if (t.getLeftY() >= 0)
+				// {
+				// g.drawLine(i * Tile.SIZE, j * Tile.SIZE + t.getLeftY(), i * Tile.SIZE + Tile.SIZE, j * Tile.SIZE + t.getRightY());
+				// }
 			}
 		}
 	}
@@ -101,6 +105,23 @@ public class World extends EventListener implements Drawable
 		if (x < 0 || y < 0 || x >= data.length || y >= data[0].length) return Tile.air.ordinal(); // outside of world = air
 		
 		return data[x][y];
+	}
+	
+	public boolean isFreeOfBumps(Rectangle grid)
+	{
+		for (int i = grid.x; i < grid.x + grid.width; i++)
+		{
+			for (int j = grid.y; j < grid.y + grid.height; j++)
+			{
+				Tile t = Tile.values()[getTileId(i, j)];
+				if (t.getBump() != null)
+				{
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	public boolean isFree(Rectangle grid)
@@ -118,6 +139,11 @@ public class World extends EventListener implements Drawable
 		}
 		
 		return true;
+	}
+	
+	public int getTileIdAtPixel(int x, int y)
+	{
+		return getTileId((int) Math.floor(x / (float) Tile.SIZE), (int) Math.floor(y / (float) Tile.SIZE));
 	}
 	
 	public boolean intersects(Rectangle grid, Rectangle bump)
@@ -138,6 +164,17 @@ public class World extends EventListener implements Drawable
 					Rectangle r = (Rectangle) t.getBump().clone();
 					r.translate(i * Tile.SIZE, j * Tile.SIZE);
 					area.add(new Area(r));
+				}
+				if (t.getLeftY() >= 0)
+				{
+					Polygon p = new Polygon();
+					p.addPoint(0, t.getLeftY());
+					p.addPoint(Tile.SIZE, t.getRightY());
+					p.addPoint(Tile.SIZE, Tile.SIZE);
+					p.addPoint(0, Tile.SIZE);
+					p.translate(i * Tile.SIZE, j * Tile.SIZE);
+					
+					area.add(new Area(p));
 				}
 			}
 		}
