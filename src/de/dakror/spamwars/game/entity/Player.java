@@ -89,17 +89,13 @@ public class Player extends Entity
 	@Override
 	protected void tick(int tick)
 	{
-		int speed = 6;
+		int speed = airborne ? 6 : 8;
 		
-		float nx = x;
-		float ny = y;
+		if (left) velocity.x = -speed;
+		if (right) velocity.x = speed;
 		
-		if (left) nx -= speed;
-		if (right) nx += speed;
+		if (!left && !right) velocity.x = 0;
 		// if (up) ny -= speed;
 		// if (down) ny += speed;
-		
-		x = nx;
-		y = ny;
 	}
 }

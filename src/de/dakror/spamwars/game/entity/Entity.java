@@ -2,7 +2,6 @@ package de.dakror.spamwars.game.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 
 import de.dakror.gamesetup.util.Drawable;
@@ -25,7 +24,7 @@ public abstract class Entity extends EventListener implements Drawable
 	
 	protected Rectangle bump;
 	
-	Polygon p;
+	Rectangle is, bm;
 	
 	public Entity(float x, float y, int width, int height)
 	{
@@ -43,8 +42,12 @@ public abstract class Entity extends EventListener implements Drawable
 		g.setColor(Color.yellow);
 		g.draw(getBump(0, 0));
 		
-		g.setColor(Color.cyan);
+		g.setColor(Color.blue);
+		if (bm != null) g.draw(bm);
+		g.setColor(Color.red);
 		g.draw(getBump(velocity.x, velocity.y));
+		g.setColor(Color.cyan);
+		if (is != null) g.draw(is);
 		
 		g.setColor(o);
 	}
@@ -92,20 +95,16 @@ public abstract class Entity extends EventListener implements Drawable
 		if (x == nx) velocity.x = 0;
 		if (y == ny) velocity.y = 0;
 		
-		Rectangle r = getBump(0, 0);
-		Rectangle next = getBump(velocity.x, velocity.y);
-		
-		
-		
 		x = nx;
 		y = ny;
+		
 	}
 	
 	public void affectByGravity()
 	{
-		float g = 0.5f;
+		float g = 15;
 		
-		velocity.y += g;
+		velocity.y = g;
 	}
 	
 	public Rectangle getBump(float tX, float tY)

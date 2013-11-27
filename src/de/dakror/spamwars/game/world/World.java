@@ -3,6 +3,7 @@ package de.dakror.spamwars.game.world;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -117,6 +118,32 @@ public class World extends EventListener implements Drawable
 		}
 		
 		return true;
+	}
+	
+	public boolean intersects(Rectangle grid, Rectangle bump)
+	{
+		return !intersection(grid, bump).isEmpty();
+	}
+	
+	public Area intersection(Rectangle grid, Rectangle bump)
+	{
+		Area area = new Area();
+		for (int i = grid.x; i < grid.x + grid.width; i++)
+		{
+			for (int j = grid.y; j < grid.y + grid.height; j++)
+			{
+				Tile t = Tile.values()[getTileId(i, j)];
+				if (t.getBump() != null)
+				{
+					Rectangle r = (Rectangle) t.getBump().clone();
+					r.translate(i * Tile.SIZE, j * Tile.SIZE);
+					area.add(new Area(r));
+				}
+			}
+		}
+		area.intersect(new Area(bump));
+		
+		return area;
 	}
 	
 	@Override
