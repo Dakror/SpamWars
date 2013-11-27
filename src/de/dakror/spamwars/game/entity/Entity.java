@@ -3,10 +3,12 @@ package de.dakror.spamwars.game.entity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.world.Tile;
 
 
@@ -87,24 +89,79 @@ public abstract class Entity extends EventListener implements Drawable
 	{
 		tick(tick);
 		
-		if (gravity) affectByGravity();
 		
-		float nx = x + velocity.x;
-		float ny = y + velocity.y;
+		float nx = velocity.x;
+		float ny = velocity.y;
 		
-		if (x == nx) velocity.x = 0;
-		if (y == ny) velocity.y = 0;
+		Rectangle g = getGridBump(nx, ny);
+		if (!Game.world.isFree(g))
+		{
+			for (int i = 0; i < 1; i++)
+			{
+				Point2D nn = checkAndResolveCollisions(nx, ny);
+				nx = (float) nn.getX();
+				ny = (float) nn.getY();
+			}
+		}
+		else airborne = true;
 		
-		x = nx;
-		y = ny;
 		
+		if (gravity && airborne) affectByGravity();
+		else velocity.y = 0;
+		
+		x += nx;
+		y += ny;
+	}
+	
+	/**
+	 * @return new nx and ny
+	 */
+	public Point2D checkAndResolveCollisions(float nx, float ny)
+	{
+		float x = nx;
+		float y = ny;
+		
+		Rectangle g = getGridBump(nx, ny);
+		for (int i = g.x; i < g.x + g.width; i++)
+		{
+			for (int j = g.y; j < g.y + g.height; j++)
+			{
+				Tile t = Tile.values()[Game.world.getTileId(i, j)];
+				
+				if (t.getBump() == null) continue; // TODO: handle slopes
+				
+				Rectangle b = (Rectangle) t.getBump().clone();
+				b.translate(i * Tile.SIZE, j * Tile.SIZE);
+				
+				Rectangle bump = getBump(x, y);
+				
+				Rectangle is = bump.intersection(b);
+				
+				if (is.height < 0 || is.width < 0) continue; // no intersection
+				
+				if (is.height < is.width)
+				{
+					y += is.y == bump.y ? is.height : -is.height;
+					
+					if (is.y == bump.y)
+					{
+						airborne = true;
+						velocity.y = 0;
+					}
+					else airborne = false;
+				}
+				else x += is.x == bump.x ? is.width : -is.width;
+			}
+		}
+		
+		return new Point2D.Float(x, y);
 	}
 	
 	public void affectByGravity()
 	{
-		float g = 15;
+		float g = 0.5f;
 		
-		velocity.y = g;
+		velocity.y += g;
 	}
 	
 	public Rectangle getBump(float tX, float tY)
