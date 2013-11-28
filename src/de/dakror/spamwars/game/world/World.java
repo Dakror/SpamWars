@@ -21,7 +21,8 @@ import de.dakror.spamwars.game.entity.Player;
  */
 public class World extends EventListener implements Drawable
 {
-	public int x, y, width, height;
+	public float x, y;
+	public int width, height;
 	
 	public int[][] data;
 	
@@ -102,7 +103,8 @@ public class World extends EventListener implements Drawable
 	
 	public int getTileId(int x, int y)
 	{
-		if (x < 0 || y < 0 || x >= data.length || y >= data[0].length) return Tile.air.ordinal(); // outside of world = air
+		if (y < 0 || y >= data[0].length) return Tile.air.ordinal();
+		if (x < 0 || x >= data.length) return Tile.stone.ordinal();
 		
 		return data[x][y];
 	}
@@ -186,15 +188,17 @@ public class World extends EventListener implements Drawable
 	@Override
 	public void draw(Graphics2D g)
 	{
-		g.drawImage(render, x, y, Game.w);
+		g.drawImage(render, (int) x, (int) y, Game.w);
 		
 		for (Entity e : entities)
-			e.draw(g);
+			e.draw(g, x, y);
 	}
 	
 	@Override
 	public void update(int tick)
 	{
+		// y = Game.getHeight() - height;
+		
 		for (Entity e : entities)
 			e.update(tick);
 	}

@@ -1,12 +1,10 @@
 package de.dakror.spamwars.game.entity;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
@@ -16,7 +14,7 @@ import de.dakror.spamwars.game.world.Tile;
 /**
  * @author Dakror
  */
-public abstract class Entity extends EventListener implements Drawable
+public abstract class Entity extends EventListener
 {
 	public float x, y;
 	public int width, height;
@@ -36,23 +34,9 @@ public abstract class Entity extends EventListener implements Drawable
 		velocity = new Vector(0, 0);
 	}
 	
-	protected void drawBump(Graphics2D g)
-	{
-		Color o = g.getColor();
-		
-		g.setColor(Color.yellow);
-		g.draw(getBump(0, 0));
-		
-		g.setColor(Color.red);
-		g.draw(getBump(velocity.x, velocity.y));
-		
-		g.setColor(o);
-	}
-	
 	protected abstract void tick(int tick);
 	
-	@Override
-	public abstract void draw(Graphics2D g);
+	public abstract void draw(Graphics2D g, float mapX, float mapY);
 	
 	public Rectangle getTileSizeBump(float tX, float tY)
 	{
@@ -79,7 +63,6 @@ public abstract class Entity extends EventListener implements Drawable
 		return r;
 	}
 	
-	@Override
 	public void update(int tick)
 	{
 		tick(tick);

@@ -29,9 +29,12 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
+	public void draw(Graphics2D g, float mapX, float mapY)
 	{
-		if (frame == -1) g.drawImage(Game.getImage("entity/player/p1/p1_front.png"), (int) x, (int) y, Game.w);
+		float mx = x + mapX;
+		float my = y + mapY;
+		
+		if (frame == -1) g.drawImage(Game.getImage("entity/player/p1/p1_front.png"), (int) mx, (int) my, Game.w);
 		else if (frame >= 0 && frame <= 10)
 		{
 			String frame = (this.frame + 1) + "";
@@ -40,11 +43,12 @@ public class Player extends Entity
 			AffineTransform old = g.getTransform();
 			if (left && !right)
 			{
-				AffineTransform at = AffineTransform.getTranslateInstance((x + width / 2) * 2, 0);
+				AffineTransform at = g.getTransform();
+				at.translate((mx + width / 2) * 2, 0);
 				at.scale(-1, 1);
 				g.setTransform(at);
 			}
-			g.drawImage(Game.getImage("entity/player/p1/p1_walk" + frame + ".png"), (int) x, (int) y, Game.w);
+			g.drawImage(Game.getImage("entity/player/p1/p1_walk" + frame + ".png"), (int) mx, (int) my, Game.w);
 			
 			g.setTransform(old);
 		}
@@ -53,18 +57,16 @@ public class Player extends Entity
 			AffineTransform old = g.getTransform();
 			if (left && !right)
 			{
-				AffineTransform at = AffineTransform.getTranslateInstance((x + width / 2) * 2, 0);
+				AffineTransform at = g.getTransform();
+				at.translate((mx + width / 2) * 2, 0);
 				at.scale(-1, 1);
 				g.setTransform(at);
 			}
 			
-			g.drawImage(Game.getImage("entity/player/p1/p1_jump.png"), (int) x, (int) y, Game.w);
+			g.drawImage(Game.getImage("entity/player/p1/p1_jump.png"), (int) mx, (int) my, Game.w);
 			
 			g.setTransform(old);
 		}
-		
-		
-		// drawBump(g);
 	}
 	
 	@Override
@@ -82,17 +84,17 @@ public class Player extends Entity
 				right = true;
 				break;
 			}
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_SPACE:
 			{
 				if (!airborne) velocity.y = -15;
 				up = true;
 				break;
 			}
-			case KeyEvent.VK_S:
-			{
-				down = true;
-				break;
-			}
+			// case KeyEvent.VK_SHIFT:
+			// {
+			// down = true;
+			// break;
+			// }
 		}
 	}
 	
@@ -111,16 +113,16 @@ public class Player extends Entity
 				right = false;
 				break;
 			}
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_SPACE:
 			{
 				up = false;
 				break;
 			}
-			case KeyEvent.VK_S:
-			{
-				down = false;
-				break;
-			}
+			// case KeyEvent.VK_S:
+			// {
+			// down = false;
+			// break;
+			// }
 		}
 	}
 	
@@ -147,5 +149,11 @@ public class Player extends Entity
 			frame = -1;
 			velocity.x = 0;
 		}
+		
+		int mx = (Game.getWidth() - width) / 2;
+		int my = (Game.getHeight() - height) / 2;
+		
+		if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
+		if (y > my) Game.world.y = -y + my;
 	}
 }
