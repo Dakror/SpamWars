@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -15,6 +16,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.projectile.Projectile;
 
 /**
  * @author Dakror
@@ -31,6 +33,7 @@ public class World extends EventListener implements Drawable
 	public Player player;
 	
 	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
+	CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
 	
 	public World(int width, int height)
 	{
@@ -192,20 +195,54 @@ public class World extends EventListener implements Drawable
 		
 		for (Entity e : entities)
 			e.draw(g, x, y);
+		
+		for (Projectile e : projectiles)
+			e.draw(g);
 	}
 	
 	@Override
 	public void update(int tick)
 	{
-		// y = Game.getHeight() - height;
-		
 		for (Entity e : entities)
 			e.update(tick);
+		
+		for (Projectile p : projectiles)
+		{
+			p.update(tick);
+			if (p.isDead()) projectiles.remove(p);
+		}
 	}
 	
 	public void addEntity(Entity e)
 	{
 		entities.add(e);
+	}
+	
+	public void addProjectile(Projectile p)
+	{
+		projectiles.add(p);
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		e.translatePoint(-(int) x, -(int) y);
+		
+		for (Entity e1 : entities)
+			e1.mouseMoved(e);
+		
+		e.translatePoint((int) x, (int) y);
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		e.translatePoint(-(int) x, -(int) y);
+		
+		for (Entity e1 : entities)
+			e1.mousePressed(e);
+		
+		e.translatePoint((int) x, (int) y);
 	}
 	
 	@Override

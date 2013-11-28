@@ -3,6 +3,7 @@ package de.dakror.spamwars.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -49,7 +50,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		w.setBackground(Color.decode("#D0F4F7"));
 		
-		Player p = new Player(0, 0);
+		Player p = new Player(140, 500);
 		world.player = p;
 		
 		world.addEntity(p);
@@ -70,8 +71,24 @@ public class Game extends GameFrame implements WindowFocusListener
 	}
 	
 	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		super.mouseMoved(e);
+		world.mouseMoved(e);
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		super.mousePressed(e);
+		world.mousePressed(e);
+	}
+	
+	
+	@Override
 	public void windowGainedFocus(WindowEvent e)
 	{}
+	
 	
 	@Override
 	public void windowLostFocus(WindowEvent e)
