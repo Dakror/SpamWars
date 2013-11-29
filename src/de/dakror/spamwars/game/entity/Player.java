@@ -89,7 +89,7 @@ public class Player extends Entity
 		
 		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
 		
-		weapon.rot = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 	}
 	
 	public Vector getWeaponPoint()
@@ -105,7 +105,7 @@ public class Player extends Entity
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		weapon.shoot(new Vector(e.getPoint()).add(new Vector(Game.world.x, Game.world.y)));
+		weapon.shoot(new Vector(e.getPoint()));
 	}
 	
 	@Override

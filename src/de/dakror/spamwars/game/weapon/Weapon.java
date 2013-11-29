@@ -23,8 +23,10 @@ public abstract class Weapon implements Drawable
 	protected float damage;
 	protected float maxAngle;
 	
-	public float rot; // in degrees
+	public float rot, rot2; // in degrees
 	public boolean left;
+	boolean overangle;
+	
 	
 	private float x, y;
 	
@@ -41,12 +43,18 @@ public abstract class Weapon implements Drawable
 	
 	public void shoot(Vector target)
 	{
+		if (overangle) return;
+		
 		Vector muzzle = getMuzzle();
 		
 		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
 		
-		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot - (float) Math.toRadians(90), 48, 23));
-		Game.world.addProjectile(getPojectile(pos.clone(), target.sub(new Vector(Game.world.x, Game.world.y))));
+		float rot3 = rot - (float) Math.toRadians(90);
+		if (left) rot3 = (float) Math.toRadians(180) - rot3;
+		
+		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23));
+		
+		Game.world.addProjectile(getPojectile(pos.clone(), target));
 	}
 	
 	protected abstract Projectile getPojectile(Vector pos, Vector target);
@@ -61,19 +69,37 @@ public abstract class Weapon implements Drawable
 		y = (float) at.getTranslateY();
 		
 		at.scale(scale, scale * (left ? -1 : 1));
-		double rot = this.rot;
+		double rot = rot2;
 		
 		double rotDeg = Math.toDegrees(rot);
 		
 		if (left)
 		{
-			if (180 - rotDeg > maxAngle && rotDeg >= 0) rot = Math.toRadians(180 - maxAngle);
-			if (180 + rotDeg > maxAngle && rotDeg <= 0) rot = Math.toRadians(180 + maxAngle);
+			if (180 - rotDeg > maxAngle && rotDeg >= 0)
+			{
+				rot = Math.toRadians(180 - maxAngle);
+				overangle = true;
+			}
+			else if (180 + rotDeg > maxAngle && rotDeg <= 0)
+			{
+				rot = Math.toRadians(180 + maxAngle);
+				overangle = true;
+			}
+			else overangle = false;
 		}
 		else
 		{
-			if (rotDeg < -maxAngle) rot = Math.toRadians(-maxAngle);
-			if (rotDeg > maxAngle) rot = Math.toRadians(maxAngle);
+			if (rotDeg < -maxAngle)
+			{
+				rot = Math.toRadians(-maxAngle);
+				overangle = true;
+			}
+			else if (rotDeg > maxAngle)
+			{
+				rot = Math.toRadians(maxAngle);
+				overangle = true;
+			}
+			else overangle = false;
 		}
 		
 		this.rot = (float) rot;
