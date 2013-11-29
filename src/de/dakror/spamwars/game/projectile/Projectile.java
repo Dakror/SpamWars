@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game.projectile;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
@@ -8,6 +9,7 @@ import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.world.Tile;
 
 /**
  * @author Dakror
@@ -64,22 +66,18 @@ public class Projectile implements Drawable
 		
 		Vector nextPos = pos.clone().add(dif);
 		
-		
-		// TODO Fast moving objects scan
-		
-		// Rectangle r = Game.world.
-		// Point p = Game.world.getTile((int) nextPos.x, (int) nextPos.y);
-		// Tile tile = Tile.values()[Game.world.getTileIdAtPixel((int) nextPos.x, (int) nextPos.y)];
-		// if (tile.getBump() != null)
-		// {
-		// Rectangle b = (Rectangle) tile.getBump().clone();
-		// b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
-		// if (b.contains(nextPos.x, nextPos.y))
-		// {
-		// dead = true;
-		// return;
-		// }
-		// }
+		Point p = Game.world.getTile((int) nextPos.x, (int) nextPos.y);
+		Tile tile = Tile.values()[Game.world.getTileIdAtPixel((int) nextPos.x, (int) nextPos.y)];
+		if (tile.getBump() != null)
+		{
+			Rectangle b = (Rectangle) tile.getBump().clone();
+			b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
+			if (b.intersectsLine(pos.x, pos.y, nextPos.x, nextPos.y))
+			{
+				dead = true;
+				return;
+			}
+		}
 		
 		pos.add(dif);
 		
