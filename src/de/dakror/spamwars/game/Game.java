@@ -6,11 +6,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
-import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.layer.LoginLayer;
+import de.dakror.spamwars.game.layer.MenuLayer;
 import de.dakror.spamwars.game.world.World;
+import de.dakror.spamwars.net.Client;
 
 /**
  * @author Dakror
@@ -19,6 +22,8 @@ public class Game extends GameFrame implements WindowFocusListener
 {
 	public static World world;
 	public static Game currentGame;
+	public static Client client;
+	public static InetAddress ip;
 	
 	public Game()
 	{
@@ -29,7 +34,9 @@ public class Game extends GameFrame implements WindowFocusListener
 	@Override
 	public void draw(Graphics2D g)
 	{
-		world.draw(g);
+		if (world != null) world.draw(g);
+		
+		drawLayers(g);
 		
 		Color old = g.getColor();
 		g.setColor(Color.green);
@@ -45,57 +52,63 @@ public class Game extends GameFrame implements WindowFocusListener
 	{
 		w.addWindowFocusListener(this);
 		
-		world = new World(getClass().getResource("/map/map2.txt"));
-		world.render();
+		client = new Client();
+		
+		addLayer(new LoginLayer());
+		addLayer(new MenuLayer());
+		
+		// world = new World(getClass().getResource("/map/map2.txt"));
+		// world.render();
 		
 		w.setBackground(Color.decode("#D0F4F7"));
 		
-		Player p = new Player(140, 500);
-		world.player = p;
-		
-		world.addEntity(p);
+		// Player p = new Player(140, 500);
+		// world.player = p;
+		//
+		// world.addEntity(p);
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
 		super.keyPressed(e);
-		world.keyPressed(e);
+		if (world != null) world.keyPressed(e);
 	}
 	
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
 		super.keyReleased(e);
-		world.keyReleased(e);
+		if (world != null) world.keyReleased(e);
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
 		super.mouseMoved(e);
-		world.mouseMoved(e);
+		if (world != null) world.mouseMoved(e);
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
 		super.mousePressed(e);
-		world.mousePressed(e);
+		if (world != null) world.mousePressed(e);
 	}
-	
 	
 	@Override
 	public void windowGainedFocus(WindowEvent e)
 	{}
 	
-	
 	@Override
 	public void windowLostFocus(WindowEvent e)
 	{
-		world.player.left = false;
-		world.player.right = false;
-		world.player.up = false;
-		world.player.down = false;
+		if (world != null)
+		{
+			world.player.left = false;
+			world.player.right = false;
+			world.player.up = false;
+			world.player.down = false;
+		}
 	}
 }
