@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game.world;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -148,7 +149,13 @@ public class World extends EventListener implements Drawable
 	
 	public int getTileIdAtPixel(int x, int y)
 	{
-		return getTileId((int) Math.floor(x / (float) Tile.SIZE), (int) Math.floor(y / (float) Tile.SIZE));
+		Point p = getTile(x, y);
+		return getTileId(p.x, p.y);
+	}
+	
+	public Point getTile(int x, int y)
+	{
+		return new Point((int) Math.floor(x / (float) Tile.SIZE), (int) Math.floor(y / (float) Tile.SIZE));
 	}
 	
 	public boolean intersects(Rectangle grid, Rectangle bump)
@@ -194,7 +201,7 @@ public class World extends EventListener implements Drawable
 		g.drawImage(render, (int) x, (int) y, Game.w);
 		
 		for (Entity e : entities)
-			e.draw(g, x, y);
+			e.draw(g);
 		
 		for (Projectile e : projectiles)
 			e.draw(g);

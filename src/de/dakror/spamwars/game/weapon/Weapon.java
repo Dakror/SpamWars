@@ -1,6 +1,5 @@
 package de.dakror.spamwars.game.weapon;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -41,7 +40,8 @@ public abstract class Weapon implements Drawable
 	
 	public void shoot(Vector target)
 	{
-		// Game.world.addProjectile(getPojectile(new Vector(x + exit.x - grab.x, y + exit.y - grab.y), target));
+		Vector muzzle = getMuzzle();
+		Game.world.addProjectile(getPojectile(new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y), target.sub(new Vector(Game.world.x, Game.world.y))));
 	}
 	
 	protected abstract Projectile getPojectile(Vector pos, Vector target);
@@ -71,24 +71,24 @@ public abstract class Weapon implements Drawable
 			if (rotDeg > maxAngle) rot = Math.toRadians(maxAngle);
 		}
 		
+		this.rot = (float) rot;
+		
 		at.rotate(rot, 0, 0);
 		g.setTransform(at);
 		
 		Helper.drawImage(Game.getImage("weapon/show.png"), -grab.x, -grab.y, tex.width, tex.height, tex.x, tex.y, tex.width, tex.height, g);
 		
-		g.setTransform(new AffineTransform());
-		Color o = g.getColor();
-		g.setColor(Color.red);
-		
-		int ex = (int) (((grab.x - exit.x) * scale) * (left ? 1 : -1));
-		int ey = -(int) ((grab.y - exit.y) * scale);
-		
-		// CFG.p(Math.toDegrees(Math.atan2(ey, ex)));
-		
-		g.fillRect((int) x, (int) y, 5, 5);
-		g.fillRect((int) (ex + x), (int) (ey + y), 5, 5);
-		g.setColor(o);
 		g.setTransform(old);
+	}
+	
+	public Vector getMuzzle()
+	{
+		Vector v = new Vector(exit).mul(scale).sub(new Vector(grab).mul(scale));
+		
+		float radius = exit.x * Weapon.scale;
+		float rot2 = (float) (rot + Math.atan2(v.y, v.x)) * (left ? -1 : 1);
+		
+		return new Vector((float) Math.cos(rot2) * radius, (float) Math.sin(rot2) * radius);
 	}
 	
 	public Point getExit()

@@ -14,7 +14,6 @@ public class Handgun extends Weapon
 	public Handgun()
 	{
 		super(new Rectangle(629, 1125, 212, 129), new Point(841, 1147), new Point(659, 1212), 50);
-		
 		damage = 4;
 	}
 	
@@ -25,6 +24,6 @@ public class Handgun extends Weapon
 	@Override
 	protected Projectile getPojectile(Vector pos, Vector target)
 	{
-		return new Projectile(new Rectangle(275, 49, 20, 10), pos, target, 1, 1);
+		return new Projectile(new Rectangle(275, 49, 20, 10), pos, target, 50, 1, 1000);
 	}
 }

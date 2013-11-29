@@ -5,6 +5,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
+import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
@@ -14,7 +15,7 @@ import de.dakror.spamwars.game.world.Tile;
 /**
  * @author Dakror
  */
-public abstract class Entity extends EventListener
+public abstract class Entity extends EventListener implements Drawable
 {
 	public float x, y;
 	public int width, height;
@@ -36,7 +37,8 @@ public abstract class Entity extends EventListener
 	
 	protected abstract void tick(int tick);
 	
-	public abstract void draw(Graphics2D g, float mapX, float mapY);
+	@Override
+	public abstract void draw(Graphics2D g);
 	
 	public Rectangle getTileSizeBump(float tX, float tY)
 	{
@@ -63,6 +65,7 @@ public abstract class Entity extends EventListener
 		return r;
 	}
 	
+	@Override
 	public void update(int tick)
 	{
 		tick(tick);

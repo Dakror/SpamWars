@@ -1,6 +1,5 @@
 package de.dakror.spamwars.game.entity;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -45,10 +44,10 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void draw(Graphics2D g, float mapX, float mapY)
+	public void draw(Graphics2D g)
 	{
-		float mx = x + mapX;
-		float my = y + mapY;
+		float mx = x + Game.world.x;
+		float my = y + Game.world.y;
 		
 		AffineTransform old = g.getTransform();
 		if (lookingLeft)
@@ -72,11 +71,6 @@ public class Player extends Entity
 		}
 		g.setTransform(old);
 		
-		Color o = g.getColor();
-		g.setColor(Color.red);
-		g.fillRect(hand.x + (int) mx - 1, hand.y + (int) my - 1, 3, 3);
-		g.setColor(o);
-		
 		old = g.getTransform();
 		AffineTransform at = g.getTransform();
 		at.translate(hand.x + mx, hand.y + my);
@@ -93,12 +87,25 @@ public class Player extends Entity
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
 		
+		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
+		
+		weapon.rot = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+	}
+	
+	public Vector getWeaponPoint()
+	{
+		Vector exit = new Vector(weapon.getExit()).mul(Weapon.scale);
+		exit.x = 0;
+		
+		Vector point = getPos().add(new Vector(hand)).sub(new Vector(weapon.getGrab()).mul(Weapon.scale)).add(exit);
+		
+		return point;
 	}
 	
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		weapon.shoot(new Vector(e.getPoint()));
+		weapon.shoot(new Vector(e.getPoint()).add(new Vector(Game.world.x, Game.world.y)));
 	}
 	
 	@Override
