@@ -10,6 +10,7 @@ import java.net.InetAddress;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.layer.LoginLayer;
 import de.dakror.spamwars.game.layer.MenuLayer;
 import de.dakror.spamwars.game.world.World;
@@ -57,15 +58,17 @@ public class Game extends GameFrame implements WindowFocusListener
 		addLayer(new LoginLayer());
 		addLayer(new MenuLayer());
 		
-		// world = new World(getClass().getResource("/map/map2.txt"));
-		// world.render();
-		
 		w.setBackground(Color.decode("#D0F4F7"));
+	}
+	
+	public void initWorld()
+	{
+		world = new World(getClass().getResource("/map/map2.txt"));
+		world.render();
+		Player p = new Player(140, 500);
+		world.player = p;
 		
-		// Player p = new Player(140, 500);
-		// world.player = p;
-		//
-		// world.addEntity(p);
+		world.addEntity(p);
 	}
 	
 	@Override

@@ -32,6 +32,17 @@ public class MenuLayer extends Layer
 	public void init()
 	{
 		MenuButton start = new MenuButton("startGame", 0);
+		start.addClickEvent(new ClickEvent()
+		{
+			
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.initWorld();
+				
+				Game.currentFrame.layers.remove(MenuLayer.this);
+			}
+		});
 		components.add(start);
 		MenuButton join = new MenuButton("joinGame", 1);
 		components.add(join);
