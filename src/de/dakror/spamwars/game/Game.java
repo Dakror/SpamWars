@@ -45,7 +45,7 @@ public class Game extends GameFrame implements WindowFocusListener
 	{
 		w.addWindowFocusListener(this);
 		
-		world = new World(getClass().getResource("/map/map.txt"));
+		world = new World(getClass().getResource("/map/map2.txt"));
 		world.render();
 		
 		w.setBackground(Color.decode("#D0F4F7"));
