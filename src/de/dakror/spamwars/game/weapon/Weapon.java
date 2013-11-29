@@ -9,6 +9,7 @@ import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
 
 /**
@@ -41,7 +42,11 @@ public abstract class Weapon implements Drawable
 	public void shoot(Vector target)
 	{
 		Vector muzzle = getMuzzle();
-		Game.world.addProjectile(getPojectile(new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y), target.sub(new Vector(Game.world.x, Game.world.y))));
+		
+		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
+		
+		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot - (float) Math.toRadians(90), 48, 23));
+		Game.world.addProjectile(getPojectile(pos.clone(), target.sub(new Vector(Game.world.x, Game.world.y))));
 	}
 	
 	protected abstract Projectile getPojectile(Vector pos, Vector target);

@@ -15,6 +15,7 @@ import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
@@ -35,6 +36,7 @@ public class World extends EventListener implements Drawable
 	
 	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
+	CopyOnWriteArrayList<Animation> animations = new CopyOnWriteArrayList<>();
 	
 	public World(int width, int height)
 	{
@@ -205,6 +207,9 @@ public class World extends EventListener implements Drawable
 		
 		for (Projectile e : projectiles)
 			e.draw(g);
+		
+		for (Animation a : animations)
+			a.draw(g);
 	}
 	
 	@Override
@@ -218,6 +223,12 @@ public class World extends EventListener implements Drawable
 			p.update(tick);
 			if (p.isDead()) projectiles.remove(p);
 		}
+		
+		for (Animation a : animations)
+		{
+			a.update(tick);
+			if (a.isDead()) animations.remove(a);
+		}
 	}
 	
 	public void addEntity(Entity e)
@@ -228,6 +239,11 @@ public class World extends EventListener implements Drawable
 	public void addProjectile(Projectile p)
 	{
 		projectiles.add(p);
+	}
+	
+	public void addAnimation(Animation a)
+	{
+		animations.add(a);
 	}
 	
 	@Override
