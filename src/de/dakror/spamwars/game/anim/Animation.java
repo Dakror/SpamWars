@@ -58,7 +58,9 @@ public class Animation implements Drawable
 			rotation = (float) o.getDouble("rot");
 			startTick = o.getInt("start");
 			size = o.getInt("size");
-			frame = o.getInt("frames");
+			frames = o.getInt("frames");
+			
+			dead = false;
 		}
 		catch (JSONException e)
 		{
@@ -84,7 +86,6 @@ public class Animation implements Drawable
 		{
 			e.printStackTrace();
 		}
-		
 		return o;
 	}
 	
