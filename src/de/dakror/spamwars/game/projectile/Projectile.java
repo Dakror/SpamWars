@@ -14,6 +14,8 @@ import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.util.Assistant;
 
@@ -124,11 +126,14 @@ public class Projectile implements Drawable
 			}
 		}
 		
-		if (Game.player.getBump(0, 0).intersectsLine(line))
+		for (Entity e : Game.world.entities)
 		{
-			Game.player.dealDamage(type.getDamage());
-			dead = true;
-			return;
+			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line))
+			{
+				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(type.getDamage());
+				dead = true;
+				return;
+			}
 		}
 		
 		pos.add(dif);
