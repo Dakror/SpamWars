@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URI;
@@ -19,11 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
+import org.json.JSONObject;
+
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.util.JHintTextField;
 
 /**
@@ -85,6 +90,19 @@ public class LoginLayer extends Layer
 		
 		final JPasswordField pwd = new JPasswordField("Passwort");
 		pwd.setColumns(40);
+		pwd.addFocusListener(new FocusListener()
+		{
+			
+			@Override
+			public void focusLost(FocusEvent e)
+			{}
+			
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				pwd.setText("");
+			}
+		});
 		pwd.setBackground(Color.white);
 		p.add(pwd);
 		
@@ -99,8 +117,10 @@ public class LoginLayer extends Layer
 					String pw = new String(HexBin.encode(MessageDigest.getInstance("MD5").digest(new String(pwd.getPassword()).getBytes()))).toLowerCase();
 					String result = Helper.getURLContent(new URL("http://dakror.de/mp-api/login?username=" + usr.getText() + "&password=" + pw + "&ip=" + Game.ip.getHostAddress()));
 					if (result.equals("faillogin")) JOptionPane.showMessageDialog(frame, "Anmeldung fehlgeschlagen!", "Anmeldung fehlgeschlagen!", JOptionPane.ERROR_MESSAGE);
-					else if (result.equals("true"))
+					else if (result.startsWith("true"))
 					{
+						Game.user = new User(new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?id=" + result.substring(result.indexOf(":") + 1)))).getString("USERNAME"), null, 0);
+						
 						frame.dispose();
 						Game.currentFrame.toggleLayer(LoginLayer.this);
 					}

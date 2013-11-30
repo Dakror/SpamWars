@@ -26,6 +26,12 @@ public class MenuLayer extends Layer
 	public void update(int tick)
 	{
 		updateComponents(tick);
+		if (Game.currentFrame.alpha == 1)
+		{
+			Game.currentFrame.layers.remove(this);
+			Game.currentFrame.addLayer(new LobbyLayer());
+			Game.currentFrame.fadeTo(0, 0.05f);
+		}
 	}
 	
 	@Override
@@ -38,9 +44,10 @@ public class MenuLayer extends Layer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.initWorld();
-				
-				Game.currentFrame.layers.remove(MenuLayer.this);
+				Game.currentFrame.fadeTo(1, 0.05f);
+				// Game.currentGame.initWorld();
+				//
+				// Game.currentFrame.layers.remove(MenuLayer.this);
 			}
 		});
 		components.add(start);

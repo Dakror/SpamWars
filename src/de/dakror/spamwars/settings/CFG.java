@@ -8,8 +8,11 @@ import java.util.Arrays;
 public class CFG
 {
 	public static final int PACKETSIZE = 255; // bytes
-	public static final int SERVER_PORT = 19950; // bytes
-	public static final int CLIENT_PORT = 19951; // bytes
+	public static final int SERVER_PORT = 19950;
+	
+	// -- UniVersion -- //
+	public static final int VERSION = 2013301108;
+	public static final int PHASE = 0;
 	
 	public static boolean INTERNET;
 	

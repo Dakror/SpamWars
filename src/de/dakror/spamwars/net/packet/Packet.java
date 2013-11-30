@@ -11,6 +11,9 @@ public abstract class Packet
 	public static enum PacketTypes
 	{
 		INVALID,
+		CONNECT,
+		REJECT,
+		ATTRIBUTE,
 		
 		;
 		public int getID()
