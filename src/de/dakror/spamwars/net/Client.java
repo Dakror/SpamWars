@@ -7,10 +7,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
+import de.dakror.spamwars.net.packet.Packet2Attribute;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.settings.CFG;
@@ -26,6 +28,8 @@ public class Client extends Thread
 	boolean connected;
 	
 	InetAddress serverIP;
+	
+	Packet3ServerInfo serverInfo;
 	
 	public Client()
 	{
@@ -86,15 +90,44 @@ public class Client extends Thread
 			}
 			case SERVERINFO:
 			{
-				packet = new Packet3ServerInfo(data);
+				Packet3ServerInfo p = new Packet3ServerInfo(data);
+				
+				for (User u : p.getUsers())
+					if (u.getUsername().equals(Game.user.getUsername()) && Game.user.getIP() == null) Game.user = u;
+				
+				serverInfo = p;
+				packet = p;
 				break;
 			}
 			case WORLD:
 			{
 				Packet4World p = new Packet4World(data);
-				Game.currentGame.initWorld(p.getWorld());
+				Game.world = p.getWorld();
+				Game.world.addEntity(Game.player);
 				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
 				
+				packet = p;
+				break;
+			}
+			case ATTRIBUTE:
+			{
+				Packet2Attribute p = new Packet2Attribute(data);
+				if (p.getKey().equals("pos"))
+				{
+					int x = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf(",")));
+					int y = Integer.parseInt(p.getValue().substring(p.getValue().indexOf(",") + 1));
+					
+					if (Game.player == null)
+					{
+						Game.player = new Player(x, y, Game.user);
+					}
+					else
+					{
+						Game.player.x = x;
+						Game.player.y = y;
+					}
+				}
+				packet = p;
 				break;
 			}
 			default:

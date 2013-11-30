@@ -18,7 +18,6 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.entity.Entity;
-import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
 
 /**
@@ -33,11 +32,9 @@ public class World extends EventListener implements Drawable
 	
 	BufferedImage render;
 	
-	public Player player;
-	
-	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
-	CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
-	CopyOnWriteArrayList<Animation> animations = new CopyOnWriteArrayList<>();
+	public CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
+	public CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
+	public CopyOnWriteArrayList<Animation> animations = new CopyOnWriteArrayList<>();
 	
 	URL file;
 	
@@ -229,6 +226,8 @@ public class World extends EventListener implements Drawable
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (render == null) render();
+		
 		g.drawImage(render, (int) x, (int) y, Game.w);
 		
 		for (Entity e : entities)

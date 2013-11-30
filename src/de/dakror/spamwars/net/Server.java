@@ -8,14 +8,18 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
 import de.dakror.spamwars.net.packet.Packet1Reject;
 import de.dakror.spamwars.net.packet.Packet1Reject.Cause;
+import de.dakror.spamwars.net.packet.Packet2Attribute;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
+import de.dakror.spamwars.net.packet.Packet5PlayerData;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -83,6 +87,14 @@ public class Server extends Thread
 		world = new World(getClass().getResource(MAP_FILE));
 		try
 		{
+			int x = 140;
+			int y = 500;
+			
+			for (User u : clients)
+				world.addEntity(new Player(x, y, u));
+			
+			sendPacketToAllClients(new Packet2Attribute("pos", x + "," + y));
+			
 			sendPacketToAllClients(new Packet4World(world));
 		}
 		catch (Exception e)
@@ -187,6 +199,36 @@ public class Server extends Thread
 				}
 				break;
 			}
+			case PLAYER:
+			{
+				Packet5PlayerData p = new Packet5PlayerData(data);
+				User user = null;
+				for (Entity e : world.entities)
+				{
+					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address))
+					{
+						e.setPos(p.getPosition());
+						e.setVelocity(p.getVelocity());
+						((Player) e).frame = p.getFrame();
+						((Player) e).left = p.isLeft();
+						((Player) e).setStyle(p.getStyle());
+						((Player) e).getWeapon().rot = p.getRot();
+						
+						user = ((Player) e).getUser();
+						break;
+					}
+				}
+				
+				try
+				{
+					sendPacketToAllClientsExceptOne(p, user);
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+				break;
+			}
 			default:
 				CFG.p("[SERVER]: reveived unhandled packet (" + address.getHostAddress() + ":" + port + ") " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -196,6 +238,12 @@ public class Server extends Thread
 	{
 		for (User u : clients)
 			sendPacket(p, u);
+	}
+	
+	public void sendPacketToAllClientsExceptOne(Packet p, User exception) throws Exception
+	{
+		for (User u : clients)
+			if (!u.getUsername().equals(exception.getUsername())) sendPacket(p, u);
 	}
 	
 	public void sendPacket(Packet p, User u) throws IOException

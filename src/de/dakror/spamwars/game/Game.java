@@ -30,6 +30,7 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static Server server;
 	public static InetAddress ip;
 	public static User user;
+	public static Player player;
 	
 	public Game()
 	{
@@ -74,16 +75,6 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 	}
 	
-	public void initWorld(World w)
-	{
-		world = w;
-		world.render();
-		Player p = new Player(140, 500);
-		world.player = p;
-		
-		world.addEntity(p);
-	}
-	
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
@@ -119,12 +110,12 @@ public class Game extends GameFrame implements WindowFocusListener
 	@Override
 	public void windowLostFocus(WindowEvent e)
 	{
-		if (world != null)
+		if (player != null)
 		{
-			world.player.left = false;
-			world.player.right = false;
-			world.player.up = false;
-			world.player.down = false;
+			player.left = false;
+			player.right = false;
+			player.up = false;
+			player.down = false;
 		}
 	}
 }

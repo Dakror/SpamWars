@@ -1,16 +1,22 @@
 package de.dakror.spamwars.game.entity;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.Handgun;
 import de.dakror.spamwars.game.weapon.Weapon;
+import de.dakror.spamwars.net.User;
+import de.dakror.spamwars.net.packet.Packet5PlayerData;
 
 
 /**
@@ -22,25 +28,32 @@ public class Player extends Entity
 	
 	boolean lookingLeft = false;
 	
-	Weapon weapon;
+	private int style = 0;
+	
+	private Weapon weapon;
 	
 	/**
 	 * 0 stand, 0-10 = walking, 11 = jump
 	 */
-	int frame = 0;
+	public int frame = 0;
 	
 	Point hand = new Point(0, 0);
 	
 	Point mouse = new Point(0, 0);
 	
-	public Player(float x, float y)
+	User user;
+	
+	public Player(float x, float y, User user)
 	{
 		super(x, y, 72, 97);
 		
+		style = (int) (Math.random() * 3 + 1);
 		bump = new Rectangle(10, 7, 44, 84);
 		gravity = true;
 		
-		weapon = new Handgun();
+		this.user = user;
+		
+		setWeapon(new Handgun());
 	}
 	
 	@Override
@@ -48,6 +61,14 @@ public class Player extends Entity
 	{
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
+		
+		Font oldF = g.getFont();
+		g.setFont(new Font("", Font.PLAIN, 25));
+		Color o = g.getColor();
+		g.setColor(Color.darkGray);
+		Helper.drawHorizontallyCenteredString(Game.user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
+		g.setFont(oldF);
+		g.setColor(o);
 		
 		AffineTransform old = g.getTransform();
 		if (lookingLeft)
@@ -63,11 +84,11 @@ public class Player extends Entity
 			String frame = (this.frame + 1) + "";
 			if (frame.length() == 1) frame = "0" + frame;
 			
-			g.drawImage(Game.getImage("entity/player/p1/p1_walk" + frame + ".png"), (int) mx, (int) my, Game.w);
+			g.drawImage(Game.getImage("entity/player/p" + getStyle() + "/p" + getStyle() + "_walk" + frame + ".png"), (int) mx, (int) my, Game.w);
 		}
 		else if (frame == 11)
 		{
-			g.drawImage(Game.getImage("entity/player/p1/p1_jump.png"), (int) mx, (int) my, Game.w);
+			g.drawImage(Game.getImage("entity/player/p" + getStyle() + "/p" + getStyle() + "_jump.png"), (int) mx, (int) my, Game.w);
 		}
 		g.setTransform(old);
 		
@@ -76,7 +97,7 @@ public class Player extends Entity
 		at.translate(hand.x + mx, hand.y + my);
 		g.setTransform(at);
 		
-		weapon.draw(g);
+		getWeapon().draw(g);
 		
 		g.setTransform(old);
 	}
@@ -89,15 +110,15 @@ public class Player extends Entity
 		
 		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
 		
-		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		getWeapon().rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 	}
 	
 	public Vector getWeaponPoint()
 	{
-		Vector exit = new Vector(weapon.getExit()).mul(Weapon.scale);
+		Vector exit = new Vector(getWeapon().getExit()).mul(Weapon.scale);
 		exit.x = 0;
 		
-		Vector point = getPos().add(new Vector(hand)).sub(new Vector(weapon.getGrab()).mul(Weapon.scale)).add(exit);
+		Vector point = getPos().add(new Vector(hand)).sub(new Vector(getWeapon().getGrab()).mul(Weapon.scale)).add(exit);
 		
 		return point;
 	}
@@ -105,7 +126,14 @@ public class Player extends Entity
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		weapon.shoot(new Vector(e.getPoint()));
+		lookingLeft = e.getX() < x + width / 2;
+		mouse = e.getPoint();
+		
+		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
+		
+		getWeapon().rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		
+		getWeapon().shoot(new Vector(e.getPoint()));
 	}
 	
 	@Override
@@ -125,7 +153,7 @@ public class Player extends Entity
 			}
 			case KeyEvent.VK_SPACE:
 			{
-				if (!airborne) velocity.y = -15;
+				if (!airborne) getVelocity().y = -15;
 				up = true;
 				break;
 			}
@@ -170,9 +198,9 @@ public class Player extends Entity
 	{
 		int speed = airborne ? 3 : 4;
 		
-		if (left) velocity.x = -speed;
-		if (right) velocity.x = speed;
-		if (!airborne && velocity.x != 0 && tick % 4 == 0)
+		if (left) getVelocity().x = -speed;
+		if (right) getVelocity().x = speed;
+		if (!airborne && getVelocity().x != 0 && tick % 4 == 0)
 		{
 			frame = frame < 0 ? 0 : frame;
 			
@@ -186,7 +214,7 @@ public class Player extends Entity
 		if (!left && !right)
 		{
 			frame = 3;
-			velocity.x = 0;
+			getVelocity().x = 0;
 		}
 		
 		int mx = (Game.getWidth() - width) / 2;
@@ -195,9 +223,43 @@ public class Player extends Entity
 		if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
 		if (y > my) Game.world.y = -y + my;
 		
-		weapon.left = lookingLeft;
+		getWeapon().left = lookingLeft;
 		if (lookingLeft) hand = new Point(0, 60);
 		else hand = new Point(65, 60);
 		
+		try
+		{
+			Game.client.sendPacket(new Packet5PlayerData(this));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
+	
+	public int getStyle()
+	{
+		return style;
+	}
+	
+	public void setStyle(int style2)
+	{
+		style = style2;
+	}
+	
+	public User getUser()
+	{
+		return user;
+	}
+	
+	public Weapon getWeapon()
+	{
+		return weapon;
+	}
+	
+	public void setWeapon(Weapon weapon)
+	{
+		this.weapon = weapon;
+	}
+	
 }

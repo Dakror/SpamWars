@@ -15,6 +15,7 @@ public abstract class Packet
 		ATTRIBUTE,
 		SERVERINFO,
 		WORLD,
+		PLAYER,
 		
 		;
 		public int getID()

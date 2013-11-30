@@ -10,9 +10,9 @@ import org.json.JSONObject;
  */
 public class User
 {
-	InetAddress ip;
-	int port;
-	String username;
+	private InetAddress ip;
+	private int port;
+	private String username;
 	
 	public User(String username, InetAddress ip, int port)
 	{

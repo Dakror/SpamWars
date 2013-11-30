@@ -22,7 +22,7 @@ public abstract class Entity extends EventListener implements Drawable
 	protected boolean gravity;
 	protected boolean airborne;
 	
-	Vector velocity;
+	private Vector velocity;
 	
 	protected Rectangle bump;
 	
@@ -32,7 +32,7 @@ public abstract class Entity extends EventListener implements Drawable
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		velocity = new Vector(0, 0);
+		setVelocity(new Vector(0, 0));
 	}
 	
 	protected abstract void tick(int tick);
@@ -71,15 +71,15 @@ public abstract class Entity extends EventListener implements Drawable
 		tick(tick);
 		
 		
-		float nx = velocity.x;
-		float ny = velocity.y;
+		float nx = getVelocity().x;
+		float ny = getVelocity().y;
 		
 		Point2D nn = checkAndResolveCollisions(nx, ny);
 		nx = (float) nn.getX();
 		ny = (float) nn.getY();
 		
 		if (gravity) affectByGravity();
-		else velocity.y = 0;
+		else getVelocity().y = 0;
 		
 		x += nx;
 		y += ny;
@@ -149,7 +149,7 @@ public abstract class Entity extends EventListener implements Drawable
 						
 						if (t.getLeftY() < t.getRightY()) y -= yInSlope - yInSlopeM;
 						else y -= yInSlope - (Tile.SIZE + yInSlopeM);
-						velocity.y = 0;
+						getVelocity().y = 0;
 						airborne = false;
 					}
 				}
@@ -168,7 +168,7 @@ public abstract class Entity extends EventListener implements Drawable
 						if (is.y == bump.y)
 						{
 							airborne = true;
-							velocity.y = 0;
+							getVelocity().y = 0;
 						}
 						else airborne = false;
 					}
@@ -184,18 +184,18 @@ public abstract class Entity extends EventListener implements Drawable
 	{
 		float G = 0.5f;
 		
-		Rectangle g = getGridBump(0, velocity.y + 2 * G);
-		Rectangle b = getBump(0, velocity.y + 2 * G);
+		Rectangle g = getGridBump(0, getVelocity().y + 2 * G);
+		Rectangle b = getBump(0, getVelocity().y + 2 * G);
 		
 		if (!Game.world.intersects(g, b))
 		{
 			airborne = true;
-			velocity.y += G;
+			getVelocity().y += G;
 		}
 		else
 		{
 			airborne = false;
-			velocity.y = 0;
+			getVelocity().y = 0;
 		}
 	}
 	
@@ -211,5 +211,21 @@ public abstract class Entity extends EventListener implements Drawable
 	public Vector getPos()
 	{
 		return new Vector(x, y);
+	}
+	
+	public Vector getVelocity()
+	{
+		return velocity;
+	}
+	
+	public void setVelocity(Vector velocity)
+	{
+		this.velocity = velocity;
+	}
+	
+	public void setPos(Vector position)
+	{
+		x = position.x;
+		y = position.y;
 	}
 }

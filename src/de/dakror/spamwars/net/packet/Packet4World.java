@@ -6,7 +6,6 @@ import java.util.Arrays;
 import de.dakror.gamesetup.util.Compressor;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.game.world.World;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -31,7 +30,6 @@ public class Packet4World extends Packet
 		int w = bb.getInt();
 		int h = bb.getInt();
 		int length = bb.getInt();
-		CFG.p(length);
 		byte[] worlddata = new byte[length];
 		bb.get(worlddata, 0, length);
 		worlddata = Compressor.decompress(worlddata);
