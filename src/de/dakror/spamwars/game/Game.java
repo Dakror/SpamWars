@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -45,7 +46,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		Color old = g.getColor();
 		g.setColor(Color.green);
-		
+		g.setFont(new Font("Arial", Font.PLAIN, 18));
 		Helper.drawString(getFPS() + " FPS", 0, 18, g, 18);
 		Helper.drawString(getUPS() + " UPS", 100, 18, g, 18);
 		
@@ -56,13 +57,21 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void initGame()
 	{
 		w.addWindowFocusListener(this);
+		try
+		{
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/Telev2.ttf")));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		w.setBackground(Color.decode("#D0F4F7"));
 		
 		client = new Client();
 		
 		addLayer(new LoginLayer());
 		addLayer(new MenuLayer());
 		
-		w.setBackground(Color.decode("#D0F4F7"));
 	}
 	
 	public void initWorld()

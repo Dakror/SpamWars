@@ -1,6 +1,22 @@
 package de.dakror.spamwars.game.layer;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.net.InetAddress;
+import java.net.URL;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.json.JSONObject;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
@@ -51,13 +67,94 @@ public class MenuLayer extends Layer
 		MenuButton join = new MenuButton("joinGame", 1);
 		join.addClickEvent(new ClickEvent()
 		{
-			
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.initWorld();
+				final JFrame frame = new JFrame();
+				frame.setAlwaysOnTop(true);
+				frame.setResizable(false);
+				frame.setUndecorated(true);
+				frame.setSize(350, 100);
+				frame.setLocationRelativeTo(Game.w);
+				frame.setBackground(new Color(0, 0, 0, 0));
+				// frame.addWindowFocusListener(new WindowFocusListener()
+				// {
+				//
+				// @Override
+				// public void windowLostFocus(WindowEvent e)
+				// {
+				// frame.dispose();
+				// }
+				//
+				// @Override
+				// public void windowGainedFocus(WindowEvent e)
+				// {}
+				// });
 				
-				Game.currentFrame.layers.remove(MenuLayer.this);
+				JPanel p = new JPanel(new FlowLayout());
+				p.setBackground(new Color(0, 0, 0, 0.8f));
+				
+				JLabel l = new JLabel("<html><center>Gib den Dakror.de - Benutzernamen des Spielers ein,<br>dessen Spiel du beitreten m&ouml;chtest</center></html>");
+				l.setForeground(Color.white);
+				p.add(l);
+				
+				final JTextField usr = new JTextField(40);
+				p.add(usr);
+				
+				JButton cnc = new JButton(new AbstractAction("Abbruch")
+				{
+					
+					private static final long serialVersionUID = 1L;
+					
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						frame.dispose();
+					}
+				});
+				cnc.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
+				cnc.setBackground(new Color(0, 0, 0, 0));
+				p.add(cnc);
+				
+				JButton go = new JButton(new AbstractAction("Spiel beitreten")
+				{
+					private static final long serialVersionUID = 1L;
+					
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						if (usr.getText().length() > 0)
+						{
+							try
+							{
+								JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
+								if (data.length() == 0)
+								{
+									JOptionPane.showMessageDialog(null, "Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", "Beitreten nicht möglich", JOptionPane.ERROR_MESSAGE);
+								}
+								
+								Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
+							}
+							catch (Exception e1)
+							{
+								e1.printStackTrace();
+							}
+						}
+						
+						frame.toFront();
+					}
+				});
+				go.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
+				go.setBackground(new Color(0, 0, 0, 0));
+				
+				p.add(go);
+				
+				frame.setContentPane(p);
+				
+				frame.setVisible(true);
+				// Game.currentGame.initWorld();
+				//
+				// Game.currentFrame.layers.remove(MenuLayer.this);
 			}
 		});
 		components.add(join);

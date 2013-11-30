@@ -1,5 +1,6 @@
 package de.dakror.spamwars.game.layer;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import de.dakror.gamesetup.layer.Layer;
@@ -17,6 +18,14 @@ public class LobbyLayer extends Layer
 	{
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/startGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+		
+		Color c = g.getColor();
+		g.setColor(Color.decode("#1c0d09"));
+		for (int i = 0; i < Game.server.clients.size(); i++)
+		{
+			Helper.drawHorizontallyCenteredString((i + 1) + ". Spieler: " + Game.server.clients.get(i).getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+		}
+		g.setColor(c);
 	}
 	
 	@Override

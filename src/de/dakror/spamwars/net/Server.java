@@ -26,7 +26,7 @@ public class Server extends Thread
 	public static final int MAX_PLAYERS = 4;
 	
 	DatagramSocket socket;
-	CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
+	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
 	public Server(InetAddress ip)
 	{

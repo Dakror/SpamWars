@@ -26,6 +26,12 @@ public class SpamWars
 			e.printStackTrace();
 		}
 		CFG.INTERNET = Helper.isInternetReachable();
+		if (!CFG.INTERNET)
+		{
+			JOptionPane.showMessageDialog(null, "Um Spam Wars spielen zu können, brauchst du eine akive Internetverbindung.", "Internetverbindung nicht vorhanden", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+		
 		Game.ip = Assistant.getHamachiIP();
 		if (Game.ip == null)
 		{

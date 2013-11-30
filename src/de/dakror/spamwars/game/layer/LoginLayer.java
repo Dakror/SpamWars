@@ -53,13 +53,13 @@ public class LoginLayer extends Layer
 	public void init()
 	{
 		final JFrame frame = new JFrame();
-		frame.setSize(350, 180);
-		frame.setTitle("Dakror.de - Anmeldung");
+		frame.setSize(350, 150);
 		frame.setLocationRelativeTo(Game.w);
 		frame.setAlwaysOnTop(true);
 		frame.setResizable(false);
 		frame.setUndecorated(true);
 		frame.setBackground(new Color(0, 0, 0, 0));
+		frame.setIgnoreRepaint(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel p = new JPanel(new FlowLayout());
