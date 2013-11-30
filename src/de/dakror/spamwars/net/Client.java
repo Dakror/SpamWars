@@ -146,7 +146,7 @@ public class Client extends Thread
 					if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
 					{
 						e.setPos(p.getPosition());
-						e.setVelocity(p.getVelocity());
+						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
 						((Player) e).left = p.isLeft();
 						((Player) e).setStyle(p.getStyle());

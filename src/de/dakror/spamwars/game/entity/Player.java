@@ -241,7 +241,7 @@ public class Player extends Entity
 		
 		try
 		{
-			if (user.getUsername().equals(Game.user.getUsername())) Game.client.sendPacket(new Packet5PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername()) && tick % 20 == 0) Game.client.sendPacket(new Packet5PlayerData(this));
 		}
 		catch (IOException e)
 		{
