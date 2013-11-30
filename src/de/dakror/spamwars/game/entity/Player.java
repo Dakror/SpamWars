@@ -230,7 +230,6 @@ public class Player extends Entity
 			int mx = (Game.getWidth() - width) / 2;
 			int my = (Game.getHeight() - height) / 2;
 			
-			
 			if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
 			if (y > my) Game.world.y = -y + my;
 		}

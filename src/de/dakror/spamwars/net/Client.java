@@ -150,7 +150,7 @@ public class Client extends Thread
 						((Player) e).frame = p.getFrame();
 						((Player) e).left = p.isLeft();
 						((Player) e).setStyle(p.getStyle());
-						((Player) e).getWeapon().rot = p.getRot();
+						((Player) e).getWeapon().rot2 = p.getRot();
 						e.update = false;
 						break;
 					}
