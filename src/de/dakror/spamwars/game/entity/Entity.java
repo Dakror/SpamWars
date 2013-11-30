@@ -23,6 +23,8 @@ public abstract class Entity extends EventListener implements Drawable
 	public boolean update;
 	protected boolean airborne;
 	
+	int life, maxlife;
+	
 	private Vector velocity;
 	
 	protected Rectangle bump;
@@ -229,5 +231,25 @@ public abstract class Entity extends EventListener implements Drawable
 	{
 		x = position.x;
 		y = position.y;
+	}
+	
+	public int getLife()
+	{
+		return life;
+	}
+	
+	public void setLife(int life)
+	{
+		this.life = life;
+	}
+	
+	public int getMaxlife()
+	{
+		return maxlife;
+	}
+	
+	public void setMaxlife(int maxlife)
+	{
+		this.maxlife = maxlife;
 	}
 }

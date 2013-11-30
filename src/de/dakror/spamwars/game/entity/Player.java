@@ -53,6 +53,8 @@ public class Player extends Entity
 		
 		this.user = user;
 		
+		life = maxlife = 100;
+		
 		setWeapon(new Handgun());
 	}
 	
@@ -97,7 +99,7 @@ public class Player extends Entity
 		at.translate(hand.x + mx, hand.y + my);
 		g.setTransform(at);
 		
-		getWeapon().draw(g);
+		weapon.draw(g);
 		
 		g.setTransform(old);
 	}
@@ -112,15 +114,15 @@ public class Player extends Entity
 		
 		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
 		
-		getWeapon().rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 	}
 	
 	public Vector getWeaponPoint()
 	{
-		Vector exit = new Vector(getWeapon().getExit()).mul(Weapon.scale);
+		Vector exit = new Vector(weapon.getExit()).mul(Weapon.scale);
 		exit.x = 0;
 		
-		Vector point = getPos().add(new Vector(hand)).sub(new Vector(getWeapon().getGrab()).mul(Weapon.scale)).add(exit);
+		Vector point = getPos().add(new Vector(hand)).sub(new Vector(weapon.getGrab()).mul(Weapon.scale)).add(exit);
 		
 		return point;
 	}
@@ -135,9 +137,9 @@ public class Player extends Entity
 		
 		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
 		
-		getWeapon().rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 		
-		getWeapon().shoot(new Vector(e.getPoint()));
+		weapon.shoot(new Vector(e.getPoint()));
 	}
 	
 	@Override
@@ -234,7 +236,7 @@ public class Player extends Entity
 			if (y > my) Game.world.y = -y + my;
 		}
 		
-		getWeapon().left = lookingLeft;
+		weapon.left = lookingLeft;
 		if (lookingLeft) hand = new Point(0, 60);
 		else hand = new Point(65, 60);
 		
@@ -271,6 +273,11 @@ public class Player extends Entity
 	public void setWeapon(Weapon weapon)
 	{
 		this.weapon = weapon;
+	}
+	
+	public void dealDamage(float damage)
+	{
+		life -= damage;
 	}
 	
 }

@@ -214,6 +214,7 @@ public class Server extends Thread
 						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
+						e.setLife(p.getLife());
 						((Player) e).setStyle(p.getStyle());
 						((Player) e).getWeapon().rot2 = p.getRot();
 						

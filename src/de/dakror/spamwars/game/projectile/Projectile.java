@@ -96,11 +96,13 @@ public class Projectile implements Drawable
 		Point p = Game.world.getTile((int) nextPos.x, (int) nextPos.y);
 		Tile tile = Tile.values()[Game.world.getTileIdAtPixel((int) nextPos.x, (int) nextPos.y)];
 		
+		Line2D line = new Line2D.Float(pos.x, pos.y, nextPos.x, nextPos.y);
+		
 		if (tile.getBump() != null)
 		{
 			Rectangle b = (Rectangle) tile.getBump().clone();
 			b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
-			if (b.intersectsLine(pos.x, pos.y, nextPos.x, nextPos.y))
+			if (b.intersectsLine(line))
 			{
 				dead = true;
 				return;
@@ -115,11 +117,18 @@ public class Projectile implements Drawable
 			b.addPoint(0, Tile.SIZE);
 			b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
 			
-			if (Assistant.intersection(b, new Line2D.Float(pos.x, pos.y, nextPos.x, nextPos.y)))
+			if (Assistant.intersection(b, line))
 			{
 				dead = true;
 				return;
 			}
+		}
+		
+		if (Game.player.getBump(0, 0).intersectsLine(line))
+		{
+			Game.player.dealDamage(type.getDamage());
+			dead = true;
+			return;
 		}
 		
 		pos.add(dif);

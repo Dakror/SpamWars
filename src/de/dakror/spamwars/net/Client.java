@@ -9,6 +9,7 @@ import java.net.SocketException;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
@@ -107,6 +108,7 @@ public class Client extends Thread
 			case WORLD:
 			{
 				Packet4World p = new Packet4World(data);
+				Game.currentGame.addLayer(new HUDLayer());
 				Game.world = p.getWorld();
 				Game.world.addEntity(Game.player, false);
 				
@@ -152,6 +154,7 @@ public class Client extends Thread
 						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
+						e.setLife(p.getLife());
 						((Player) e).setStyle(p.getStyle());
 						((Player) e).getWeapon().rot2 = p.getRot();
 						e.update = false;

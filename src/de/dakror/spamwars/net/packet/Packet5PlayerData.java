@@ -13,7 +13,7 @@ public class Packet5PlayerData extends Packet
 {
 	Vector position;
 	boolean left;
-	int style, frame;
+	int style, frame, life;
 	float rot;
 	
 	public Packet5PlayerData(Player p)
@@ -23,6 +23,7 @@ public class Packet5PlayerData extends Packet
 		left = p.lookingLeft;
 		style = p.getStyle();
 		frame = p.frame;
+		life = p.getLife();
 		rot = p.getWeapon().rot;
 	}
 	
@@ -36,18 +37,20 @@ public class Packet5PlayerData extends Packet
 		style = bb.get();
 		frame = bb.get();
 		rot = bb.getFloat();
+		life = bb.getInt();
 	}
 	
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(21);
+		ByteBuffer bb = ByteBuffer.allocate(25);
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
 		bb.put((byte) (style - 128));
 		bb.put((byte) (frame - 128));
 		bb.putFloat(rot);
+		bb.putInt(life);
 		
 		return bb.array();
 	}
@@ -75,5 +78,10 @@ public class Packet5PlayerData extends Packet
 	public float getRot()
 	{
 		return rot;
+	}
+	
+	public int getLife()
+	{
+		return life;
 	}
 }

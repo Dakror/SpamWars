@@ -72,7 +72,6 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		addLayer(new LoginLayer());
 		addLayer(new MenuLayer());
-		
 	}
 	
 	@Override
