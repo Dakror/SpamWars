@@ -7,15 +7,17 @@ import java.io.IOException;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
+import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
  */
 public class LobbyLayer extends MPLayer
 {
+	User[] users;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -24,11 +26,11 @@ public class LobbyLayer extends MPLayer
 		
 		Color c = g.getColor();
 		g.setColor(Color.decode("#1c0d09"));
-		if (Game.server != null)
+		if (users != null)
 		{
-			for (int i = 0; i < Game.server.clients.size(); i++)
+			for (int i = 0; i < users.length; i++)
 			{
-				Helper.drawHorizontallyCenteredString(Game.server.clients.get(i).getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+				Helper.drawHorizontallyCenteredString(users[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
 			}
 		}
 		g.setColor(c);
@@ -61,6 +63,6 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		CFG.p("->>>>>> " + p.getClass());
+		if (p instanceof Packet3ServerInfo) users = ((Packet3ServerInfo) p).getUsers();
 	}
 }

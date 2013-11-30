@@ -21,6 +21,20 @@ public class User
 		this.username = username;
 	}
 	
+	public User(JSONObject o)
+	{
+		try
+		{
+			ip = InetAddress.getByName(o.getString("ip"));
+			port = o.getInt("port");
+			username = o.getString("username");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	public InetAddress getIP()
 	{
 		return ip;

@@ -16,6 +16,19 @@ public class Packet3ServerInfo extends Packet
 	public Packet3ServerInfo(byte[] data)
 	{
 		super(3);
+		try
+		{
+			JSONArray arr = new JSONArray(readData(data));
+			users = new User[arr.length()];
+			for (int i = 0; i < arr.length(); i++)
+			{
+				users[i] = new User(arr.getJSONObject(i));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public Packet3ServerInfo(User[] users)

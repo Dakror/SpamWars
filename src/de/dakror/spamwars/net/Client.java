@@ -86,6 +86,7 @@ public class Client extends Thread
 			case SERVERINFO:
 			{
 				packet = new Packet3ServerInfo(data);
+				break;
 			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
