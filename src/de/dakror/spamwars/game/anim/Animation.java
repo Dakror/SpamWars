@@ -4,6 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
@@ -43,6 +46,46 @@ public class Animation implements Drawable
 		
 		frame = 0;
 		dead = false;
+	}
+	
+	public Animation(JSONObject o)
+	{
+		try
+		{
+			pos = new Vector((float) o.getDouble("x"), (float) o.getDouble("y"));
+			name = o.getString("name");
+			speed = (float) o.getDouble("speed");
+			rotation = (float) o.getDouble("rot");
+			startTick = o.getInt("start");
+			size = o.getInt("size");
+			frame = o.getInt("frames");
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public JSONObject serialize()
+	{
+		JSONObject o = new JSONObject();
+		try
+		{
+			o.put("x", pos.x);
+			o.put("y", pos.y);
+			o.put("name", name);
+			o.put("speed", speed);
+			o.put("rot", rotation);
+			o.put("start", startTick);
+			o.put("size", size);
+			o.put("frames", frames);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return o;
 	}
 	
 	@Override

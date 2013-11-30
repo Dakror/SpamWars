@@ -52,9 +52,9 @@ public abstract class Weapon implements Drawable
 		float rot3 = rot - (float) Math.toRadians(90);
 		if (left) rot3 = (float) Math.toRadians(180) - rot3;
 		
-		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23));
+		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
 		
-		Game.world.addProjectile(getPojectile(pos.clone(), target));
+		Game.world.addProjectile(getPojectile(pos.clone(), target), true);
 	}
 	
 	protected abstract Projectile getPojectile(Vector pos, Vector target);

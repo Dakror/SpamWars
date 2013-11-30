@@ -17,6 +17,7 @@ import de.dakror.spamwars.net.packet.Packet2Attribute;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
+import de.dakror.spamwars.net.packet.Packet6Animation;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -106,12 +107,11 @@ public class Client extends Thread
 			{
 				Packet4World p = new Packet4World(data);
 				Game.world = p.getWorld();
-				Game.world.addEntity(Game.player);
-				// Game.playerDataSender = new PlayerDataSender();
+				Game.world.addEntity(Game.player, false);
 				
 				for (User u : serverInfo.getUsers())
 				{
-					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
+					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u), false);
 				}
 				
 				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
@@ -157,6 +157,13 @@ public class Client extends Thread
 						break;
 					}
 				}
+				break;
+			}
+			case ANIMATION:
+			{
+				Packet6Animation p = new Packet6Animation(data);
+				Game.world.addAnimation(p.getAnimation(), false);
+				
 				break;
 			}
 			default:

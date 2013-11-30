@@ -16,7 +16,6 @@ import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.layer.LoginLayer;
 import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.Client;
-import de.dakror.spamwars.net.PlayerDataSender;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
 
@@ -32,7 +31,6 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static InetAddress ip;
 	public static User user;
 	public static Player player;
-	public static PlayerDataSender playerDataSender;
 	
 	public Game()
 	{

@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -19,6 +20,7 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.projectile.Projectile;
+import de.dakror.spamwars.net.packet.Packet6Animation;
 
 /**
  * @author Dakror
@@ -259,19 +261,28 @@ public class World extends EventListener implements Drawable
 		}
 	}
 	
-	public void addEntity(Entity e)
+	public void addEntity(Entity e, boolean send)
 	{
 		entities.add(e);
 	}
 	
-	public void addProjectile(Projectile p)
+	public void addProjectile(Projectile p, boolean send)
 	{
 		projectiles.add(p);
 	}
 	
-	public void addAnimation(Animation a)
+	public void addAnimation(Animation a, boolean send)
 	{
 		animations.add(a);
+		
+		try
+		{
+			if (send) Game.client.sendPacket(new Packet6Animation(a));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

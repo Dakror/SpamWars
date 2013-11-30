@@ -11,7 +11,7 @@ import de.dakror.spamwars.game.entity.Player;
  */
 public class Packet5PlayerData extends Packet
 {
-	Vector velocity, position;
+	Vector position;
 	boolean left;
 	int style, frame;
 	float rot;
@@ -19,7 +19,6 @@ public class Packet5PlayerData extends Packet
 	public Packet5PlayerData(Player p)
 	{
 		super(5);
-		velocity = p.getVelocity();
 		position = p.getPos();
 		left = p.lookingLeft;
 		style = p.getStyle();
@@ -33,7 +32,6 @@ public class Packet5PlayerData extends Packet
 		
 		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
 		position = new Vector(bb.getFloat(), bb.getFloat());
-		velocity = new Vector(bb.getFloat(), bb.getFloat());
 		left = bb.get() == (byte) -127;
 		style = bb.get();
 		frame = bb.get();
@@ -43,22 +41,15 @@ public class Packet5PlayerData extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(23);
+		ByteBuffer bb = ByteBuffer.allocate(21);
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
-		bb.putFloat(velocity.x);
-		bb.putFloat(velocity.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
 		bb.put((byte) (style - 128));
 		bb.put((byte) (frame - 128));
 		bb.putFloat(rot);
 		
 		return bb.array();
-	}
-	
-	public Vector getVelocity()
-	{
-		return velocity;
 	}
 	
 	public Vector getPosition()

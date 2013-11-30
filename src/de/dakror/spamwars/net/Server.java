@@ -20,6 +20,7 @@ import de.dakror.spamwars.net.packet.Packet2Attribute;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
+import de.dakror.spamwars.net.packet.Packet6Animation;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -92,7 +93,7 @@ public class Server extends Thread
 			int y = 500;
 			
 			for (User u : clients)
-				world.addEntity(new Player(x, y, u));
+				world.addEntity(new Player(x, y, u), false);
 			
 			sendPacketToAllClients(new Packet2Attribute("pos", x + "," + y));
 			
@@ -230,6 +231,18 @@ public class Server extends Thread
 				}
 				break;
 			}
+			case ANIMATION:
+			{
+				try
+				{
+					sendPacketToAllClientsExceptOne(new Packet6Animation(data), new User(null, address, port));
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+				break;
+			}
 			default:
 				CFG.p("[SERVER]: reveived unhandled packet (" + address.getHostAddress() + ":" + port + ") " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -244,7 +257,7 @@ public class Server extends Thread
 	public void sendPacketToAllClientsExceptOne(Packet p, User exception) throws Exception
 	{
 		for (User u : clients)
-			if (!u.getUsername().equals(exception.getUsername())) sendPacket(p, u);
+			if (!u.getIP().equals(exception.getIP()) && u.getPort() != exception.getPort()) sendPacket(p, u);
 	}
 	
 	public void sendPacket(Packet p, User u) throws IOException
