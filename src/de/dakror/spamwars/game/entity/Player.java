@@ -66,7 +66,7 @@ public class Player extends Entity
 		g.setFont(new Font("", Font.PLAIN, 25));
 		Color o = g.getColor();
 		g.setColor(Color.darkGray);
-		Helper.drawHorizontallyCenteredString(Game.user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
+		Helper.drawHorizontallyCenteredString(user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
 		g.setFont(oldF);
 		g.setColor(o);
 		
@@ -241,7 +241,7 @@ public class Player extends Entity
 		
 		try
 		{
-			if (user.getUsername().equals(Game.user.getUsername()) && tick % 20 == 0) Game.client.sendPacket(new Packet5PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername())) Game.client.sendPacket(new Packet5PlayerData(this));
 		}
 		catch (IOException e)
 		{
