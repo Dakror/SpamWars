@@ -34,7 +34,7 @@ public class Packet5PlayerData extends Packet
 		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
 		position = new Vector(bb.getFloat(), bb.getFloat());
 		velocity = new Vector(bb.getFloat(), bb.getFloat());
-		left = bb.get() == (byte) 1;
+		left = bb.get() == (byte) -127;
 		style = bb.get();
 		frame = bb.get();
 		rot = bb.getFloat();
