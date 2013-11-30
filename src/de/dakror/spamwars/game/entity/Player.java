@@ -1,6 +1,8 @@
 package de.dakror.spamwars.game.entity;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.weapon.Handgun;
 import de.dakror.spamwars.game.weapon.Weapon;
 import de.dakror.spamwars.net.User;
@@ -41,7 +44,11 @@ public class Player extends Entity
 	
 	Point mouse = new Point(0, 0);
 	
+	Animation death;
+	
 	User user;
+	
+	float alpha = 1;
 	
 	public Player(float x, float y, User user)
 	{
@@ -61,6 +68,9 @@ public class Player extends Entity
 	@Override
 	public void draw(Graphics2D g)
 	{
+		Composite c = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
 		
@@ -102,6 +112,7 @@ public class Player extends Entity
 		weapon.draw(g);
 		
 		g.setTransform(old);
+		g.setComposite(c);
 	}
 	
 	@Override
@@ -208,6 +219,14 @@ public class Player extends Entity
 	{
 		int speed = airborne ? 3 : 4;
 		
+		if (death != null)
+		{
+			if (death.isDead()) alpha = 1;
+			else if ((tick - death.startTick) % death.speed == 0) alpha -= 1 / (float) death.frames;
+			
+			if (alpha < 0) alpha = 0;
+		}
+		
 		if (user.getUsername().equals(Game.user.getUsername()))
 		{
 			if (left) getVelocity().x = -speed;
@@ -278,6 +297,11 @@ public class Player extends Entity
 	public void dealDamage(float damage)
 	{
 		life -= damage;
+		if (life < 0)
+		{
+			life = 0;
+			death = new Animation("expl/11", getPos().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24);
+			Game.world.addAnimation(death, true);
+		}
 	}
-	
 }

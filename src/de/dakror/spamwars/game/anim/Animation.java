@@ -20,13 +20,13 @@ public class Animation implements Drawable
 	String name;
 	Vector pos;
 	
-	float speed;
+	public float speed;
 	float rotation;
 	
-	int startTick;
-	int frame;
+	public int startTick;
+	public int frame;
 	int size;
-	int frames;
+	public int frames;
 	
 	boolean dead;
 	
