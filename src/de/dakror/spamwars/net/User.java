@@ -2,6 +2,9 @@ package de.dakror.spamwars.net;
 
 import java.net.InetAddress;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @author Dakror
  */
@@ -46,5 +49,24 @@ public class User
 	public void setUsername(String username)
 	{
 		this.username = username;
+	}
+	
+	public String serialize()
+	{
+		JSONObject o = new JSONObject();
+		
+		try
+		{
+			o.put("username", username);
+			o.put("ip", ip.getHostAddress());
+			o.put("port", port);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		return o.toString();
 	}
 }

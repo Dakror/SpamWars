@@ -3,18 +3,16 @@ package de.dakror.spamwars.game.layer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
+import de.dakror.spamwars.net.packet.Packet;
 
 /**
  * @author Dakror
  */
-public class LobbyLayer extends Layer
+public class LobbyLayer extends MPLayer
 {
-	public static LobbyLayer lobby;
-	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -23,9 +21,12 @@ public class LobbyLayer extends Layer
 		
 		Color c = g.getColor();
 		g.setColor(Color.decode("#1c0d09"));
-		for (int i = 0; i < Game.server.clients.size(); i++)
+		if (Game.server != null)
 		{
-			Helper.drawHorizontallyCenteredString((i + 1) + ". Spieler: " + Game.server.clients.get(i).getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+			for (int i = 0; i < Game.server.clients.size(); i++)
+			{
+				Helper.drawHorizontallyCenteredString(Game.server.clients.get(i).getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+			}
 		}
 		g.setColor(c);
 	}
@@ -37,8 +38,6 @@ public class LobbyLayer extends Layer
 	@Override
 	public void init()
 	{
-		lobby = this;
-		
 		if (!Game.client.isConnected())
 		{
 			Game.server = new Server(Game.ip);
@@ -46,4 +45,8 @@ public class LobbyLayer extends Layer
 			Game.client.connectToServer(Game.ip);
 		}
 	}
+	
+	@Override
+	public void onPacketReceived(Packet p)
+	{}
 }

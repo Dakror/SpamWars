@@ -18,17 +18,20 @@ import javax.swing.JTextField;
 
 import org.json.JSONObject;
 
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.ui.ClickEvent;
 import de.dakror.spamwars.game.ui.MenuButton;
+import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet0Connect;
 
 /**
  * @author Dakror
  */
-public class MenuLayer extends Layer
+public class MenuLayer extends MPLayer
 {
+	JFrame join;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -44,7 +47,8 @@ public class MenuLayer extends Layer
 		updateComponents(tick);
 		if (Game.currentFrame.alpha == 1)
 		{
-			Game.currentFrame.layers.remove(this);
+			if (join != null) join.dispose();
+			Game.currentFrame.removeLayer(this);
 			Game.currentFrame.addLayer(new LobbyLayer());
 			Game.currentFrame.fadeTo(0, 0.05f);
 		}
@@ -56,7 +60,6 @@ public class MenuLayer extends Layer
 		MenuButton start = new MenuButton("startGame", 0);
 		start.addClickEvent(new ClickEvent()
 		{
-			
 			@Override
 			public void trigger()
 			{
@@ -64,19 +67,19 @@ public class MenuLayer extends Layer
 			}
 		});
 		components.add(start);
-		MenuButton join = new MenuButton("joinGame", 1);
-		join.addClickEvent(new ClickEvent()
+		MenuButton joingame = new MenuButton("joinGame", 1);
+		joingame.addClickEvent(new ClickEvent()
 		{
 			@Override
 			public void trigger()
 			{
-				final JFrame frame = new JFrame();
-				frame.setAlwaysOnTop(true);
-				frame.setResizable(false);
-				frame.setUndecorated(true);
-				frame.setSize(350, 100);
-				frame.setLocationRelativeTo(Game.w);
-				frame.setBackground(new Color(0, 0, 0, 0));
+				join = new JFrame();
+				join.setAlwaysOnTop(true);
+				join.setResizable(false);
+				join.setUndecorated(true);
+				join.setSize(350, 100);
+				join.setLocationRelativeTo(Game.w);
+				join.setBackground(new Color(0, 0, 0, 0));
 				// frame.addWindowFocusListener(new WindowFocusListener()
 				// {
 				//
@@ -99,7 +102,7 @@ public class MenuLayer extends Layer
 				p.add(l);
 				
 				final JTextField usr = new JTextField();
-				usr.setPreferredSize(new Dimension(frame.getWidth() - 40, 22));
+				usr.setPreferredSize(new Dimension(join.getWidth() - 40, 22));
 				p.add(usr);
 				
 				JButton cnc = new JButton(new AbstractAction("Abbruch")
@@ -110,7 +113,7 @@ public class MenuLayer extends Layer
 					@Override
 					public void actionPerformed(ActionEvent e)
 					{
-						frame.dispose();
+						join.dispose();
 					}
 				});
 				cnc.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
@@ -142,7 +145,7 @@ public class MenuLayer extends Layer
 							}
 						}
 						
-						frame.toFront();
+						join.toFront();
 					}
 				});
 				go.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
@@ -150,15 +153,15 @@ public class MenuLayer extends Layer
 				
 				p.add(go);
 				
-				frame.setContentPane(p);
+				join.setContentPane(p);
 				
-				frame.setVisible(true);
+				join.setVisible(true);
 				// Game.currentGame.initWorld();
 				//
-				// Game.currentFrame.layers.remove(MenuLayer.this);
+				// Game.currentFrame.removeLayer(MenuLayer.this);
 			}
 		});
-		components.add(join);
+		components.add(joingame);
 		MenuButton opt = new MenuButton("options", 2);
 		components.add(opt);
 		MenuButton end = new MenuButton("endGame", 3);
@@ -171,5 +174,14 @@ public class MenuLayer extends Layer
 			}
 		});
 		components.add(end);
+	}
+	
+	@Override
+	public void onPacketReceived(Packet p)
+	{
+		if (p instanceof Packet0Connect && ((Packet0Connect) p).getUsername().equals(Game.user.getUsername()))
+		{
+			Game.currentFrame.fadeTo(1, 0.05f);
+		}
 	}
 }

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
@@ -63,6 +64,9 @@ public class Client extends Thread
 	public void parsePacket(byte[] data)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
+		
+		Packet packet = null;
+		
 		switch (type)
 		{
 			case INVALID:
@@ -74,12 +78,15 @@ public class Client extends Thread
 			{
 				Packet0Connect p = new Packet0Connect(data);
 				if (p.getUsername().equals(Game.user.getUsername())) connected = true;
-				else ;
+				
+				packet = p;
 				break;
 			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
+		
+		if (Game.currentGame.getActiveLayer() instanceof MPLayer && packet != null) ((MPLayer) Game.currentGame.getActiveLayer()).onPacketReceived(packet);
 	}
 	
 	public void sendPacket(Packet p) throws IOException

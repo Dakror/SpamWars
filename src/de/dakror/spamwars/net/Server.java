@@ -13,6 +13,7 @@ import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
 import de.dakror.spamwars.net.packet.Packet1Reject;
 import de.dakror.spamwars.net.packet.Packet1Reject.Cause;
+import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -142,6 +143,7 @@ public class Server extends Thread
 				clients.add(user);
 				try
 				{
+					sendPacket(new Packet3ServerInfo(clients.toArray(new User[] {})), user);
 					sendPacketToAllClients(packet);
 				}
 				catch (Exception e)

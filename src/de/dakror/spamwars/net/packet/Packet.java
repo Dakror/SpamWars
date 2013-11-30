@@ -14,6 +14,7 @@ public abstract class Packet
 		CONNECT,
 		REJECT,
 		ATTRIBUTE,
+		SERVERINFO,
 		
 		;
 		public int getID()
