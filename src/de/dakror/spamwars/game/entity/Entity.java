@@ -20,6 +20,7 @@ public abstract class Entity extends EventListener implements Drawable
 	public float x, y;
 	public int width, height;
 	protected boolean gravity;
+	public boolean update;
 	protected boolean airborne;
 	
 	private Vector velocity;
@@ -33,6 +34,7 @@ public abstract class Entity extends EventListener implements Drawable
 		this.width = width;
 		this.height = height;
 		setVelocity(new Vector(0, 0));
+		update = true;
 	}
 	
 	protected abstract void tick(int tick);
@@ -69,21 +71,21 @@ public abstract class Entity extends EventListener implements Drawable
 	public void update(int tick)
 	{
 		tick(tick);
-		
-		
-		float nx = getVelocity().x;
-		float ny = getVelocity().y;
-		
-		Point2D nn = checkAndResolveCollisions(nx, ny);
-		nx = (float) nn.getX();
-		ny = (float) nn.getY();
-		
-		if (gravity) affectByGravity();
-		else getVelocity().y = 0;
-		
-		x += nx;
-		y += ny;
-		
+		if (update)
+		{
+			float nx = getVelocity().x;
+			float ny = getVelocity().y;
+			
+			Point2D nn = checkAndResolveCollisions(nx, ny);
+			nx = (float) nn.getX();
+			ny = (float) nn.getY();
+			
+			if (gravity) affectByGravity();
+			else getVelocity().y = 0;
+			
+			x += nx;
+			y += ny;
+		}
 	}
 	
 	/**

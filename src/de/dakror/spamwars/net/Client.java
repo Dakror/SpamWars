@@ -151,6 +151,7 @@ public class Client extends Thread
 						((Player) e).left = p.isLeft();
 						((Player) e).setStyle(p.getStyle());
 						((Player) e).getWeapon().rot = p.getRot();
+						e.update = false;
 						break;
 					}
 				}
