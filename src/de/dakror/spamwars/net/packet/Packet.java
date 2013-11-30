@@ -1,6 +1,5 @@
 package de.dakror.spamwars.net.packet;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -36,12 +35,12 @@ public abstract class Packet
 	{
 		byte[] strData = getPacketData();
 		
-		ByteBuffer bb = ByteBuffer.allocate(strData.length + 5);
-		bb.putInt(strData.length + 1);
-		bb.put(packetID);
-		bb.put(strData);
+		byte[] data = new byte[strData.length + 1];
+		data[0] = packetID;
 		
-		return bb.array();
+		System.arraycopy(strData, 0, data, 1, strData.length);
+		
+		return data;
 	}
 	
 	public static String readData(byte[] data)

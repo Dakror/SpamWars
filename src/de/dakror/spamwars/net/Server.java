@@ -75,7 +75,9 @@ public class Server extends Thread
 		switch (type)
 		{
 			case INVALID:
+			{
 				break;
+			}
 			case CONNECT:
 			{
 				Packet0Connect packet = new Packet0Connect(data);
