@@ -45,13 +45,21 @@ public class MenuLayer extends Layer
 			public void trigger()
 			{
 				Game.currentFrame.fadeTo(1, 0.05f);
-				// Game.currentGame.initWorld();
-				//
-				// Game.currentFrame.layers.remove(MenuLayer.this);
 			}
 		});
 		components.add(start);
 		MenuButton join = new MenuButton("joinGame", 1);
+		join.addClickEvent(new ClickEvent()
+		{
+			
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.initWorld();
+				
+				Game.currentFrame.layers.remove(MenuLayer.this);
+			}
+		});
 		components.add(join);
 		MenuButton opt = new MenuButton("options", 2);
 		components.add(opt);
