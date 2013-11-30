@@ -134,15 +134,13 @@ public class MenuLayer extends MPLayer
 								JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
 								if (data.length() == 0)
 								{
-									JOptionPane.showMessageDialog(null, "Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", "Beitreten nicht möglich", JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(join, "Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", "Beitreten nicht möglich", JOptionPane.ERROR_MESSAGE);
 								}
 								
 								Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
 							}
 							catch (Exception e1)
-							{
-								e1.printStackTrace();
-							}
+							{}
 						}
 						
 						join.toFront();
