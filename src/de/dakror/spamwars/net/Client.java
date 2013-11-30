@@ -11,6 +11,7 @@ import de.dakror.spamwars.game.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
+import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -81,6 +82,10 @@ public class Client extends Thread
 				
 				packet = p;
 				break;
+			}
+			case SERVERINFO:
+			{
+				packet = new Packet3ServerInfo(data);
 			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");

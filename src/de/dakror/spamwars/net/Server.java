@@ -145,12 +145,23 @@ public class Server extends Thread
 				clients.add(user);
 				try
 				{
-					sendPacket(new Packet3ServerInfo(clients.toArray(new User[] {})), user);
 					sendPacketToAllClients(packet);
 				}
 				catch (Exception e)
 				{}
 				break;
+			}
+			case SERVERINFO:
+			{
+				User user = new User(null, address, port);
+				try
+				{
+					sendPacket(new Packet3ServerInfo(clients.toArray(new User[] {})), user);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 			default:
 				CFG.p("[SERVER]: reveived unhandled packet (" + address.getHostAddress() + ":" + port + ") " + type + " [" + Packet.readData(data) + "]");

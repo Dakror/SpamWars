@@ -2,11 +2,14 @@ package de.dakror.spamwars.game.layer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.IOException;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet3ServerInfo;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -44,9 +47,20 @@ public class LobbyLayer extends MPLayer
 			
 			Game.client.connectToServer(Game.ip);
 		}
+		
+		try
+		{
+			Game.client.sendPacket(new Packet3ServerInfo());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void onPacketReceived(Packet p)
-	{}
+	{
+		CFG.p("->>>>>> " + p.getClass());
+	}
 }
