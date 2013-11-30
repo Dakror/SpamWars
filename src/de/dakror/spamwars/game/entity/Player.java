@@ -220,8 +220,11 @@ public class Player extends Entity
 		int mx = (Game.getWidth() - width) / 2;
 		int my = (Game.getHeight() - height) / 2;
 		
-		if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
-		if (y > my) Game.world.y = -y + my;
+		if (user.getUsername().equals(Game.user.getUsername()))
+		{
+			if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
+			if (y > my) Game.world.y = -y + my;
+		}
 		
 		getWeapon().left = lookingLeft;
 		if (lookingLeft) hand = new Point(0, 60);
@@ -229,7 +232,7 @@ public class Player extends Entity
 		
 		try
 		{
-			Game.client.sendPacket(new Packet5PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername())) Game.client.sendPacket(new Packet5PlayerData(this));
 		}
 		catch (IOException e)
 		{
