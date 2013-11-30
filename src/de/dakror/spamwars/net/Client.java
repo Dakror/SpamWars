@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
@@ -15,6 +16,7 @@ import de.dakror.spamwars.net.packet.Packet0Connect;
 import de.dakror.spamwars.net.packet.Packet2Attribute;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
+import de.dakror.spamwars.net.packet.Packet5PlayerData;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -104,6 +106,12 @@ public class Client extends Thread
 				Packet4World p = new Packet4World(data);
 				Game.world = p.getWorld();
 				Game.world.addEntity(Game.player);
+				
+				for (User u : serverInfo.getUsers())
+				{
+					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
+				}
+				
 				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
 				
 				packet = p;
@@ -128,6 +136,24 @@ public class Client extends Thread
 					}
 				}
 				packet = p;
+				break;
+			}
+			case PLAYER:
+			{
+				Packet5PlayerData p = new Packet5PlayerData(data);
+				for (Entity e : Game.world.entities)
+				{
+					if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
+					{
+						e.setPos(p.getPosition());
+						e.setVelocity(p.getVelocity());
+						((Player) e).frame = p.getFrame();
+						((Player) e).left = p.isLeft();
+						((Player) e).setStyle(p.getStyle());
+						((Player) e).getWeapon().rot = p.getRot();
+						break;
+					}
+				}
 				break;
 			}
 			default:
