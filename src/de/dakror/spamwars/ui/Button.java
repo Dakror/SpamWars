@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.ui;
+package de.dakror.spamwars.ui;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;

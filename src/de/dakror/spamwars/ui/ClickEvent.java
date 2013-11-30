@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.ui;
+package de.dakror.spamwars.ui;
 
 /**
  * @author Dakror

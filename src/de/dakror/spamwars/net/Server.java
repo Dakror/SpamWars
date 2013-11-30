@@ -8,12 +8,14 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
 import de.dakror.spamwars.net.packet.Packet1Reject;
 import de.dakror.spamwars.net.packet.Packet1Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
+import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -21,19 +23,25 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class Server extends Thread
 {
+	public static final int MAX_PLAYERS = 4;
+	public static final int PORT = 19950;
+	public static final int PACKETSIZE = 255; // bytes
+	
+	public static final String MAP_FILE = "/map/map2.txt";
+	
 	public boolean running;
 	
 	boolean lobby;
-	public static final int MAX_PLAYERS = 4;
 	
 	DatagramSocket socket;
+	World world;
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
 	public Server(InetAddress ip)
 	{
 		try
 		{
-			socket = new DatagramSocket(new InetSocketAddress(ip, CFG.SERVER_PORT));
+			socket = new DatagramSocket(new InetSocketAddress(ip, Server.PORT));
 			setName("Server-Thread");
 			CFG.p("[SERVER]: Starting server at " + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
 			lobby = true;
@@ -52,7 +60,7 @@ public class Server extends Thread
 		running = true;
 		while (running)
 		{
-			byte[] data = new byte[CFG.PACKETSIZE];
+			byte[] data = new byte[Server.PACKETSIZE];
 			
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try
@@ -67,6 +75,20 @@ public class Server extends Thread
 		}
 		
 		shutdown();
+	}
+	
+	public void startGame()
+	{
+		lobby = false;
+		world = new World(getClass().getResource(MAP_FILE));
+		try
+		{
+			sendPacketToAllClients(new Packet4World(world));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void parsePacket(byte[] data, InetAddress address, int port)

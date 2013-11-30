@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.ui;
+package de.dakror.spamwars.ui;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;

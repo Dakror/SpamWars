@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -37,6 +38,8 @@ public class World extends EventListener implements Drawable
 	CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
 	CopyOnWriteArrayList<Animation> animations = new CopyOnWriteArrayList<>();
+	
+	URL file;
 	
 	public World(int width, int height)
 	{
@@ -73,6 +76,32 @@ public class World extends EventListener implements Drawable
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public World(int width, int height, byte[] data)
+	{
+		x = y = 0;
+		this.width = width * Tile.SIZE;
+		this.height = height * Tile.SIZE;
+		this.data = new int[width][height];
+		
+		for (int i = 0; i < data.length; i++)
+		{
+			this.data[i / height][i % height] = data[i] + 128;
+		}
+	}
+	
+	public byte[] getData()
+	{
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		for (int i = 0; i < width / Tile.SIZE; i++)
+		{
+			for (int j = 0; j < height / Tile.SIZE; j++)
+			{
+				baos.write(data[i][j] - 128);
+			}
+		}
+		return baos.toByteArray();
 	}
 	
 	public void render()

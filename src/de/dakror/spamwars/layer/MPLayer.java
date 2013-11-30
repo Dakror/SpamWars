@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.layer;
+package de.dakror.spamwars.layer;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.spamwars.net.packet.Packet;

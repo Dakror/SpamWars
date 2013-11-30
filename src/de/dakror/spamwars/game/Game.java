@@ -12,9 +12,9 @@ import java.net.InetAddress;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.game.layer.LoginLayer;
-import de.dakror.spamwars.game.layer.MenuLayer;
 import de.dakror.spamwars.game.world.World;
+import de.dakror.spamwars.layer.LoginLayer;
+import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
@@ -74,9 +74,9 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 	}
 	
-	public void initWorld()
+	public void initWorld(World w)
 	{
-		world = new World(getClass().getResource("/map/map2.txt"));
+		world = w;
 		world.render();
 		Player p = new Player(140, 500);
 		world.player = p;

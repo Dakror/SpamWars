@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.layer;
+package de.dakror.spamwars.layer;
 
 import java.awt.Color;
 import java.awt.Desktop;

@@ -7,11 +7,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 
 import de.dakror.spamwars.game.Game;
-import de.dakror.spamwars.game.layer.MPLayer;
+import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet0Connect;
 import de.dakror.spamwars.net.packet.Packet3ServerInfo;
+import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -47,7 +48,7 @@ public class Client extends Thread
 		running = true;
 		while (running)
 		{
-			byte[] data = new byte[CFG.PACKETSIZE];
+			byte[] data = new byte[Server.PACKETSIZE];
 			
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try
@@ -88,6 +89,14 @@ public class Client extends Thread
 				packet = new Packet3ServerInfo(data);
 				break;
 			}
+			case WORLD:
+			{
+				Packet4World p = new Packet4World(data);
+				Game.currentGame.initWorld(p.getWorld());
+				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
+				
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -103,7 +112,7 @@ public class Client extends Thread
 			return;
 		}
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, CFG.SERVER_PORT);
+		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
 		socket.send(packet);
 	}
 	

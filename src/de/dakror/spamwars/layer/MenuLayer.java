@@ -1,4 +1,4 @@
-package de.dakror.spamwars.game.layer;
+package de.dakror.spamwars.layer;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,10 +20,10 @@ import org.json.JSONObject;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
-import de.dakror.spamwars.game.ui.ClickEvent;
-import de.dakror.spamwars.game.ui.MenuButton;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet0Connect;
+import de.dakror.spamwars.ui.ClickEvent;
+import de.dakror.spamwars.ui.MenuButton;
 
 /**
  * @author Dakror

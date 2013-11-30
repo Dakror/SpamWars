@@ -14,6 +14,7 @@ public abstract class Packet
 		REJECT,
 		ATTRIBUTE,
 		SERVERINFO,
+		WORLD,
 		
 		;
 		public int getID()
