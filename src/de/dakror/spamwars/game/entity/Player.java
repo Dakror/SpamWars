@@ -26,7 +26,7 @@ public class Player extends Entity
 {
 	public boolean left, right, up, down;
 	
-	boolean lookingLeft = false;
+	public boolean lookingLeft = false;
 	
 	private int style = 0;
 	
@@ -240,7 +240,7 @@ public class Player extends Entity
 		
 		try
 		{
-			if (user.getUsername().equals(Game.user.getUsername())) Game.client.sendPacket(new Packet5PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacket(new Packet5PlayerData(this));
 		}
 		catch (IOException e)
 		{

@@ -39,6 +39,7 @@ public class Client extends Thread
 		{
 			socket = new DatagramSocket();
 			setName("Client-Thread");
+			setPriority(MAX_PRIORITY);
 			connected = false;
 			start();
 		}
@@ -106,6 +107,7 @@ public class Client extends Thread
 				Packet4World p = new Packet4World(data);
 				Game.world = p.getWorld();
 				Game.world.addEntity(Game.player);
+				// Game.playerDataSender = new PlayerDataSender();
 				
 				for (User u : serverInfo.getUsers())
 				{
@@ -148,7 +150,7 @@ public class Client extends Thread
 						e.setPos(p.getPosition());
 						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
-						((Player) e).left = p.isLeft();
+						((Player) e).lookingLeft = p.isLeft();
 						((Player) e).setStyle(p.getStyle());
 						((Player) e).getWeapon().rot2 = p.getRot();
 						e.update = false;

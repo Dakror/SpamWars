@@ -47,6 +47,7 @@ public class Server extends Thread
 		{
 			socket = new DatagramSocket(new InetSocketAddress(ip, Server.PORT));
 			setName("Server-Thread");
+			setPriority(MAX_PRIORITY);
 			CFG.p("[SERVER]: Starting server at " + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
 			lobby = true;
 			start();
@@ -210,7 +211,7 @@ public class Server extends Thread
 						e.setPos(p.getPosition());
 						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
-						((Player) e).left = p.isLeft();
+						((Player) e).lookingLeft = p.isLeft();
 						((Player) e).setStyle(p.getStyle());
 						((Player) e).getWeapon().rot2 = p.getRot();
 						
