@@ -2,6 +2,7 @@ package de.dakror.spamwars.game.layer;
 
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -85,11 +86,11 @@ public class LoginLayer extends Layer
 		
 		final JHintTextField usr = new JHintTextField("Benutzername");
 		usr.setBackground(Color.white);
-		usr.setColumns(40);
+		usr.setPreferredSize(new Dimension(frame.getWidth() - 40, 20));
 		p.add(usr);
 		
 		final JPasswordField pwd = new JPasswordField("Passwort");
-		pwd.setColumns(40);
+		pwd.setPreferredSize(new Dimension(frame.getWidth() - 40, 20));
 		pwd.addFocusListener(new FocusListener()
 		{
 			

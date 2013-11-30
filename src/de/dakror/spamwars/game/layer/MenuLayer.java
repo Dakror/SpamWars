@@ -98,7 +98,8 @@ public class MenuLayer extends Layer
 				l.setForeground(Color.white);
 				p.add(l);
 				
-				final JTextField usr = new JTextField(40);
+				final JTextField usr = new JTextField();
+				usr.setPreferredSize(new Dimension(frame.getWidth() - 40, 22));
 				p.add(usr);
 				
 				JButton cnc = new JButton(new AbstractAction("Abbruch")
