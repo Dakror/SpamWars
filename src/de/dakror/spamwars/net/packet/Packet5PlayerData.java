@@ -21,7 +21,7 @@ public class Packet5PlayerData extends Packet
 		super(5);
 		velocity = p.getVelocity();
 		position = p.getPos();
-		left = p.left;
+		left = p.lookingLeft;
 		style = p.getStyle();
 		frame = p.frame;
 		rot = p.getWeapon().rot;
