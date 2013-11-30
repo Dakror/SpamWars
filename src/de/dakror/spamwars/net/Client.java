@@ -18,6 +18,7 @@ import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
 import de.dakror.spamwars.net.packet.Packet6Animation;
+import de.dakror.spamwars.net.packet.Packet7Projectile;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -163,6 +164,13 @@ public class Client extends Thread
 			{
 				Packet6Animation p = new Packet6Animation(data);
 				Game.world.addAnimation(p.getAnimation(), false);
+				
+				break;
+			}
+			case PROJECTILE:
+			{
+				Packet7Projectile p = new Packet7Projectile(data);
+				Game.world.addProjectile(p.getProjectile(), false);
 				
 				break;
 			}

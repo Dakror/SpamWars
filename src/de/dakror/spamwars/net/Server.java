@@ -21,6 +21,7 @@ import de.dakror.spamwars.net.packet.Packet3ServerInfo;
 import de.dakror.spamwars.net.packet.Packet4World;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
 import de.dakror.spamwars.net.packet.Packet6Animation;
+import de.dakror.spamwars.net.packet.Packet7Projectile;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -236,6 +237,21 @@ public class Server extends Thread
 				try
 				{
 					sendPacketToAllClientsExceptOne(new Packet6Animation(data), new User(null, address, port));
+				}
+				catch (Exception e1)
+				{
+					e1.printStackTrace();
+				}
+				break;
+			}
+			case PROJECTILE:
+			{
+				Packet7Projectile p = new Packet7Projectile(data);
+				world.addProjectile(p.getProjectile(), false);
+				
+				try
+				{
+					sendPacketToAllClientsExceptOne(new Packet7Projectile(data), new User(null, address, port));
 				}
 				catch (Exception e1)
 				{

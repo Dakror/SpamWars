@@ -17,6 +17,7 @@ public abstract class Packet
 		WORLD,
 		PLAYER,
 		ANIMATION,
+		PROJECTILE,
 		
 		;
 		public int getID()

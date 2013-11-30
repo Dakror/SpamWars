@@ -21,6 +21,7 @@ import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.net.packet.Packet6Animation;
+import de.dakror.spamwars.net.packet.Packet7Projectile;
 
 /**
  * @author Dakror
@@ -269,6 +270,18 @@ public class World extends EventListener implements Drawable
 	public void addProjectile(Projectile p, boolean send)
 	{
 		projectiles.add(p);
+		
+		if (send)
+		{
+			try
+			{
+				Game.client.sendPacket(new Packet7Projectile(p));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void addAnimation(Animation a, boolean send)

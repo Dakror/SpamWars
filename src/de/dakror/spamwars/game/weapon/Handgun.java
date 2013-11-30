@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.projectile.Projectile;
+import de.dakror.spamwars.game.projectile.ProjectileType;
 
 /**
  * @author Dakror
@@ -24,6 +25,6 @@ public class Handgun extends Weapon
 	@Override
 	protected Projectile getPojectile(Vector pos, Vector target)
 	{
-		return new Projectile(new Rectangle(275, 89, 20, 10), pos, target, 50, 1, 1000);
+		return new Projectile(pos, target, ProjectileType.HANDGUN);
 	}
 }
