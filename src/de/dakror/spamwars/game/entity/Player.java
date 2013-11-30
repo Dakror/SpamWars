@@ -105,6 +105,8 @@ public class Player extends Entity
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
+		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
 		
@@ -126,6 +128,8 @@ public class Player extends Entity
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
+		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
 		
@@ -139,6 +143,8 @@ public class Player extends Entity
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
+		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		
 		switch (e.getKeyCode())
 		{
 			case KeyEvent.VK_A:
@@ -168,6 +174,8 @@ public class Player extends Entity
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
+		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		
 		switch (e.getKeyCode())
 		{
 			case KeyEvent.VK_A:
@@ -198,30 +206,31 @@ public class Player extends Entity
 	{
 		int speed = airborne ? 3 : 4;
 		
-		if (left) getVelocity().x = -speed;
-		if (right) getVelocity().x = speed;
-		if (!airborne && getVelocity().x != 0 && tick % 4 == 0)
-		{
-			frame = frame < 0 ? 0 : frame;
-			
-			frame = (frame + 1) % 6;
-		}
-		else if (airborne)
-		{
-			frame = 11;
-		}
-		
-		if (!left && !right)
-		{
-			frame = 3;
-			getVelocity().x = 0;
-		}
-		
-		int mx = (Game.getWidth() - width) / 2;
-		int my = (Game.getHeight() - height) / 2;
-		
 		if (user.getUsername().equals(Game.user.getUsername()))
 		{
+			if (left) getVelocity().x = -speed;
+			if (right) getVelocity().x = speed;
+			if (!airborne && getVelocity().x != 0 && tick % 4 == 0)
+			{
+				frame = frame < 0 ? 0 : frame;
+				
+				frame = (frame + 1) % 6;
+			}
+			else if (airborne)
+			{
+				frame = 11;
+			}
+			
+			if (!left && !right)
+			{
+				frame = 3;
+				getVelocity().x = 0;
+			}
+			
+			int mx = (Game.getWidth() - width) / 2;
+			int my = (Game.getHeight() - height) / 2;
+			
+			
 			if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
 			if (y > my) Game.world.y = -y + my;
 		}
