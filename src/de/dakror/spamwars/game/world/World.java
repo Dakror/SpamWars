@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.entity.Entity;
@@ -32,6 +33,8 @@ public class World extends EventListener implements Drawable
 	public int width, height;
 	
 	public int[][] data;
+	
+	public Vector spawn = new Vector(140, 500);
 	
 	BufferedImage render;
 	

@@ -1,8 +1,6 @@
 package de.dakror.spamwars.game.entity;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -18,6 +16,7 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.weapon.Handgun;
 import de.dakror.spamwars.game.weapon.Weapon;
+import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
 
@@ -44,11 +43,7 @@ public class Player extends Entity
 	
 	Point mouse = new Point(0, 0);
 	
-	Animation death;
-	
 	User user;
-	
-	float alpha = 1;
 	
 	public Player(float x, float y, User user)
 	{
@@ -68,9 +63,6 @@ public class Player extends Entity
 	@Override
 	public void draw(Graphics2D g)
 	{
-		Composite c = g.getComposite();
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-		
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
 		
@@ -112,13 +104,12 @@ public class Player extends Entity
 		weapon.draw(g);
 		
 		g.setTransform(old);
-		g.setComposite(c);
 	}
 	
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
@@ -141,7 +132,7 @@ public class Player extends Entity
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
@@ -156,7 +147,7 @@ public class Player extends Entity
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		switch (e.getKeyCode())
 		{
@@ -187,7 +178,7 @@ public class Player extends Entity
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername())) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		switch (e.getKeyCode())
 		{
@@ -218,14 +209,6 @@ public class Player extends Entity
 	protected void tick(int tick)
 	{
 		int speed = airborne ? 3 : 4;
-		
-		if (death != null)
-		{
-			if (death.isDead()) alpha = 1;
-			else if ((tick - death.startTick) % death.speed == 0) alpha -= 1 / (float) death.frames;
-			
-			if (alpha < 0) alpha = 0;
-		}
 		
 		if (user.getUsername().equals(Game.user.getUsername()))
 		{
@@ -294,14 +277,24 @@ public class Player extends Entity
 		this.weapon = weapon;
 	}
 	
+	public void revive()
+	{
+		gravity = true;
+		x = Game.world.spawn.x;
+		y = Game.world.spawn.y;
+		life = maxlife;
+	}
+	
 	public void dealDamage(float damage)
 	{
 		life -= damage;
-		if (life < 0)
+		if (life <= 0)
 		{
+			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
+			y = -height * 2;
+			gravity = false;
 			life = 0;
-			death = new Animation("expl/11", getPos().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24);
-			Game.world.addAnimation(death, true);
+			Game.currentGame.addLayer(new RespawnLayer());
 		}
 	}
 }
