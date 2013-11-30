@@ -70,6 +70,13 @@ public class Client extends Thread
 				CFG.p("received invalid packet: " + new String(data));
 				return;
 			}
+			case CONNECT:
+			{
+				Packet0Connect p = new Packet0Connect(data);
+				if (p.getUsername().equals(Game.user.getUsername())) connected = true;
+				else ;
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -104,5 +111,10 @@ public class Client extends Thread
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isConnected()
+	{
+		return connected;
 	}
 }

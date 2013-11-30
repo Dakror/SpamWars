@@ -13,6 +13,8 @@ import de.dakror.spamwars.net.Server;
  */
 public class LobbyLayer extends Layer
 {
+	public static LobbyLayer lobby;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -35,8 +37,13 @@ public class LobbyLayer extends Layer
 	@Override
 	public void init()
 	{
-		Game.server = new Server(Game.ip);
+		lobby = this;
 		
-		Game.client.connectToServer(Game.ip);
+		if (!Game.client.isConnected())
+		{
+			Game.server = new Server(Game.ip);
+			
+			Game.client.connectToServer(Game.ip);
+		}
 	}
 }

@@ -78,13 +78,13 @@ public class Server extends Thread
 			case CONNECT:
 			{
 				Packet0Connect packet = new Packet0Connect(data);
-				User User = new User(packet.getUsername(), address, port);
+				User user = new User(packet.getUsername(), address, port);
 				if (packet.getVersion() < CFG.VERSION)
 				{
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated client");
-						sendPacket(new Packet1Reject(Cause.OUTDATEDCLIENT), User);
+						sendPacket(new Packet1Reject(Cause.OUTDATEDCLIENT), user);
 						return;
 					}
 					catch (Exception e)
@@ -95,7 +95,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
-						sendPacket(new Packet1Reject(Cause.OUTDATEDSERVER), User);
+						sendPacket(new Packet1Reject(Cause.OUTDATEDSERVER), user);
 						return;
 					}
 					catch (Exception e)
@@ -106,7 +106,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game already started");
-						sendPacket(new Packet1Reject(Cause.GAMERUNNING), User);
+						sendPacket(new Packet1Reject(Cause.GAMERUNNING), user);
 						return;
 					}
 					catch (Exception e)
@@ -117,7 +117,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
-						sendPacket(new Packet1Reject(Cause.FULL), User);
+						sendPacket(new Packet1Reject(Cause.FULL), user);
 						return;
 					}
 					catch (Exception e)
@@ -129,7 +129,7 @@ public class Server extends Thread
 					{
 						try
 						{
-							sendPacket(new Packet1Reject(Cause.USERNAMETAKEN), User);
+							sendPacket(new Packet1Reject(Cause.USERNAMETAKEN), user);
 							CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): username taken");
 							return;
 						}
@@ -138,8 +138,8 @@ public class Server extends Thread
 					}
 				}
 				CFG.p("[SERVER]: " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + ") has connected.");
-				User.setPort(port);
-				clients.add(User);
+				user.setPort(port);
+				clients.add(user);
 				try
 				{
 					sendPacketToAllClients(packet);
