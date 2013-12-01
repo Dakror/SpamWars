@@ -146,7 +146,7 @@ public class Client extends Thread
 				Packet5PlayerData p = new Packet5PlayerData(data);
 				for (Entity e : Game.world.entities)
 				{
-					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUser().getUsername()))
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUser().getUsername()) && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
 					{
 						e.setPos(p.getPosition());
 						((Player) e).frame = p.getFrame();
