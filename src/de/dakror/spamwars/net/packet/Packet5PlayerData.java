@@ -62,7 +62,9 @@ public class Packet5PlayerData extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(25);
+		byte[] str = Compressor.compress(user.toString().getBytes());
+		
+		ByteBuffer bb = ByteBuffer.allocate(25 + 4 + str.length);
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
@@ -71,7 +73,6 @@ public class Packet5PlayerData extends Packet
 		bb.putFloat(rot);
 		bb.putInt(life);
 		
-		byte[] str = Compressor.compress(user.toString().getBytes());
 		
 		bb.putInt(str.length);
 		bb.put(str);
