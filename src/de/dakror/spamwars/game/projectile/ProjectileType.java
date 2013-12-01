@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 public enum ProjectileType
 {
 	HANDGUN(new Rectangle(275, 89, 20, 10), 50, 5, 1000),
-	ASSAULT_RIFLE(new Rectangle(275, 89, 20, 10), 70, 2, 1400),
+	ASSAULT_RIFLE(new Rectangle(275, 89, 20, 10), 70, 5, 1400),
 	
 	;
 	
