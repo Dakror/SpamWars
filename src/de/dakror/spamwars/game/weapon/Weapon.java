@@ -90,8 +90,6 @@ public abstract class Weapon implements Drawable
 			
 			if (fireMode == FireMode.SINGLE) target = null;
 		}
-		
-		if (target == null) lastShot = 0;
 	}
 	
 	@Override

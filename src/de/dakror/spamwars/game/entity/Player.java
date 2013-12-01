@@ -15,6 +15,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.weapon.Weapon;
+import de.dakror.spamwars.game.weapon.Weapon.FireMode;
 import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
@@ -149,7 +150,7 @@ public class Player extends Entity
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || weapon.fireMode != FireMode.AUTO) return;
 		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
