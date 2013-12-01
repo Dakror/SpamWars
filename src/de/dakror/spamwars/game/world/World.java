@@ -161,7 +161,7 @@ public class World extends EventListener implements Drawable
 					if (dist == 0 || d < dist) dist = d;
 				}
 			}
-			if (dist < clostestPlayer || point == null)
+			if (dist > clostestPlayer || point == null)
 			{
 				point = p;
 				clostestPlayer = dist;
