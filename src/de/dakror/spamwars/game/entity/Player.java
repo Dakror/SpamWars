@@ -14,8 +14,8 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
-import de.dakror.spamwars.game.weapon.Handgun;
 import de.dakror.spamwars.game.weapon.Weapon;
+import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
@@ -58,7 +58,8 @@ public class Player extends Entity
 		
 		life = maxlife = 100;
 		
-		setWeapon(new Handgun());
+		setWeapon(WeaponType.HANDGUN);
+		if (Game.user.getUsername().equals("Dakror")) setWeapon(WeaponType.ASSAULT_RIFLE);
 	}
 	
 	@Override
@@ -142,7 +143,30 @@ public class Player extends Entity
 		
 		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 		
-		weapon.shoot(new Vector(e.getPoint()));
+		weapon.target(new Vector(e.getPoint()));
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
+		
+		lookingLeft = e.getX() < x + width / 2;
+		mouse = e.getPoint();
+		
+		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
+		
+		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		
+		weapon.target(new Vector(e.getPoint()));
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
+		
+		weapon.target(null);
 	}
 	
 	@Override
@@ -235,11 +259,24 @@ public class Player extends Entity
 			int mx = (Game.getWidth() - width) / 2;
 			int my = (Game.getHeight() - height) / 2;
 			
-			if (x > mx && Game.world.width - x > (Game.getWidth() + width) / 2) Game.world.x = -x + mx;
-			if (y > my) Game.world.y = -y + my;
+			if (life > 0)
+			{
+				Game.world.x = mx - x;
+				Game.world.y = my - y;
+				
+				float fx = Game.world.x + Game.world.width;
+				
+				if (fx < Game.getWidth() && fx > 0) Game.world.x += Game.getWidth() - fx;
+				else if (Game.world.x > 0) Game.world.x = 0;
+			}
+			else
+			{
+				left = right = up = down = false;
+			}
 		}
 		
 		weapon.left = lookingLeft;
+		weapon.update(tick);
 		if (lookingLeft) hand = new Point(0, 60);
 		else hand = new Point(65, 60);
 		
@@ -273,9 +310,16 @@ public class Player extends Entity
 		return weapon;
 	}
 	
-	public void setWeapon(Weapon weapon)
+	public void setWeapon(WeaponType weapon)
 	{
-		this.weapon = weapon;
+		try
+		{
+			this.weapon = (Weapon) weapon.getClass1().getConstructor().newInstance();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void revive()

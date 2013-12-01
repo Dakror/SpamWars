@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.weapon.WeaponType;
 
 /**
  * @author Dakror
@@ -15,6 +16,7 @@ public class Packet5PlayerData extends Packet
 	boolean left;
 	int style, frame, life;
 	float rot;
+	int weaponID;
 	String username;
 	
 	public Packet5PlayerData(Player p)
@@ -26,6 +28,7 @@ public class Packet5PlayerData extends Packet
 		frame = p.frame;
 		life = p.getLife();
 		rot = p.getWeapon().rot;
+		weaponID = p.getWeapon().type.ordinal();
 		username = p.getUser().getUsername();
 	}
 	
@@ -40,6 +43,7 @@ public class Packet5PlayerData extends Packet
 		frame = bb.get();
 		rot = bb.getFloat();
 		life = bb.getInt();
+		weaponID = bb.getInt();
 		
 		int length = bb.getInt();
 		
@@ -52,7 +56,7 @@ public class Packet5PlayerData extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(25 + 4 + username.length());
+		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + username.length());
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
@@ -60,6 +64,7 @@ public class Packet5PlayerData extends Packet
 		bb.put((byte) (frame - 128));
 		bb.putFloat(rot);
 		bb.putInt(life);
+		bb.putInt(weaponID);
 		
 		bb.putInt(username.length());
 		bb.put(username.getBytes());
@@ -95,6 +100,11 @@ public class Packet5PlayerData extends Packet
 	public int getLife()
 	{
 		return life;
+	}
+	
+	public WeaponType getWeaponType()
+	{
+		return WeaponType.values()[weaponID];
 	}
 	
 	public String getUsername()

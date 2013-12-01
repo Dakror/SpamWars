@@ -17,34 +17,55 @@ import de.dakror.spamwars.game.projectile.Projectile;
  */
 public abstract class Weapon implements Drawable
 {
+	public enum FireMode
+	{
+		SINGLE,
+		AUTO
+	}
+	
 	public static final float scale = 0.25f;
 	protected Rectangle tex;
 	protected Point exit, grab;
-	protected float damage;
 	protected float maxAngle;
 	
 	public float rot, rot2; // in degrees
 	public boolean left;
 	boolean overangle;
 	
+	public WeaponType type;
+	public FireMode fireMode;
+	
+	int lastShot;
+	
+	public int speed;
 	
 	private float x, y;
 	
-	public Weapon(Rectangle tex, Point exit, Point grab, float maxAngle)
+	Vector target;
+	
+	public Weapon(Rectangle tex, Point exit, Point grab, FireMode fireMode, int speed, float maxAngle)
 	{
 		this.tex = tex;
 		this.exit = exit;
+		this.fireMode = fireMode;
 		this.maxAngle = maxAngle;
+		this.speed = speed;
 		this.grab = new Point(grab.x - tex.x, grab.y - tex.y);
 		this.exit = new Point(exit.x - tex.x, exit.y - tex.y);
 		rot = 0;
 		left = false;
 	}
 	
-	public void shoot(Vector target)
+	public void target(Vector target)
 	{
 		if (overangle) return;
 		
+		this.target = target;
+	}
+	
+	protected void shoot()
+	{
+		if (target == null) return;
 		Vector muzzle = getMuzzle();
 		
 		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
@@ -58,6 +79,20 @@ public abstract class Weapon implements Drawable
 	}
 	
 	protected abstract Projectile getPojectile(Vector pos, Vector target);
+	
+	@Override
+	public void update(int tick)
+	{
+		if (target != null && (tick - lastShot) >= speed)
+		{
+			shoot();
+			lastShot = tick;
+			
+			if (fireMode == FireMode.SINGLE) target = null;
+		}
+		
+		if (target == null) lastShot = 0;
+	}
 	
 	@Override
 	public void draw(Graphics2D g)

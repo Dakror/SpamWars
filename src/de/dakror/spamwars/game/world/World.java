@@ -356,6 +356,28 @@ public class World extends EventListener implements Drawable
 	}
 	
 	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		e.translatePoint(-(int) x, -(int) y);
+		
+		for (Entity e1 : entities)
+			e1.mouseReleased(e);
+		
+		e.translatePoint((int) x, (int) y);
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		e.translatePoint(-(int) x, -(int) y);
+		
+		for (Entity e1 : entities)
+			e1.mouseDragged(e);
+		
+		e.translatePoint((int) x, (int) y);
+	}
+	
+	@Override
 	public void keyPressed(KeyEvent e)
 	{
 		for (Entity e1 : entities)

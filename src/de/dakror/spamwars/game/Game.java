@@ -103,6 +103,20 @@ public class Game extends GameFrame implements WindowFocusListener
 	}
 	
 	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		super.mouseReleased(e);
+		if (world != null) world.mouseReleased(e);
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		super.mouseDragged(e);
+		if (world != null) world.mouseDragged(e);
+	}
+	
+	@Override
 	public void windowGainedFocus(WindowEvent e)
 	{}
 	
