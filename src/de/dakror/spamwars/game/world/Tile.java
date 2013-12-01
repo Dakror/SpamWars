@@ -11,7 +11,11 @@ public enum Tile
 	box(new Rectangle()),
 	boxAlt(new Rectangle()),
 	boxCoin(new Rectangle()),
-	boxCoinAlt(new Rectangle()),
+	
+	/**
+	 * ammo box
+	 */
+	boxCoinAlt(null),
 	boxCoinAlt_disabled(new Rectangle()),
 	boxCoin_disabled(new Rectangle()),
 	boxEmpty(new Rectangle()),
@@ -24,7 +28,10 @@ public enum Tile
 	boxItem_disabled(new Rectangle()),
 	boxWarning(new Rectangle()),
 	brickWall(new Rectangle()),
-	bridge(new Rectangle(0, 50, 70, 20)),
+	/**
+	 * spawnpoint
+	 */
+	bridge(null),
 	bridgeLogs(new Rectangle(0, 45, 70, 25)),
 	castle(new Rectangle()),
 	castleCenter(new Rectangle()),

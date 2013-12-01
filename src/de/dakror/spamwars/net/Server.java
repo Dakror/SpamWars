@@ -33,7 +33,7 @@ public class Server extends Thread
 	public static final int PORT = 19950;
 	public static final int PACKETSIZE = 255; // bytes
 	
-	public static final String MAP_FILE = "/map/map2.txt";
+	public static final String MAP_FILE = "/map/map.txt";
 	
 	public boolean running;
 	

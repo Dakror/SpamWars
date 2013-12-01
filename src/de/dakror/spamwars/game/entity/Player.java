@@ -16,6 +16,7 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.weapon.Handgun;
 import de.dakror.spamwars.game.weapon.Weapon;
+import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet5PlayerData;
@@ -280,8 +281,9 @@ public class Player extends Entity
 	public void revive()
 	{
 		gravity = true;
-		x = Game.world.spawn.x;
-		y = Game.world.spawn.y;
+		Vector spawn = Game.world.getBestSpawnPoint();
+		x = spawn.x * Tile.SIZE;
+		y = spawn.y * Tile.SIZE - height + Tile.SIZE;
 		life = maxlife;
 	}
 	

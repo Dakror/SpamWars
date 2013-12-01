@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Drawable;
@@ -19,7 +20,9 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
+import de.dakror.spamwars.game.entity.AmmoBox;
 import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.net.packet.Packet6Animation;
 import de.dakror.spamwars.net.packet.Packet7Projectile;
@@ -34,8 +37,6 @@ public class World extends EventListener implements Drawable
 	
 	public int[][] data;
 	
-	public Vector spawn = new Vector(140, 500);
-	
 	BufferedImage render;
 	
 	public CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
@@ -43,6 +44,8 @@ public class World extends EventListener implements Drawable
 	public CopyOnWriteArrayList<Animation> animations = new CopyOnWriteArrayList<>();
 	
 	URL file;
+	
+	ArrayList<Vector> spawns = new ArrayList<>();
 	
 	public World(int width, int height)
 	{
@@ -111,6 +114,8 @@ public class World extends EventListener implements Drawable
 	{
 		if (render == null) render = new BufferedImage(data.length * Tile.SIZE, data[0].length * Tile.SIZE, BufferedImage.TYPE_INT_ARGB);
 		
+		spawns = new ArrayList<>();
+		
 		render.flush();
 		
 		Graphics2D g = (Graphics2D) render.getGraphics();
@@ -123,20 +128,47 @@ public class World extends EventListener implements Drawable
 				
 				Tile t = Tile.values()[data[i][j]];
 				
-				g.drawImage(Game.getImage("tile/" + t.name() + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, Game.w);
+				if (t == Tile.boxCoinAlt)
+				{
+					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE), false);
+					continue;
+				}
 				
-				// if (t.getBump() != null)
-				// {
-				// g.translate(i * Tile.SIZE, j * Tile.SIZE);
-				// g.draw(t.getBump());
-				// g.translate(-i * Tile.SIZE, -j * Tile.SIZE);
-				// }
-				// if (t.getLeftY() >= 0)
-				// {
-				// g.drawLine(i * Tile.SIZE, j * Tile.SIZE + t.getLeftY(), i * Tile.SIZE + Tile.SIZE, j * Tile.SIZE + t.getRightY());
-				// }
+				if (t == Tile.bridge)
+				{
+					spawns.add(new Vector(i, j));
+					continue;
+				}
+				
+				g.drawImage(Game.getImage("tile/" + t.name() + ".png"), i * Tile.SIZE, j * Tile.SIZE, Tile.SIZE, Tile.SIZE, Game.w);
 			}
 		}
+	}
+	
+	public Vector getBestSpawnPoint()
+	{
+		Vector point = null;
+		float clostestPlayer = 0;
+		
+		for (Vector p : spawns)
+		{
+			float dist = 0;
+			for (Entity e : entities)
+			{
+				if (e instanceof Player)
+				{
+					float d = e.getPos().sub(p.clone().mul(Tile.SIZE)).getLength();
+					if (dist == 0 || d < dist) dist = d;
+				}
+			}
+			if (dist < clostestPlayer || point == null)
+			{
+				point = p;
+				clostestPlayer = dist;
+			}
+		}
+		
+		return point;
 	}
 	
 	public int getTileId(int x, int y)
