@@ -83,4 +83,10 @@ public class User
 		
 		return o.toString();
 	}
+	
+	@Override
+	public String toString()
+	{
+		return serialize().toString();
+	}
 }

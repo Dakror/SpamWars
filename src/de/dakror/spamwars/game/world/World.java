@@ -130,7 +130,7 @@ public class World extends EventListener implements Drawable
 				
 				if (t == Tile.boxCoinAlt)
 				{
-					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE), false);
+					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
 					continue;
 				}
 				
@@ -297,7 +297,7 @@ public class World extends EventListener implements Drawable
 		}
 	}
 	
-	public void addEntity(Entity e, boolean send)
+	public void addEntity(Entity e)
 	{
 		entities.add(e);
 	}

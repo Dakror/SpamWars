@@ -110,12 +110,10 @@ public class Client extends Thread
 				Packet4World p = new Packet4World(data);
 				Game.currentGame.addLayer(new HUDLayer());
 				Game.world = p.getWorld();
-				Game.world.addEntity(Game.player, false);
+				Game.world.addEntity(Game.player);
 				
 				for (User u : serverInfo.getUsers())
-				{
-					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u), false);
-				}
+					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
 				
 				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
 				
@@ -148,10 +146,9 @@ public class Client extends Thread
 				Packet5PlayerData p = new Packet5PlayerData(data);
 				for (Entity e : Game.world.entities)
 				{
-					if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUser().getUsername()))
 					{
 						e.setPos(p.getPosition());
-						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
 						e.setLife(p.getLife());

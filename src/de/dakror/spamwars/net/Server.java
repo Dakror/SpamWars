@@ -94,7 +94,7 @@ public class Server extends Thread
 			int y = 500;
 			
 			for (User u : clients)
-				world.addEntity(new Player(x, y, u), false);
+				world.addEntity(new Player(x, y, u));
 			
 			sendPacketToAllClients(new Packet2Attribute("pos", x + "," + y));
 			
