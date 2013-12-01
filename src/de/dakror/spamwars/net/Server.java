@@ -216,6 +216,8 @@ public class Server extends Thread
 						((Player) e).lookingLeft = p.isLeft();
 						e.setLife(p.getLife());
 						((Player) e).setStyle(p.getStyle());
+						if (((Player) e).getWeapon().type != p.getWeaponType()) ((Player) e).setWeapon(p.getWeaponType());
+						
 						((Player) e).getWeapon().rot2 = p.getRot();
 						
 						user = ((Player) e).getUser();
