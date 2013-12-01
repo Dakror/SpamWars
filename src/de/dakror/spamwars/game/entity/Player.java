@@ -336,10 +336,10 @@ public class Player extends Entity
 	public void dealDamage(float damage)
 	{
 		life -= damage;
-		if (life <= 0)
+		if (life <= 0 && gravity)
 		{
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
-			y = -height * 2;
+			x = -width * 2;
 			gravity = false;
 			life = 0;
 			Game.currentGame.addLayer(new RespawnLayer());
