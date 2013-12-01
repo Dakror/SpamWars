@@ -273,6 +273,7 @@ public class Player extends Entity
 			else
 			{
 				left = right = up = down = false;
+				weapon.target(null);
 			}
 		}
 		
