@@ -3,13 +3,8 @@ package de.dakror.spamwars.net.packet;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.net.User;
 
 /**
  * @author Dakror
@@ -20,7 +15,7 @@ public class Packet5PlayerData extends Packet
 	boolean left;
 	int style, frame, life;
 	float rot;
-	User user;
+	String username;
 	
 	public Packet5PlayerData(Player p)
 	{
@@ -31,7 +26,7 @@ public class Packet5PlayerData extends Packet
 		frame = p.frame;
 		life = p.getLife();
 		rot = p.getWeapon().rot;
-		user = p.getUser();
+		username = p.getUser().getUsername();
 	}
 	
 	public Packet5PlayerData(byte[] data)
@@ -45,26 +40,19 @@ public class Packet5PlayerData extends Packet
 		frame = bb.get();
 		rot = bb.getFloat();
 		life = bb.getInt();
+		
 		int length = bb.getInt();
+		
 		byte[] str = new byte[length];
 		bb.get(str, 0, length);
-		str = Compressor.decompress(str);
-		try
-		{
-			user = new User(new JSONObject(new String(str)));
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
+		
+		username = new String(str);
 	}
 	
 	@Override
 	protected byte[] getPacketData()
 	{
-		byte[] str = Compressor.compress(user.toString().getBytes());
-		
-		ByteBuffer bb = ByteBuffer.allocate(25 + 4 + str.length);
+		ByteBuffer bb = ByteBuffer.allocate(25 + 4 + username.length());
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
@@ -73,9 +61,8 @@ public class Packet5PlayerData extends Packet
 		bb.putFloat(rot);
 		bb.putInt(life);
 		
-		
-		bb.putInt(str.length);
-		bb.put(str);
+		bb.putInt(username.length());
+		bb.put(username.getBytes());
 		
 		return bb.array();
 	}
@@ -110,8 +97,8 @@ public class Packet5PlayerData extends Packet
 		return life;
 	}
 	
-	public User getUser()
+	public String getUsername()
 	{
-		return user;
+		return username;
 	}
 }
