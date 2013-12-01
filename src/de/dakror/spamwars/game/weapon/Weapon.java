@@ -69,7 +69,6 @@ public abstract class Weapon implements Drawable
 	
 	protected void shoot()
 	{
-		if (target == null) return;
 		Vector muzzle = getMuzzle();
 		
 		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
@@ -79,6 +78,7 @@ public abstract class Weapon implements Drawable
 		
 		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
 		
+		if (target == null) return;
 		Game.world.addProjectile(getPojectile(pos.clone(), target), true);
 	}
 	

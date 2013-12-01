@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.ui.KillLabel;
 
 /**
  * @author Dakror
@@ -25,11 +26,15 @@ public class HUDLayer extends MPLayer
 		Helper.drawHorizontallyCenteredString(Game.player.getLife() + " / " + Game.player.getMaxlife(), Game.getWidth(), Game.getHeight() - 14, g, 14);
 		g.setFont(old);
 		g.setColor(o);
+		
+		drawComponents(g);
 	}
 	
 	@Override
 	public void update(int tick)
-	{}
+	{
+		updateComponents(tick);
+	}
 	
 	@Override
 	public void onPacketReceived(Packet p)
@@ -37,5 +42,7 @@ public class HUDLayer extends MPLayer
 	
 	@Override
 	public void init()
-	{}
+	{
+		components.add(new KillLabel(50));
+	}
 }
