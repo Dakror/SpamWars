@@ -58,7 +58,11 @@ public abstract class Weapon implements Drawable
 	
 	public void target(Vector target)
 	{
-		if (overangle) return;
+		if (overangle)
+		{
+			this.target = null;
+			return;
+		}
 		
 		this.target = target;
 	}

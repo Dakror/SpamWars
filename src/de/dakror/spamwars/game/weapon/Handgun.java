@@ -14,7 +14,7 @@ public class Handgun extends Weapon
 {
 	public Handgun()
 	{
-		super(new Rectangle(629, 1125, 212, 129), new Point(841, 1147), new Point(659, 1212), FireMode.SINGLE, 20, 50);
+		super(new Rectangle(629, 1125, 212, 129), new Point(841, 1147), new Point(659, 1212), FireMode.SINGLE, 10, 50);
 		type = WeaponType.HANDGUN;
 	}
 	
