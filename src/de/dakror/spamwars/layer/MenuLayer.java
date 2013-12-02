@@ -59,13 +59,21 @@ public class MenuLayer extends MPLayer
 	public void update(int tick)
 	{
 		updateComponents(tick);
-		if (Game.currentFrame.alpha == 1)
+		if (Game.currentFrame.alpha == 1 && enabled)
 		{
 			if (join != null) join.dispose();
-			Game.currentFrame.removeLayer(this);
-			Game.currentFrame.addLayer(new LobbyLayer());
 			Game.currentFrame.fadeTo(0, 0.05f);
+			new Thread()
+			{
+				@Override
+				public void run()
+				{
+					Game.currentFrame.addLayer(new LobbyLayer());
+				}
+			}.start();
 		}
+		
+		enabled = Game.currentGame.getActiveLayer().equals(this);
 	}
 	
 	@Override

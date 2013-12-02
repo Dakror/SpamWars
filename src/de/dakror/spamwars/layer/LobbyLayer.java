@@ -21,6 +21,8 @@ public class LobbyLayer extends MPLayer
 {
 	User[] users;
 	
+	boolean fade;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -39,16 +41,19 @@ public class LobbyLayer extends MPLayer
 		g.setColor(c);
 		
 		drawComponents(g);
+		
+		if (Game.currentGame.alpha == 1 && Game.world != null)
+		{
+			Game.world.render();
+			Game.currentGame.setLayer(new HUDLayer());
+			
+			Game.currentGame.fadeTo(0, 0.05f);
+		}
 	}
 	
 	@Override
 	public void update(int tick)
 	{
-		if (Game.currentGame.alpha == 1)
-		{
-			// Game.currentGame.fadeTo(0, 0.05f);
-		}
-		
 		updateComponents(tick);
 	}
 	
@@ -87,6 +92,6 @@ public class LobbyLayer extends MPLayer
 	public void onPacketReceived(Packet p)
 	{
 		if (p instanceof Packet04ServerInfo) users = ((Packet04ServerInfo) p).getUsers();
-		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.025f);
+		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.05f);
 	}
 }

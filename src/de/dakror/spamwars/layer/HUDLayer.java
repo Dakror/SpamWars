@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.ui.KillLabel;
 
 /**
  * @author Dakror
@@ -43,6 +42,6 @@ public class HUDLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		components.add(new KillLabel(50));
+		// components.add(new KillLabel(50));
 	}
 }

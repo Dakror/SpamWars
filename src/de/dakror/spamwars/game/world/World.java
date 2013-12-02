@@ -263,7 +263,7 @@ public class World extends EventListener implements Drawable
 	@Override
 	public void draw(Graphics2D g)
 	{
-		if (render == null) render();
+		if (render == null) return;
 		
 		g.drawImage(render, (int) x, (int) y, Game.w);
 		

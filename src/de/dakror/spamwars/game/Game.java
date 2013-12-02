@@ -73,8 +73,8 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		client = new Client();
 		
-		if (user == null) addLayer(new LoginLayer());
 		addLayer(new MenuLayer());
+		if (user == null) addLayer(new LoginLayer());
 	}
 	
 	@Override
