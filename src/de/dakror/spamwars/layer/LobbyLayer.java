@@ -87,6 +87,6 @@ public class LobbyLayer extends MPLayer
 	public void onPacketReceived(Packet p)
 	{
 		if (p instanceof Packet04ServerInfo) users = ((Packet04ServerInfo) p).getUsers();
-		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.05f);
+		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.025f);
 	}
 }

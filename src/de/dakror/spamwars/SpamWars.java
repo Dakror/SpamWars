@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
 import de.dakror.spamwars.net.User;
@@ -28,14 +29,14 @@ public class SpamWars
 		{
 			e.printStackTrace();
 		}
-		CFG.INTERNET = false;// Helper.isInternetReachable();
+		CFG.INTERNET = Helper.isInternetReachable();
 		if (!CFG.INTERNET)
 		{
 			try
 			{
 				Game.ip = InetAddress.getLocalHost();
 				CFG.p(Game.ip);
-				Game.user = new User(/* System.getProperty("user.name") */"Player" + (int) (Math.random() * 10000), Game.ip, 0);
+				Game.user = new User("Player" + (int) (Math.random() * 10000), Game.ip, 0);
 			}
 			catch (UnknownHostException e)
 			{
