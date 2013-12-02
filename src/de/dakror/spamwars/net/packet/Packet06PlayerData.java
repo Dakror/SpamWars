@@ -10,7 +10,7 @@ import de.dakror.spamwars.game.weapon.WeaponType;
 /**
  * @author Dakror
  */
-public class Packet5PlayerData extends Packet
+public class Packet06PlayerData extends Packet
 {
 	Vector position;
 	boolean left;
@@ -19,9 +19,9 @@ public class Packet5PlayerData extends Packet
 	int weaponID;
 	String username;
 	
-	public Packet5PlayerData(Player p)
+	public Packet06PlayerData(Player p)
 	{
-		super(5);
+		super(6);
 		position = p.getPos();
 		left = p.lookingLeft;
 		style = p.getStyle();
@@ -32,9 +32,9 @@ public class Packet5PlayerData extends Packet
 		username = p.getUser().getUsername();
 	}
 	
-	public Packet5PlayerData(byte[] data)
+	public Packet06PlayerData(byte[] data)
 	{
-		super(5);
+		super(6);
 		
 		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
 		position = new Vector(bb.getFloat(), bb.getFloat());

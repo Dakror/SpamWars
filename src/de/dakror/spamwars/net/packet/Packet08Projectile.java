@@ -8,19 +8,19 @@ import de.dakror.spamwars.game.projectile.Projectile;
 /**
  * @author Dakror
  */
-public class Packet7Projectile extends Packet
+public class Packet08Projectile extends Packet
 {
 	Projectile p;
 	
-	public Packet7Projectile(Projectile p)
+	public Packet08Projectile(Projectile p)
 	{
-		super(7);
+		super(8);
 		this.p = p;
 	}
 	
-	public Packet7Projectile(byte[] data)
+	public Packet08Projectile(byte[] data)
 	{
-		super(7);
+		super(8);
 		
 		try
 		{

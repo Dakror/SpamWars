@@ -20,12 +20,11 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
-import de.dakror.spamwars.game.entity.AmmoBox;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
-import de.dakror.spamwars.net.packet.Packet6Animation;
-import de.dakror.spamwars.net.packet.Packet7Projectile;
+import de.dakror.spamwars.net.packet.Packet07Animation;
+import de.dakror.spamwars.net.packet.Packet08Projectile;
 
 /**
  * @author Dakror
@@ -130,7 +129,7 @@ public class World extends EventListener implements Drawable
 				
 				if (t == Tile.boxCoinAlt)
 				{
-					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
+					// addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
 					continue;
 				}
 				
@@ -310,7 +309,7 @@ public class World extends EventListener implements Drawable
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet7Projectile(p));
+				Game.client.sendPacket(new Packet08Projectile(p));
 			}
 			catch (IOException e)
 			{
@@ -325,7 +324,7 @@ public class World extends EventListener implements Drawable
 		
 		try
 		{
-			if (send) Game.client.sendPacket(new Packet6Animation(a));
+			if (send) Game.client.sendPacket(new Packet07Animation(a));
 		}
 		catch (IOException e)
 		{

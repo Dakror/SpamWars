@@ -3,7 +3,7 @@ package de.dakror.spamwars.net.packet;
 /**
  * @author Dakror
  */
-public class Packet2Attribute extends Packet
+public class Packet03Attribute extends Packet
 {
 	String key;
 	String value;
@@ -11,16 +11,16 @@ public class Packet2Attribute extends Packet
 	/**
 	 * Key format: class_field_type
 	 */
-	public Packet2Attribute(String key, Object value)
+	public Packet03Attribute(String key, Object value)
 	{
-		super(2);
+		super(3);
 		this.key = key;
 		this.value = value.toString();
 	}
 	
-	public Packet2Attribute(byte[] data)
+	public Packet03Attribute(byte[] data)
 	{
-		super(2);
+		super(3);
 		String[] s = readData(data).split(":");
 		key = s[0];
 		value = s[1];

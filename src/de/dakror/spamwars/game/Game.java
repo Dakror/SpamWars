@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -8,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.InetAddress;
+
+import javax.swing.JFrame;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
@@ -70,7 +73,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		client = new Client();
 		
-		addLayer(new LoginLayer());
+		if (user == null) addLayer(new LoginLayer());
 		addLayer(new MenuLayer());
 	}
 	
@@ -85,6 +88,21 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void keyReleased(KeyEvent e)
 	{
 		super.keyReleased(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_F11)
+		{
+			if (w.isUndecorated())
+			{
+				setWindowed();
+				w.setMinimumSize(new Dimension(1280, 720));
+			}
+			else
+			{
+				setFullscreen();
+				w.setExtendedState(JFrame.NORMAL);
+			}
+		}
+		
 		if (world != null) world.keyReleased(e);
 	}
 	

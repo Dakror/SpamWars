@@ -9,19 +9,19 @@ import de.dakror.spamwars.game.anim.Animation;
 /**
  * @author Dakror
  */
-public class Packet6Animation extends Packet
+public class Packet07Animation extends Packet
 {
 	Animation animation;
 	
-	public Packet6Animation(Animation anim)
+	public Packet07Animation(Animation anim)
 	{
-		super(6);
+		super(7);
 		animation = anim;
 	}
 	
-	public Packet6Animation(byte[] data)
+	public Packet07Animation(byte[] data)
 	{
-		super(6);
+		super(7);
 		
 		try
 		{

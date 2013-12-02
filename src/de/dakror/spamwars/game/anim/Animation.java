@@ -98,6 +98,7 @@ public class Animation implements Drawable
 		
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
+		at.translate(-Game.w.getInsets().left, -Game.w.getInsets().top);
 		at.rotate(rotation, (int) (Game.world.x + pos.x) + size / 2, (int) (Game.world.y + pos.y) + size / 2);
 		g.setTransform(at);
 		

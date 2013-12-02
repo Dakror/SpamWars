@@ -13,15 +13,16 @@ import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
-import de.dakror.spamwars.net.packet.Packet0Connect;
-import de.dakror.spamwars.net.packet.Packet1Reject;
-import de.dakror.spamwars.net.packet.Packet1Reject.Cause;
-import de.dakror.spamwars.net.packet.Packet2Attribute;
-import de.dakror.spamwars.net.packet.Packet3ServerInfo;
-import de.dakror.spamwars.net.packet.Packet4World;
-import de.dakror.spamwars.net.packet.Packet5PlayerData;
-import de.dakror.spamwars.net.packet.Packet6Animation;
-import de.dakror.spamwars.net.packet.Packet7Projectile;
+import de.dakror.spamwars.net.packet.Packet00Connect;
+import de.dakror.spamwars.net.packet.Packet01Disconnect;
+import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
+import de.dakror.spamwars.net.packet.Packet03Attribute;
+import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet05World;
+import de.dakror.spamwars.net.packet.Packet06PlayerData;
+import de.dakror.spamwars.net.packet.Packet07Animation;
+import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -96,9 +97,9 @@ public class Server extends Thread
 			for (User u : clients)
 				world.addEntity(new Player(x, y, u));
 			
-			sendPacketToAllClients(new Packet2Attribute("pos", x + "," + y));
+			sendPacketToAllClients(new Packet03Attribute("pos", x + "," + y));
 			
-			sendPacketToAllClients(new Packet4World(world));
+			sendPacketToAllClients(new Packet05World(world));
 		}
 		catch (Exception e)
 		{
@@ -117,14 +118,14 @@ public class Server extends Thread
 			}
 			case CONNECT:
 			{
-				Packet0Connect packet = new Packet0Connect(data);
+				Packet00Connect packet = new Packet00Connect(data);
 				User user = new User(packet.getUsername(), address, port);
 				if (packet.getVersion() < CFG.VERSION)
 				{
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated client");
-						sendPacket(new Packet1Reject(Cause.OUTDATEDCLIENT), user);
+						sendPacket(new Packet02Reject(Cause.OUTDATEDCLIENT), user);
 						return;
 					}
 					catch (Exception e)
@@ -135,7 +136,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
-						sendPacket(new Packet1Reject(Cause.OUTDATEDSERVER), user);
+						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER), user);
 						return;
 					}
 					catch (Exception e)
@@ -146,7 +147,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game already started");
-						sendPacket(new Packet1Reject(Cause.GAMERUNNING), user);
+						sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
 						return;
 					}
 					catch (Exception e)
@@ -157,7 +158,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
-						sendPacket(new Packet1Reject(Cause.FULL), user);
+						sendPacket(new Packet02Reject(Cause.FULL), user);
 						return;
 					}
 					catch (Exception e)
@@ -169,7 +170,7 @@ public class Server extends Thread
 					{
 						try
 						{
-							sendPacket(new Packet1Reject(Cause.USERNAMETAKEN), user);
+							sendPacket(new Packet02Reject(Cause.USERNAMETAKEN), user);
 							CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): username taken");
 							return;
 						}
@@ -183,7 +184,7 @@ public class Server extends Thread
 				try
 				{
 					sendPacketToAllClients(packet);
-					sendPacketToAllClients(new Packet3ServerInfo(clients.toArray(new User[] {})));
+					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
 				}
 				catch (Exception e)
 				{}
@@ -194,7 +195,7 @@ public class Server extends Thread
 				User user = new User(null, address, port);
 				try
 				{
-					sendPacket(new Packet3ServerInfo(clients.toArray(new User[] {})), user);
+					sendPacket(new Packet04ServerInfo(clients.toArray(new User[] {})), user);
 				}
 				catch (IOException e)
 				{
@@ -204,11 +205,11 @@ public class Server extends Thread
 			}
 			case PLAYER:
 			{
-				Packet5PlayerData p = new Packet5PlayerData(data);
+				Packet06PlayerData p = new Packet06PlayerData(data);
 				User user = null;
 				for (Entity e : world.entities)
 				{
-					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address))
+					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address) && ((Player) e).getUser().getPort() == port)
 					{
 						e.setPos(p.getPosition());
 						// e.setVelocity(p.getVelocity());
@@ -239,7 +240,7 @@ public class Server extends Thread
 			{
 				try
 				{
-					sendPacketToAllClientsExceptOne(new Packet6Animation(data), new User(null, address, port));
+					sendPacketToAllClientsExceptOne(new Packet07Animation(data), new User(null, address, port));
 				}
 				catch (Exception e1)
 				{
@@ -249,12 +250,12 @@ public class Server extends Thread
 			}
 			case PROJECTILE:
 			{
-				Packet7Projectile p = new Packet7Projectile(data);
+				Packet08Projectile p = new Packet08Projectile(data);
 				world.addProjectile(p.getProjectile(), false);
 				
 				try
 				{
-					sendPacketToAllClientsExceptOne(new Packet7Projectile(data), new User(null, address, port));
+					sendPacketToAllClientsExceptOne(new Packet08Projectile(data), new User(null, address, port));
 				}
 				catch (Exception e1)
 				{
@@ -288,5 +289,14 @@ public class Server extends Thread
 	}
 	
 	public void shutdown()
-	{}
+	{
+		try
+		{
+			sendPacketToAllClients(new Packet01Disconnect("##", de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.SERVER_CLOSED));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

@@ -10,20 +10,20 @@ import de.dakror.spamwars.game.world.World;
 /**
  * @author Dakror
  */
-public class Packet4World extends Packet
+public class Packet05World extends Packet
 {
 	World world;
 	
-	public Packet4World(World world)
+	public Packet05World(World world)
 	{
-		super(4);
+		super(5);
 		
 		this.world = world;
 	}
 	
-	public Packet4World(byte[] data)
+	public Packet05World(byte[] data)
 	{
-		super(4);
+		super(5);
 		
 		byte[] d = Arrays.copyOfRange(data, 1, data.length);
 		ByteBuffer bb = ByteBuffer.wrap(d);

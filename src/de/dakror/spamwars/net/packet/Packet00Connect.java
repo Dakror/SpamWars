@@ -3,12 +3,12 @@ package de.dakror.spamwars.net.packet;
 /**
  * @author Dakror
  */
-public class Packet0Connect extends Packet
+public class Packet00Connect extends Packet
 {
 	private String username;
 	private int version;
 	
-	public Packet0Connect(byte[] data)
+	public Packet00Connect(byte[] data)
 	{
 		super(0);
 		String[] s = readData(data).split(":");
@@ -16,7 +16,7 @@ public class Packet0Connect extends Packet
 		version = Integer.parseInt(s[1]);
 	}
 	
-	public Packet0Connect(String username, int version)
+	public Packet00Connect(String username, int version)
 	{
 		super(0);
 		this.version = version;

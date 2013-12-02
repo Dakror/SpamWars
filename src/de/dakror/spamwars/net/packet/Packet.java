@@ -11,6 +11,7 @@ public abstract class Packet
 	{
 		INVALID,
 		CONNECT,
+		DISCONNECT,
 		REJECT,
 		ATTRIBUTE,
 		SERVERINFO,

@@ -75,6 +75,7 @@ public class Projectile implements Drawable
 		
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
+		at.translate(-Game.w.getInsets().left, -Game.w.getInsets().top);
 		at.rotate(rot, pos.x + type.getTex().width / 2, pos.y + type.getTex().height / 2);
 		g.setTransform(at);
 		

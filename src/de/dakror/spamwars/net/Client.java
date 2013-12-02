@@ -6,20 +6,24 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import javax.swing.JOptionPane;
+
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.layer.MPLayer;
+import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
-import de.dakror.spamwars.net.packet.Packet0Connect;
-import de.dakror.spamwars.net.packet.Packet2Attribute;
-import de.dakror.spamwars.net.packet.Packet3ServerInfo;
-import de.dakror.spamwars.net.packet.Packet4World;
-import de.dakror.spamwars.net.packet.Packet5PlayerData;
-import de.dakror.spamwars.net.packet.Packet6Animation;
-import de.dakror.spamwars.net.packet.Packet7Projectile;
+import de.dakror.spamwars.net.packet.Packet00Connect;
+import de.dakror.spamwars.net.packet.Packet01Disconnect;
+import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.net.packet.Packet03Attribute;
+import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet05World;
+import de.dakror.spamwars.net.packet.Packet06PlayerData;
+import de.dakror.spamwars.net.packet.Packet07Animation;
+import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -34,7 +38,7 @@ public class Client extends Thread
 	
 	InetAddress serverIP;
 	
-	Packet3ServerInfo serverInfo;
+	Packet04ServerInfo serverInfo;
 	
 	public Client()
 	{
@@ -88,15 +92,40 @@ public class Client extends Thread
 			}
 			case CONNECT:
 			{
-				Packet0Connect p = new Packet0Connect(data);
+				Packet00Connect p = new Packet00Connect(data);
 				if (p.getUsername().equals(Game.user.getUsername())) connected = true;
 				
 				packet = p;
 				break;
 			}
+			case DISCONNECT:
+			{
+				Packet01Disconnect p = new Packet01Disconnect(data);
+				if (p.getUsername().equals("##"))
+				{
+					connected = false;
+					serverInfo = null;
+					serverIP = null;
+					
+					JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
+					Game.currentGame.setLayer(new MenuLayer());
+				}
+				
+				packet = p;
+				break;
+			}
+			case REJECT:
+			{
+				connected = false;
+				serverInfo = null;
+				serverIP = null;
+				packet = new Packet02Reject(data);
+				
+				break;
+			}
 			case SERVERINFO:
 			{
-				Packet3ServerInfo p = new Packet3ServerInfo(data);
+				Packet04ServerInfo p = new Packet04ServerInfo(data);
 				
 				for (User u : p.getUsers())
 					if (u.getUsername().equals(Game.user.getUsername()) && Game.user.getIP() == null) Game.user = u;
@@ -107,22 +136,19 @@ public class Client extends Thread
 			}
 			case WORLD:
 			{
-				Packet4World p = new Packet4World(data);
-				Game.currentGame.addLayer(new HUDLayer());
+				Packet05World p = new Packet05World(data);
 				Game.world = p.getWorld();
 				Game.world.addEntity(Game.player);
 				
 				for (User u : serverInfo.getUsers())
 					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
 				
-				Game.currentFrame.removeLayer(Game.currentFrame.getActiveLayer());
-				
 				packet = p;
 				break;
 			}
 			case ATTRIBUTE:
 			{
-				Packet2Attribute p = new Packet2Attribute(data);
+				Packet03Attribute p = new Packet03Attribute(data);
 				if (p.getKey().equals("pos"))
 				{
 					int x = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf(",")));
@@ -143,7 +169,7 @@ public class Client extends Thread
 			}
 			case PLAYER:
 			{
-				Packet5PlayerData p = new Packet5PlayerData(data);
+				Packet06PlayerData p = new Packet06PlayerData(data);
 				for (Entity e : Game.world.entities)
 				{
 					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()) && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
@@ -163,14 +189,14 @@ public class Client extends Thread
 			}
 			case ANIMATION:
 			{
-				Packet6Animation p = new Packet6Animation(data);
+				Packet07Animation p = new Packet07Animation(data);
 				Game.world.addAnimation(p.getAnimation(), false);
 				
 				break;
 			}
 			case PROJECTILE:
 			{
-				Packet7Projectile p = new Packet7Projectile(data);
+				Packet08Projectile p = new Packet08Projectile(data);
 				Game.world.addProjectile(p.getProjectile(), false);
 				
 				break;
@@ -205,7 +231,7 @@ public class Client extends Thread
 		serverIP = ip;
 		try
 		{
-			sendPacket(new Packet0Connect(Game.user.getUsername(), CFG.VERSION));
+			sendPacket(new Packet00Connect(Game.user.getUsername(), CFG.VERSION));
 		}
 		catch (IOException e)
 		{

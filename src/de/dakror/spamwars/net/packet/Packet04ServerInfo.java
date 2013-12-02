@@ -9,13 +9,13 @@ import de.dakror.spamwars.net.User;
 /**
  * @author Dakror
  */
-public class Packet3ServerInfo extends Packet
+public class Packet04ServerInfo extends Packet
 {
 	User[] users;
 	
-	public Packet3ServerInfo(byte[] data)
+	public Packet04ServerInfo(byte[] data)
 	{
-		super(3);
+		super(4);
 		try
 		{
 			JSONArray arr = new JSONArray(readData(data));
@@ -31,15 +31,15 @@ public class Packet3ServerInfo extends Packet
 		}
 	}
 	
-	public Packet3ServerInfo(User[] users)
+	public Packet04ServerInfo(User[] users)
 	{
-		super(3);
+		super(4);
 		this.users = users;
 	}
 	
-	public Packet3ServerInfo()
+	public Packet04ServerInfo()
 	{
-		super(3);
+		super(4);
 	}
 	
 	public User[] getUsers()

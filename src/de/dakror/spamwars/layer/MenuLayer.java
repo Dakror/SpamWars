@@ -3,10 +3,14 @@ package de.dakror.spamwars.layer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -21,7 +25,9 @@ import org.json.JSONObject;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.net.packet.Packet0Connect;
+import de.dakror.spamwars.net.packet.Packet00Connect;
+import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.ui.ClickEvent;
 import de.dakror.spamwars.ui.MenuButton;
 
@@ -37,6 +43,14 @@ public class MenuLayer extends MPLayer
 	{
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/title.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+		
+		if (!CFG.INTERNET)
+		{
+			Font old = g.getFont();
+			g.setFont(new Font("", Font.PLAIN, 20));
+			Helper.drawHorizontallyCenteredString("Offline-Modus: " + Game.user.getUsername() + " (" + Game.user.getIP().getHostAddress() + ")", Game.getWidth(), 20, g, 20);
+			g.setFont(old);
+		}
 		
 		drawComponents(g);
 	}
@@ -80,24 +94,25 @@ public class MenuLayer extends MPLayer
 				join.setSize(350, 100);
 				join.setLocationRelativeTo(Game.w);
 				join.setBackground(new Color(0, 0, 0, 0));
-				// frame.addWindowFocusListener(new WindowFocusListener()
-				// {
-				//
-				// @Override
-				// public void windowLostFocus(WindowEvent e)
-				// {
-				// frame.dispose();
-				// }
-				//
-				// @Override
-				// public void windowGainedFocus(WindowEvent e)
-				// {}
-				// });
+				join.addWindowListener(new WindowAdapter()
+				{
+					@Override
+					public void windowClosed(WindowEvent e)
+					{
+						enabled = true;
+					}
+					
+					@Override
+					public void windowOpened(WindowEvent e)
+					{
+						enabled = false;
+					}
+				});
 				
 				JPanel p = new JPanel(new FlowLayout());
 				p.setBackground(new Color(0, 0, 0, 0.8f));
 				
-				JLabel l = new JLabel("<html><center>Gib den Dakror.de - Benutzernamen des Spielers ein,<br>dessen Spiel du beitreten m&ouml;chtest</center></html>");
+				JLabel l = new JLabel("<html><center>Gib " + (CFG.INTERNET ? "den Dakror.de - Benutzernamen" : "die IP im LAN") + " des Spielers ein,<br>dessen Spiel du beitreten m&ouml;chtest</center></html>");
 				l.setForeground(Color.white);
 				p.add(l);
 				
@@ -129,18 +144,32 @@ public class MenuLayer extends MPLayer
 					{
 						if (usr.getText().length() > 0)
 						{
-							try
+							if (CFG.INTERNET)
 							{
-								JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
-								if (data.length() == 0)
+								try
 								{
-									JOptionPane.showMessageDialog(join, "Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", "Beitreten nicht möglich", JOptionPane.ERROR_MESSAGE);
+									JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
+									if (data.length() == 0)
+									{
+										JOptionPane.showMessageDialog(join, "Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", "Beitreten nicht möglich", JOptionPane.ERROR_MESSAGE);
+									}
+									
+									Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
 								}
-								
-								Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
+								catch (Exception e1)
+								{}
 							}
-							catch (Exception e1)
-							{}
+							else
+							{
+								try
+								{
+									Game.client.connectToServer(InetAddress.getByName(usr.getText()));
+								}
+								catch (UnknownHostException e1)
+								{
+									JOptionPane.showMessageDialog(join, "Die eingegebene IP-Adresse ist nicht gültig.", "IP-Adresse ungültig", JOptionPane.ERROR_MESSAGE);
+								}
+							}
 						}
 						
 						join.toFront();
@@ -154,9 +183,6 @@ public class MenuLayer extends MPLayer
 				join.setContentPane(p);
 				
 				join.setVisible(true);
-				// Game.currentGame.initWorld();
-				//
-				// Game.currentFrame.removeLayer(MenuLayer.this);
 			}
 		});
 		components.add(joingame);
@@ -177,9 +203,13 @@ public class MenuLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet0Connect && ((Packet0Connect) p).getUsername().equals(Game.user.getUsername()))
+		if (p instanceof Packet00Connect && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))
 		{
 			Game.currentFrame.fadeTo(1, 0.05f);
+		}
+		if (p instanceof Packet02Reject)
+		{
+			JOptionPane.showMessageDialog(join == null ? Game.w : join, ((Packet02Reject) p).getCause().getDescription(), "Konnte Spiel nicht beitreten", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

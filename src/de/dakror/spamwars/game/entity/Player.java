@@ -20,7 +20,7 @@ import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
-import de.dakror.spamwars.net.packet.Packet5PlayerData;
+import de.dakror.spamwars.net.packet.Packet06PlayerData;
 
 
 /**
@@ -60,7 +60,6 @@ public class Player extends Entity
 		life = maxlife = 100;
 		
 		setWeapon(WeaponType.HANDGUN);
-		if (Game.user.getUsername().equals("Dakror")) setWeapon(WeaponType.ASSAULT_RIFLE);
 	}
 	
 	@Override
@@ -284,7 +283,7 @@ public class Player extends Entity
 		
 		try
 		{
-			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacket(new Packet5PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacket(new Packet06PlayerData(this));
 		}
 		catch (IOException e)
 		{

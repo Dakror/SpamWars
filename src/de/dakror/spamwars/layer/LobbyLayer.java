@@ -9,7 +9,8 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.net.packet.Packet3ServerInfo;
+import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet05World;
 import de.dakror.spamwars.ui.ClickEvent;
 import de.dakror.spamwars.ui.TextButton;
 
@@ -43,6 +44,11 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void update(int tick)
 	{
+		if (Game.currentGame.alpha == 1)
+		{
+			// Game.currentGame.fadeTo(0, 0.05f);
+		}
+		
 		updateComponents(tick);
 	}
 	
@@ -69,7 +75,7 @@ public class LobbyLayer extends MPLayer
 		
 		try
 		{
-			Game.client.sendPacket(new Packet3ServerInfo());
+			Game.client.sendPacket(new Packet04ServerInfo());
 		}
 		catch (IOException e)
 		{
@@ -80,6 +86,7 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet3ServerInfo) users = ((Packet3ServerInfo) p).getUsers();
+		if (p instanceof Packet04ServerInfo) users = ((Packet04ServerInfo) p).getUsers();
+		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.05f);
 	}
 }

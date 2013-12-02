@@ -1,11 +1,14 @@
 package de.dakror.spamwars;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
+import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.util.Assistant;
 
@@ -25,18 +28,28 @@ public class SpamWars
 		{
 			e.printStackTrace();
 		}
-		CFG.INTERNET = Helper.isInternetReachable();
+		CFG.INTERNET = false;// Helper.isInternetReachable();
 		if (!CFG.INTERNET)
 		{
-			JOptionPane.showMessageDialog(null, "Um Spam Wars spielen zu können, brauchst du eine akive Internetverbindung.", "Internetverbindung nicht vorhanden", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			try
+			{
+				Game.ip = InetAddress.getLocalHost();
+				CFG.p(Game.ip);
+				Game.user = new User(/* System.getProperty("user.name") */"Player" + (int) (Math.random() * 10000), Game.ip, 0);
+			}
+			catch (UnknownHostException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		
-		Game.ip = Assistant.getHamachiIP();
-		if (Game.ip == null)
+		else
 		{
-			JOptionPane.showMessageDialog(null, "Um Spam Wars spielen zu können, musst du \"LogMeIn Hamachi\" installiert und\naktiv haben. Es wird zum Verbinden zu anderen Computern benötigt.", "Hamachi nicht vorhanden", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			Game.ip = Assistant.getHamachiIP();
+			if (Game.ip == null)
+			{
+				JOptionPane.showMessageDialog(null, "Um Spam Wars spielen zu können, musst du \"LogMeIn Hamachi\" installiert und\naktiv haben. Es wird zum Verbinden zu anderen Computern benötigt.", "Hamachi nicht vorhanden", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
 		}
 		
 		new Game();

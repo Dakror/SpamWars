@@ -65,6 +65,7 @@ public abstract class Weapon implements Drawable
 		}
 		
 		this.target = target;
+		if (this.target != null) this.target.add(new Vector(Game.w.getInsets().left, Game.w.getInsets().top));
 	}
 	
 	protected void shoot()
