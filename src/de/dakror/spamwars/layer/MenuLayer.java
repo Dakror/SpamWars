@@ -30,6 +30,7 @@ import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.ui.ClickEvent;
 import de.dakror.spamwars.ui.MenuButton;
+import de.dakror.universion.UniVersion;
 
 /**
  * @author Dakror
@@ -51,6 +52,8 @@ public class MenuLayer extends MPLayer
 			Helper.drawHorizontallyCenteredString("Offline-Modus: " + Game.user.getUsername() + " (" + Game.user.getIP().getHostAddress() + ")", Game.getWidth(), 20, g, 20);
 			g.setFont(old);
 		}
+		
+		Helper.drawString(UniVersion.prettyVersion(), 10, Game.getHeight() - 10, g, 18);
 		
 		drawComponents(g);
 	}

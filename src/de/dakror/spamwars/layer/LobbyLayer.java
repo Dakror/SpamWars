@@ -64,8 +64,6 @@ public class LobbyLayer extends MPLayer
 		{
 			Game.server = new Server(Game.ip);
 			
-			Game.client.connectToServer(Game.ip);
-			
 			TextButton start = new TextButton(Game.getWidth() / 2 - 200, Game.getHeight() / 4 * 3, 400, 80, "Spiel starten");
 			start.addClickEvent(new ClickEvent()
 			{
@@ -76,6 +74,8 @@ public class LobbyLayer extends MPLayer
 				}
 			});
 			components.add(start);
+			
+			Game.client.connectToServer(Game.ip);
 		}
 		
 		try
