@@ -46,6 +46,9 @@ public class Server extends Thread
 	World world;
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
+	int x = 140;
+	int y = 500;
+	
 	public Server(InetAddress ip)
 	{
 		try
@@ -93,9 +96,6 @@ public class Server extends Thread
 		world = new World(getClass().getResource(MAP_FILE));
 		try
 		{
-			int x = 140;
-			int y = 500;
-			
 			for (User u : clients)
 				world.addEntity(new Player(x, y, u));
 			
@@ -107,6 +107,21 @@ public class Server extends Thread
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public void addLateJoiner(User user)
+	{
+		world.addEntity(new Player(x, y, user));
+		try
+		{
+			sendPacket(new Packet03Attribute("pos", x + "," + y), user);
+			sendPacket(new Packet05World(world), user);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void parsePacket(byte[] data, InetAddress address, int port)
@@ -144,17 +159,17 @@ public class Server extends Thread
 					catch (Exception e)
 					{}
 				}
-				else if (!lobby)
-				{
-					try
-					{
-						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game already started");
-						sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
-						return;
-					}
-					catch (Exception e)
-					{}
-				}
+				// else if (!lobby)
+				// {
+				// try
+				// {
+				// CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game already started");
+				// sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
+				// return;
+				// }
+				// catch (Exception e)
+				// {}
+				// }
 				else if (clients.size() == MAX_PLAYERS)
 				{
 					try
@@ -190,6 +205,7 @@ public class Server extends Thread
 				}
 				catch (Exception e)
 				{}
+				if (!lobby) addLateJoiner(user);
 				break;
 			}
 			case DISCONNECT:

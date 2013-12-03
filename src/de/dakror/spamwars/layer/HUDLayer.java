@@ -3,9 +3,11 @@ package de.dakror.spamwars.layer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.settings.CFG;
@@ -15,6 +17,8 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class HUDLayer extends MPLayer
 {
+	boolean showStats;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -29,6 +33,26 @@ public class HUDLayer extends MPLayer
 		g.setColor(o);
 		
 		drawComponents(g);
+		
+		drawStats(g);
+	}
+	
+	public void drawStats(Graphics2D g)
+	{
+		if (!showStats) return;
+		
+		Helper.drawContainer(Game.getWidth() / 2 - 500, Game.getHeight() / 2 - 300, 1000, 600, true, false, g);
+		Color o = g.getColor();
+		g.setColor(Color.gray);
+		Helper.drawHorizontallyCenteredString("Statistik", Game.getWidth(), Game.getHeight() / 2 - 220, g, 80);
+		Helper.drawOutline(Game.getWidth() / 2 - 495, Game.getHeight() / 2 - 295, 990, 100, false, g);
+		User[] users = Game.client.serverInfo.getUsers();
+		g.setColor(Color.white);
+		for (int i = 0; i < users.length; i++)
+		{
+			Helper.drawString(users[i].getUsername(), Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 150 + i * 30, g, 30);
+		}
+		g.setColor(o);
 	}
 	
 	@Override
@@ -47,8 +71,25 @@ public class HUDLayer extends MPLayer
 	}
 	
 	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		super.keyPressed(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = true;
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		super.keyReleased(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = false;
+	}
+	
+	@Override
 	public void init()
 	{
+		showStats = false;
 		// components.add(new KillLabel(50));
 	}
 }

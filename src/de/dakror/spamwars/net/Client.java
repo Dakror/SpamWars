@@ -40,7 +40,7 @@ public class Client extends Thread
 	
 	InetAddress serverIP;
 	
-	Packet04ServerInfo serverInfo;
+	public Packet04ServerInfo serverInfo;
 	
 	public Client()
 	{
@@ -96,6 +96,7 @@ public class Client extends Thread
 			{
 				Packet00Connect p = new Packet00Connect(data);
 				if (p.getUsername().equals(Game.user.getUsername())) connected = true;
+				else if (Game.world != null) Game.world.addEntity(new Player(0, 0, new User(p.getUsername(), null, 0)));
 				
 				packet = p;
 				break;
@@ -118,8 +119,19 @@ public class Client extends Thread
 					serverInfo = null;
 					serverIP = null;
 				}
-				else
+				else if (Game.world != null)
 				{
+					for (Entity e : Game.world.entities)
+					{
+						if (e instanceof Player)
+						{
+							if (((Player) e).getUser().getUsername().equals(p.getUsername()))
+							{
+								Game.world.entities.remove(e);
+								break;
+							}
+						}
+					}
 					try
 					{
 						sendPacket(new Packet04ServerInfo());

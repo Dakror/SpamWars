@@ -62,6 +62,7 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void initGame()
 	{
 		w.addWindowFocusListener(this);
+		w.setFocusTraversalKeysEnabled(false);
 		w.addWindowListener(new WindowAdapter()
 		{
 			@Override

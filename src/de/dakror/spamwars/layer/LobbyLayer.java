@@ -7,7 +7,6 @@ import java.io.IOException;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
-import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
 import de.dakror.spamwars.net.packet.Packet05World;
@@ -19,8 +18,6 @@ import de.dakror.spamwars.ui.TextButton;
  */
 public class LobbyLayer extends MPLayer
 {
-	User[] users;
-	
 	boolean fade;
 	
 	@Override
@@ -31,11 +28,11 @@ public class LobbyLayer extends MPLayer
 		
 		Color c = g.getColor();
 		g.setColor(Color.decode("#1c0d09"));
-		if (users != null)
+		if (Game.client.serverInfo != null)
 		{
-			for (int i = 0; i < users.length; i++)
+			for (int i = 0; i < Game.client.serverInfo.getUsers().length; i++)
 			{
-				Helper.drawHorizontallyCenteredString(users[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+				Helper.drawHorizontallyCenteredString(Game.client.serverInfo.getUsers()[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
 			}
 		}
 		g.setColor(c);
@@ -110,7 +107,6 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet04ServerInfo) users = ((Packet04ServerInfo) p).getUsers();
 		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.05f);
 	}
 }
