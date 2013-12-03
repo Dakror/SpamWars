@@ -159,28 +159,17 @@ public class Server extends Thread
 					catch (Exception e)
 					{}
 				}
-				// else if (!lobby)
+				// else if (clients.size() == MAX_PLAYERS)
 				// {
 				// try
 				// {
-				// CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game already started");
-				// sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
+				// CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
+				// sendPacket(new Packet02Reject(Cause.FULL), user);
 				// return;
 				// }
 				// catch (Exception e)
 				// {}
 				// }
-				else if (clients.size() == MAX_PLAYERS)
-				{
-					try
-					{
-						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
-						sendPacket(new Packet02Reject(Cause.FULL), user);
-						return;
-					}
-					catch (Exception e)
-					{}
-				}
 				for (User p : clients)
 				{
 					if (p.getUsername().equals(packet.getUsername()))
@@ -200,6 +189,7 @@ public class Server extends Thread
 				clients.add(user);
 				try
 				{
+					sendPacket(new Packet03Attribute("user", user.serialize()), user);
 					sendPacketToAllClients(packet);
 					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
 				}

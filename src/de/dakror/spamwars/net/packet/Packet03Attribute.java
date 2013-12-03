@@ -21,7 +21,7 @@ public class Packet03Attribute extends Packet
 	public Packet03Attribute(byte[] data)
 	{
 		super(3);
-		String[] s = readData(data).split(":");
+		String[] s = readData(data).split("#~#");
 		key = s[0];
 		value = s[1];
 	}
@@ -29,7 +29,7 @@ public class Packet03Attribute extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		return (key + ":" + value).getBytes();
+		return (key + "#~#" + value).getBytes();
 	}
 	
 	public String getKey()

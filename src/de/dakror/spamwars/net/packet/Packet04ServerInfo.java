@@ -57,7 +57,7 @@ public class Packet04ServerInfo extends Packet
 		{
 			try
 			{
-				json.put(new JSONObject(p.serialize()));
+				json.put(new JSONObject(p.serializeThin()));
 			}
 			catch (JSONException e)
 			{

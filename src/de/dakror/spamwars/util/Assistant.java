@@ -37,6 +37,8 @@ public class Assistant
 			{
 				if (ni.getDisplayName().equals("Hamachi Network Interface")) return ni.getInetAddresses().nextElement();
 			}
+			
+			System.err.println(interfaces);
 		}
 		catch (Exception e)
 		{

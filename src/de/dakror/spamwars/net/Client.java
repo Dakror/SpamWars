@@ -8,6 +8,9 @@ import java.net.SocketException;
 
 import javax.swing.JOptionPane;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
@@ -159,9 +162,6 @@ public class Client extends Thread
 			{
 				Packet04ServerInfo p = new Packet04ServerInfo(data);
 				
-				for (User u : p.getUsers())
-					if (u.getUsername().equals(Game.user.getUsername()) && Game.user.getIP() == null) Game.user = u;
-				
 				serverInfo = p;
 				packet = p;
 				break;
@@ -197,6 +197,17 @@ public class Client extends Thread
 					{
 						Game.player.x = x;
 						Game.player.y = y;
+					}
+				}
+				if (p.getKey().equals("user"))
+				{
+					try
+					{
+						Game.user = new User(new JSONObject(p.getValue()));
+					}
+					catch (JSONException e)
+					{
+						e.printStackTrace();
 					}
 				}
 				packet = p;

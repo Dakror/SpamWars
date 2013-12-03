@@ -29,9 +29,9 @@ public class User
 	{
 		try
 		{
-			ip = InetAddress.getByName(o.getString("ip"));
-			port = o.getInt("port");
-			username = o.getString("username");
+			if (o.has("i")) ip = InetAddress.getByName(o.getString("i"));
+			if (o.has("p")) port = o.getInt("p");
+			username = o.getString("u");
 			K = o.getInt("K");
 			D = o.getInt("D");
 		}
@@ -77,9 +77,28 @@ public class User
 		
 		try
 		{
-			o.put("username", username);
-			o.put("ip", ip.getHostAddress());
-			o.put("port", port);
+			o.put("u", username);
+			o.put("i", ip.getHostAddress());
+			o.put("p", port);
+			o.put("K", K);
+			o.put("D", D);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		return o.toString();
+	}
+	
+	public String serializeThin()
+	{
+		JSONObject o = new JSONObject();
+		
+		try
+		{
+			o.put("u", username);
 			o.put("K", K);
 			o.put("D", D);
 		}

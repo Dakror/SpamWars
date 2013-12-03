@@ -47,10 +47,15 @@ public class HUDLayer extends MPLayer
 		Helper.drawHorizontallyCenteredString("Statistik", Game.getWidth(), Game.getHeight() / 2 - 220, g, 80);
 		Helper.drawOutline(Game.getWidth() / 2 - 495, Game.getHeight() / 2 - 295, 990, 100, false, g);
 		User[] users = Game.client.serverInfo.getUsers();
-		g.setColor(Color.white);
+		Helper.drawString("SPIELER", Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 160, g, 30);
+		Helper.drawString("K / D", Game.getWidth() / 2 + 300, Game.getHeight() / 2 - 160, g, 30);
+		
 		for (int i = 0; i < users.length; i++)
 		{
-			Helper.drawString(users[i].getUsername(), Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 150 + i * 30, g, 30);
+			g.setColor(Color.white);
+			if (users[i].getUsername().equals(Game.user.getUsername())) g.setColor(Color.decode("#3333ff"));
+			Helper.drawString(users[i].getUsername(), Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 110 + i * 30, g, 30);
+			Helper.drawString(users[i].K + " / " + users[i].D, Game.getWidth() / 2 + 300, Game.getHeight() / 2 - 110 + i * 30, g, 30);
 		}
 		g.setColor(o);
 	}
