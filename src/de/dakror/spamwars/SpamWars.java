@@ -33,6 +33,12 @@ public class SpamWars
 			e.printStackTrace();
 		}
 		CFG.INTERNET = Helper.isInternetReachable();
+		
+		UniVersion.offline = !CFG.INTERNET;
+		
+		UniVersion.init(SpamWars.class, CFG.VERSION, CFG.PHASE);
+		if (!UniVersion.offline) Reporter.init(new File(CFG.DIR, "log"));
+		
 		if (!CFG.INTERNET)
 		{
 			try
@@ -56,10 +62,6 @@ public class SpamWars
 			}
 		}
 		
-		UniVersion.offline = !CFG.INTERNET;
-		
-		UniVersion.init(SpamWars.class, CFG.VERSION, CFG.PHASE);
-		if (!UniVersion.offline) Reporter.init(new File(CFG.DIR, "log"));
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");
