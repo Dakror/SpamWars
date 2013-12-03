@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.World;
@@ -34,7 +35,7 @@ public class Server extends Thread
 	public static final int PORT = 19950;
 	public static final int PACKETSIZE = 255; // bytes
 	
-	public static final String MAP_FILE = "/map/map.txt";
+	public static final String MAP_FILE = "/map/map2.txt";
 	
 	public boolean running;
 	
@@ -76,13 +77,13 @@ public class Server extends Thread
 				socket.receive(packet);
 				parsePacket(data, packet.getAddress(), packet.getPort());
 			}
-			catch (IOException e)
+			catch (SocketException e)
+			{}
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
 		}
-		
-		shutdown();
 	}
 	
 	public void startGame()
@@ -190,6 +191,30 @@ public class Server extends Thread
 				{}
 				break;
 			}
+			case DISCONNECT:
+			{
+				Packet01Disconnect p = new Packet01Disconnect(data);
+				
+				for (User u : clients)
+				{
+					if (u.getUsername().equals(p.getUsername()))
+					{
+						clients.remove(u);
+						break;
+					}
+				}
+				
+				try
+				{
+					sendPacketToAllClients(p);
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				break;
+			}
 			case SERVERINFO:
 			{
 				User user = new User(null, address, port);
@@ -207,6 +232,9 @@ public class Server extends Thread
 			{
 				Packet06PlayerData p = new Packet06PlayerData(data);
 				User user = null;
+				
+				if (Game.world == null) break;
+				
 				for (Entity e : world.entities)
 				{
 					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address) && ((Player) e).getUser().getPort() == port)
@@ -251,6 +279,9 @@ public class Server extends Thread
 			case PROJECTILE:
 			{
 				Packet08Projectile p = new Packet08Projectile(data);
+				
+				if (world == null) break;
+				
 				world.addProjectile(p.getProjectile(), false);
 				
 				try
@@ -290,6 +321,7 @@ public class Server extends Thread
 	
 	public void shutdown()
 	{
+		running = false;
 		try
 		{
 			sendPacketToAllClients(new Packet01Disconnect("##", de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.SERVER_CLOSED));
@@ -298,5 +330,7 @@ public class Server extends Thread
 		{
 			e.printStackTrace();
 		}
+		socket.close();
+		CFG.p("[SERVER]: Server closed");
 	}
 }

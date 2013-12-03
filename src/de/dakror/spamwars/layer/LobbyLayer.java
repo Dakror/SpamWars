@@ -64,7 +64,7 @@ public class LobbyLayer extends MPLayer
 		{
 			Game.server = new Server(Game.ip);
 			
-			TextButton start = new TextButton(Game.getWidth() / 2 - 200, Game.getHeight() / 4 * 3, 400, 80, "Spiel starten");
+			TextButton start = new TextButton(Game.getWidth() / 2 + 50, Game.getHeight() / 4 * 3, 400, 80, "Spiel starten");
 			start.addClickEvent(new ClickEvent()
 			{
 				@Override
@@ -77,6 +77,25 @@ public class LobbyLayer extends MPLayer
 			
 			Game.client.connectToServer(Game.ip);
 		}
+		
+		TextButton disco = new TextButton(Game.getWidth() / 2 - 450, Game.getHeight() / 4 * 3, 400, 80, "Trennen");
+		disco.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				Game.client.disconnect();
+				
+				if (Game.server != null)
+				{
+					Game.server.shutdown();
+					Game.server = null;
+				}
+				
+				Game.currentGame.removeLayer(LobbyLayer.this);
+			}
+		});
+		components.add(disco);
 		
 		try
 		{

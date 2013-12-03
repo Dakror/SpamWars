@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.InetAddress;
@@ -61,6 +62,21 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void initGame()
 	{
 		w.addWindowFocusListener(this);
+		w.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				if (client != null)
+				{
+					client.disconnect();
+				}
+				if (server != null)
+				{
+					server.shutdown();
+				}
+			}
+		});
 		try
 		{
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/Telev2.ttf")));

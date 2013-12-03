@@ -17,6 +17,7 @@ import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet01Disconnect;
+import de.dakror.spamwars.net.packet.Packet01Disconnect.Cause;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
@@ -103,12 +104,29 @@ public class Client extends Thread
 				Packet01Disconnect p = new Packet01Disconnect(data);
 				if (p.getUsername().equals("##"))
 				{
+					if (!serverIP.equals(Game.user.getIP())) JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
 					connected = false;
 					serverInfo = null;
 					serverIP = null;
 					
-					JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
 					Game.currentGame.setLayer(new MenuLayer());
+				}
+				else if (p.getUsername().equals(Game.user.getUsername()))
+				{
+					connected = false;
+					serverInfo = null;
+					serverIP = null;
+				}
+				else
+				{
+					try
+					{
+						sendPacket(new Packet04ServerInfo());
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 				}
 				
 				packet = p;
@@ -210,11 +228,8 @@ public class Client extends Thread
 	
 	public void sendPacket(Packet p) throws IOException
 	{
-		if (serverIP == null)
-		{
-			System.err.println("Connect to a server first!");
-			return;
-		}
+		if (serverIP == null) return;
+		
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
 		socket.send(packet);
@@ -242,5 +257,18 @@ public class Client extends Thread
 	public boolean isConnected()
 	{
 		return connected;
+	}
+	
+	public void disconnect()
+	{
+		if (!connected) return;
+		try
+		{
+			sendPacket(new Packet01Disconnect(Game.user.getUsername(), Cause.USER_DISCONNECT));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
