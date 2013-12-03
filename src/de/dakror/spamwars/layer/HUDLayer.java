@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -37,7 +39,12 @@ public class HUDLayer extends MPLayer
 	
 	@Override
 	public void onPacketReceived(Packet p)
-	{}
+	{
+		if (p instanceof Packet09Kill)
+		{
+			CFG.p(((Packet09Kill) p).getKiller() + " -> " + ((Packet09Kill) p).getDead());
+		}
+	}
 	
 	@Override
 	public void init()

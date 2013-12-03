@@ -25,6 +25,7 @@ import de.dakror.spamwars.net.packet.Packet05World;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
+import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -216,6 +217,12 @@ public class Client extends Thread
 			{
 				Packet08Projectile p = new Packet08Projectile(data);
 				Game.world.addProjectile(p.getProjectile(), false);
+				
+				break;
+			}
+			case KILL:
+			{
+				packet = new Packet09Kill(data);
 				
 				break;
 			}

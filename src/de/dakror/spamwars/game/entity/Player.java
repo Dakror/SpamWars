@@ -22,7 +22,7 @@ import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
-import de.dakror.spamwars.settings.CFG;
+import de.dakror.spamwars.net.packet.Packet09Kill;
 
 
 /**
@@ -339,8 +339,17 @@ public class Player extends Entity
 		life -= damage;
 		if (life <= 0 && x > -10000000)
 		{
-			if (source instanceof Projectile) CFG.p(((Projectile) source).getUsername() + " -> " + Game.user.getUsername());
-			
+			if (source instanceof Projectile)
+			{
+				try
+				{
+					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername()));
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
 			
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
 			x = -10000000;

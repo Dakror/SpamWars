@@ -14,11 +14,15 @@ public class User
 	private int port;
 	private String username;
 	
+	public int K, D;
+	
 	public User(String username, InetAddress ip, int port)
 	{
 		this.ip = ip;
 		this.port = port;
 		this.username = username;
+		
+		K = D = 0;
 	}
 	
 	public User(JSONObject o)
@@ -28,6 +32,8 @@ public class User
 			ip = InetAddress.getByName(o.getString("ip"));
 			port = o.getInt("port");
 			username = o.getString("username");
+			K = o.getInt("K");
+			D = o.getInt("D");
 		}
 		catch (Exception e)
 		{
@@ -74,6 +80,8 @@ public class User
 			o.put("username", username);
 			o.put("ip", ip.getHostAddress());
 			o.put("port", port);
+			o.put("K", K);
+			o.put("D", D);
 		}
 		catch (JSONException e)
 		{

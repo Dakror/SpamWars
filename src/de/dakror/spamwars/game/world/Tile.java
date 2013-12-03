@@ -181,12 +181,6 @@ public enum Tile
 	{
 		this.bump = bump;
 		
-		// if (bump != null && bump.width > 0)
-		// {
-		// this.bump.width = (int) ((this.bump.width / 70f) * SIZE);
-		// this.bump.height = (int) ((this.bump.height / 70f) * SIZE);
-		// }
-		
 		if (tY.length == 2)
 		{
 			lY = tY[1];

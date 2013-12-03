@@ -24,6 +24,7 @@ import de.dakror.spamwars.net.packet.Packet05World;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
+import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -240,7 +241,6 @@ public class Server extends Thread
 					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address) && ((Player) e).getUser().getPort() == port)
 					{
 						e.setPos(p.getPosition());
-						// e.setVelocity(p.getVelocity());
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
 						e.setLife(p.getLife());
@@ -291,6 +291,27 @@ public class Server extends Thread
 				catch (Exception e1)
 				{
 					e1.printStackTrace();
+				}
+				break;
+			}
+			case KILL:
+			{
+				Packet09Kill p = new Packet09Kill(data);
+				
+				for (User u : clients)
+				{
+					if (u.getUsername().equals(p.getKiller())) u.K++;
+					if (u.getUsername().equals(p.getDead())) u.D++;
+				}
+				
+				try
+				{
+					sendPacketToAllClientsExceptOne(p, new User(p.getDead(), address, port));
+					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
 				}
 				break;
 			}

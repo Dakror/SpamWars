@@ -19,6 +19,7 @@ public abstract class Packet
 		PLAYER,
 		ANIMATION,
 		PROJECTILE,
+		KILL,
 		
 		;
 		public int getID()
