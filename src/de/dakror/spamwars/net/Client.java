@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.layer.LobbyLayer;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.packet.Packet;
@@ -168,6 +169,9 @@ public class Client extends Thread
 			case WORLD:
 			{
 				Packet05World p = new Packet05World(data);
+				
+				if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
+				
 				Game.world = p.getWorld();
 				Game.world.addEntity(Game.player);
 				
