@@ -35,6 +35,7 @@ public class Assistant
 			List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
 			for (NetworkInterface ni : interfaces)
 			{
+				if (ni.getDisplayName() == null) continue;
 				if (ni.getDisplayName().equals("Hamachi Network Interface")) return ni.getInetAddresses().nextElement();
 			}
 			
