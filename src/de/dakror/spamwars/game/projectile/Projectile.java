@@ -26,15 +26,17 @@ public class Projectile implements Drawable
 {
 	private Vector pos, target;
 	ProjectileType type;
+	String username;
 	
 	private boolean dead;
 	
 	private float rot;
 	
-	public Projectile(Vector pos, Vector target, ProjectileType type)
+	public Projectile(Vector pos, Vector target, String username, ProjectileType type)
 	{
 		this.type = type;
 		this.pos = pos;
+		this.username = username;
 		this.target = target;
 		
 		Vector dif = target.clone().sub(pos);
@@ -44,7 +46,7 @@ public class Projectile implements Drawable
 	
 	public Projectile(JSONObject o) throws JSONException
 	{
-		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), ProjectileType.values()[o.getInt("t")]);
+		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), ProjectileType.values()[o.getInt("t")]);
 	}
 	
 	public JSONObject serialize()
@@ -58,6 +60,7 @@ public class Projectile implements Drawable
 			o.put("ty", target.y);
 			o.put("t", type.ordinal());
 			o.put("d", dead);
+			o.put("u", username);
 		}
 		catch (JSONException e)
 		{
@@ -131,7 +134,7 @@ public class Projectile implements Drawable
 		{
 			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line))
 			{
-				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(type.getDamage());
+				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(type.getDamage(), this);
 				dead = true;
 				return;
 			}
@@ -140,6 +143,11 @@ public class Projectile implements Drawable
 		pos.add(dif);
 		
 		if (pos.equals(target)) dead = true;
+	}
+	
+	public String getUsername()
+	{
+		return username;
 	}
 	
 	public ProjectileType getType()

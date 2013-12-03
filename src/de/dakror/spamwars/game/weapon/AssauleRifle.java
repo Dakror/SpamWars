@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.projectile.ProjectileType;
 
@@ -29,6 +30,6 @@ public class AssauleRifle extends Weapon
 	@Override
 	protected Projectile getPojectile(Vector pos, Vector target)
 	{
-		return new Projectile(pos, target, ProjectileType.ASSAULT_RIFLE);
+		return new Projectile(pos, target, Game.user.getUsername(), ProjectileType.ASSAULT_RIFLE);
 	}
 }

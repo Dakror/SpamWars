@@ -172,8 +172,8 @@ public class World extends EventListener implements Drawable
 	
 	public int getTileId(int x, int y)
 	{
-		if (y < 0 || y >= data[0].length) return Tile.air.ordinal();
 		if (x < 0 || x >= data.length) return Tile.stone.ordinal();
+		if (y < 0 || y >= data[0].length) return Tile.air.ordinal();
 		
 		return data[x][y];
 	}

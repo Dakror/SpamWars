@@ -14,6 +14,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
+import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.weapon.Weapon;
 import de.dakror.spamwars.game.weapon.Weapon.FireMode;
 import de.dakror.spamwars.game.weapon.WeaponType;
@@ -21,6 +22,7 @@ import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
+import de.dakror.spamwars.settings.CFG;
 
 
 /**
@@ -332,11 +334,14 @@ public class Player extends Entity
 		life = maxlife;
 	}
 	
-	public void dealDamage(float damage)
+	public void dealDamage(float damage, Object source)
 	{
 		life -= damage;
 		if (life <= 0 && x > -10000000)
 		{
+			if (source instanceof Projectile) CFG.p(((Projectile) source).getUsername() + " -> " + Game.user.getUsername());
+			
+			
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
 			x = -10000000;
 			gravity = false;
