@@ -63,18 +63,6 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void initGame()
 	{
 		w.addWindowFocusListener(this);
-		w.addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				for (Layer l : layers)
-				{
-					l.components.clear();
-					l.init();
-				}
-			}
-		});
 		w.setFocusTraversalKeysEnabled(false);
 		w.addWindowListener(new WindowAdapter()
 		{
@@ -101,6 +89,20 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		addLayer(new MenuLayer());
 		if (user == null) addLayer(new LoginLayer());
+		
+		w.addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				if (getActiveLayer() instanceof LoginLayer) return;
+				for (Layer l : layers)
+				{
+					l.components.clear();
+					l.init();
+				}
+			}
+		});
 	}
 	
 	@Override

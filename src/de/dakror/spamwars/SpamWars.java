@@ -16,7 +16,6 @@ import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.util.Assistant;
 import de.dakror.universion.UniVersion;
 
-
 /**
  * @author Dakror
  */
