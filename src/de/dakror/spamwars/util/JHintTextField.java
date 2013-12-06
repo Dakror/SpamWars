@@ -9,10 +9,8 @@ import javax.swing.JTextField;
 
 public class JHintTextField extends JTextField
 {
-	
 	private static final long serialVersionUID = 1L;
 	String hint;
-	
 	
 	public JHintTextField(String h)
 	{
@@ -21,7 +19,6 @@ public class JHintTextField extends JTextField
 		setHintVisible(true);
 		addFocusListener(new FocusListener()
 		{
-			
 			@Override
 			public void focusLost(FocusEvent e)
 			{

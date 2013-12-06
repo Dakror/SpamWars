@@ -19,7 +19,11 @@ public enum Tile
 	boxCoinAlt_disabled(new Rectangle()),
 	boxCoin_disabled(new Rectangle()),
 	boxEmpty(new Rectangle()),
-	boxExplosive(new Rectangle()),
+	
+	/**
+	 * health box
+	 */
+	boxExplosive(null),
 	boxExplosiveAlt(new Rectangle()),
 	boxExplosive_disabled(new Rectangle()),
 	boxItem(new Rectangle()),
@@ -28,6 +32,7 @@ public enum Tile
 	boxItem_disabled(new Rectangle()),
 	boxWarning(new Rectangle()),
 	brickWall(new Rectangle()),
+	
 	/**
 	 * spawnpoint
 	 */

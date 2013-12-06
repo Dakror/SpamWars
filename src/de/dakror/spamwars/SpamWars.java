@@ -34,6 +34,8 @@ public class SpamWars
 		}
 		CFG.INTERNET = Helper.isInternetReachable();
 		
+		CFG.init();
+		
 		UniVersion.offline = !CFG.INTERNET;
 		
 		UniVersion.init(SpamWars.class, CFG.VERSION, CFG.PHASE);
@@ -62,6 +64,7 @@ public class SpamWars
 			}
 		}
 		
+		CFG.loadSettings();
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");

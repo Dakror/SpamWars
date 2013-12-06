@@ -3,11 +3,11 @@ package de.dakror.spamwars.layer;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.settings.CFG;
-import de.dakror.spamwars.ui.ClickEvent;
 import de.dakror.spamwars.ui.MenuButton;
 import de.dakror.universion.UniVersion;
 
@@ -79,6 +79,14 @@ public class MenuLayer extends MPLayer
 		});
 		components.add(joingame);
 		MenuButton opt = new MenuButton("options", 2);
+		opt.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.addLayer(new SettingsLayer());
+			}
+		});
 		components.add(opt);
 		MenuButton end = new MenuButton("endGame", 3);
 		end.addClickEvent(new ClickEvent()

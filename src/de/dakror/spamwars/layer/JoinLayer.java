@@ -99,7 +99,7 @@ public class JoinLayer extends MPLayer
 				join.dispose();
 			}
 		});
-		cnc.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
+		cnc.setPreferredSize(new Dimension(155, 22));
 		cnc.setBackground(new Color(0, 0, 0, 0));
 		p.add(cnc);
 		
@@ -143,7 +143,7 @@ public class JoinLayer extends MPLayer
 				join.toFront();
 			}
 		});
-		go.setPreferredSize(new Dimension(usr.getPreferredSize().width / 2, usr.getPreferredSize().height));
+		go.setPreferredSize(new Dimension(155, 22));
 		go.setBackground(new Color(0, 0, 0, 0));
 		
 		p.add(go);

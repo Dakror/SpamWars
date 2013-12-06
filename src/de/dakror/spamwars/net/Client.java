@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -14,6 +15,7 @@ import org.json.JSONObject;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.layer.LobbyLayer;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.layer.MenuLayer;
@@ -25,11 +27,12 @@ import de.dakror.spamwars.net.packet.Packet01Disconnect.Cause;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
-import de.dakror.spamwars.net.packet.Packet05World;
+import de.dakror.spamwars.net.packet.Packet05Chunk;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -45,6 +48,8 @@ public class Client extends Thread
 	InetAddress serverIP;
 	
 	public Packet04ServerInfo serverInfo;
+	
+	ArrayList<Packet05Chunk> chunkPackets = new ArrayList<>();
 	
 	public Client()
 	{
@@ -122,6 +127,13 @@ public class Client extends Thread
 					connected = false;
 					serverInfo = null;
 					serverIP = null;
+					
+					if (Game.server != null)
+					{
+						Game.server.shutdown();
+						Game.world = null;
+					}
+					Game.server = null;
 				}
 				else if (Game.world != null)
 				{
@@ -166,17 +178,11 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case WORLD:
+			case CHUNK:
 			{
-				Packet05World p = new Packet05World(data);
+				Packet05Chunk p = new Packet05Chunk(data);
 				
-				if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
-				
-				Game.world = p.getWorld();
-				Game.world.addEntity(Game.player);
-				
-				for (User u : serverInfo.getUsers())
-					if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
+				chunkPackets.add(p);
 				
 				packet = p;
 				break;
@@ -210,12 +216,34 @@ public class Client extends Thread
 						e.printStackTrace();
 					}
 				}
+				if (p.getKey().equals("worldsize"))
+				{
+					if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
+					
+					int w = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf("_")));
+					int h = Integer.parseInt(p.getValue().substring(p.getValue().indexOf("_") + 1));
+					Game.world = new World(w, h);
+					
+					for (Packet05Chunk chunk : chunkPackets)
+					{
+						Game.world.setData(chunk.getChunk().x, chunk.getChunk().y, Packet05Chunk.SIZE, chunk.getWorldData());
+					}
+					
+					Game.world.addEntity(Game.player);
+					
+					for (User u : serverInfo.getUsers())
+						if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
+				}
+				
 				packet = p;
 				break;
 			}
 			case PLAYER:
 			{
 				Packet06PlayerData p = new Packet06PlayerData(data);
+				
+				if (Game.world == null) break;
+				
 				for (Entity e : Game.world.entities)
 				{
 					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()) && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
@@ -251,6 +279,23 @@ public class Client extends Thread
 			{
 				packet = new Packet09Kill(data);
 				
+				break;
+			}
+			case ENTITYSTATUS:
+			{
+				Packet10EntityStatus p = new Packet10EntityStatus(data);
+				
+				if (Game.world == null) break;
+				
+				for (Entity e : Game.world.entities)
+				{
+					if (!(e instanceof Player) && e.getPos().equals(p.getPos()))
+					{
+						e.setEnabled(p.getState(), false);
+					}
+				}
+				
+				packet = p;
 				break;
 			}
 			default:

@@ -16,11 +16,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
-import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
+import de.dakror.spamwars.game.entity.AmmoBox;
 import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.HealthBox;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.net.packet.Packet07Animation;
@@ -46,6 +47,11 @@ public class World extends EventListener implements Drawable
 	
 	ArrayList<Vector> spawns = new ArrayList<>();
 	
+	public World()
+	{
+		x = y = width = height = 0;
+	}
+	
 	public World(int width, int height)
 	{
 		x = y = 0;
@@ -58,12 +64,11 @@ public class World extends EventListener implements Drawable
 				data[i][j] = Tile.air.ordinal();
 	}
 	
-	public World(URL worldFile)
+	public World(String content)
 	{
 		try
 		{
 			x = y = 0;
-			String content = Helper.getURLContent(worldFile);
 			width = Integer.parseInt(content.substring(0, content.indexOf(":"))) * Tile.SIZE;
 			height = Integer.parseInt(content.substring(content.indexOf(":") + 1, content.indexOf(";"))) * Tile.SIZE;
 			String[] raw = content.substring(content.indexOf(";") + 1).split(";");
@@ -96,17 +101,40 @@ public class World extends EventListener implements Drawable
 		}
 	}
 	
-	public byte[] getData()
+	public byte[] getData(int cx, int cy, int cs)
 	{
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (int i = 0; i < width / Tile.SIZE; i++)
+		for (int i = cx * cs; i < (cx + 1) * cs; i++)
 		{
-			for (int j = 0; j < height / Tile.SIZE; j++)
+			for (int j = cy * cs; j < (cy + 1) * cs; j++)
 			{
-				baos.write(data[i][j] - 128);
+				if (i >= data.length || j >= data[0].length) baos.write((byte) 128);
+				else baos.write((byte) (data[i][j] - 128));
 			}
 		}
 		return baos.toByteArray();
+	}
+	
+	public void setData(int cx, int cy, int cs, byte[] d)
+	{
+		for (int i = cx * cs; i < (cx + 1) * cs; i++)
+		{
+			for (int j = cy * cs; j < (cy + 1) * cs; j++)
+			{
+				int x = i - cx * cs;
+				int y = j - cy * cs;
+				
+				if (d[x * cs + y] == (byte) 128) continue;
+				
+				int b = d[x * cs + y] + 128;
+				try
+				{
+					data[i][j] = b;
+				}
+				catch (ArrayIndexOutOfBoundsException e)
+				{}
+			}
+		}
 	}
 	
 	public void render()
@@ -129,7 +157,13 @@ public class World extends EventListener implements Drawable
 				
 				if (t == Tile.boxCoinAlt)
 				{
-					// addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
+					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
+					continue;
+				}
+				
+				if (t == Tile.boxExplosive)
+				{
+					addEntity(new HealthBox(i * Tile.SIZE, j * Tile.SIZE));
 					continue;
 				}
 				
@@ -268,7 +302,9 @@ public class World extends EventListener implements Drawable
 		g.drawImage(render, (int) x, (int) y, Game.w);
 		
 		for (Entity e : entities)
-			e.draw(g);
+		{
+			if (e.isEnabled()) e.draw(g);
+		}
 		
 		for (Projectile e : projectiles)
 			e.draw(g);

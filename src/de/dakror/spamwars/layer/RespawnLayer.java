@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 
+import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
@@ -20,7 +21,7 @@ public class RespawnLayer extends MPLayer
 	
 	public RespawnLayer()
 	{
-		modal = true;
+		modal = false;
 		end = 0;
 	}
 	
@@ -56,7 +57,16 @@ public class RespawnLayer extends MPLayer
 	
 	@Override
 	public void onPacketReceived(Packet p)
-	{}
+	{
+		for (Layer l : Game.currentGame.layers)
+		{
+			if (l instanceof HUDLayer)
+			{
+				((HUDLayer) l).onPacketReceived(p);
+				break;
+			}
+		}
+	}
 	
 	@Override
 	public void init()

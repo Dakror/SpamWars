@@ -1,5 +1,7 @@
 package de.dakror.spamwars.net;
 
+import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -8,9 +10,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.dakror.spamwars.game.Game;
+import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
@@ -20,11 +23,12 @@ import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
-import de.dakror.spamwars.net.packet.Packet05World;
+import de.dakror.spamwars.net.packet.Packet05Chunk;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -32,13 +36,13 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class Server extends Thread
 {
-	public static final int MAX_PLAYERS = 4;
+	public static final int MAX_PLAYERS = 10;
 	public static final int PORT = 19950;
 	public static final int PACKETSIZE = 255; // bytes
 	
-	public static final String MAP_FILE = "/map/map2.txt";
-	
 	public boolean running;
+	
+	public File map = new File(CFG.DIR, "maps/BigSnowSurfaceStoneBasementDefault.map");
 	
 	boolean lobby;
 	
@@ -93,7 +97,7 @@ public class Server extends Thread
 	public void startGame()
 	{
 		lobby = false;
-		world = new World(getClass().getResource(MAP_FILE));
+		world = new World(Helper.getFileContent(map));
 		try
 		{
 			for (User u : clients)
@@ -101,7 +105,30 @@ public class Server extends Thread
 			
 			sendPacketToAllClients(new Packet03Attribute("pos", x + "," + y));
 			
-			sendPacketToAllClients(new Packet05World(world));
+			sendWorld(null);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void sendWorld(User user)
+	{
+		try
+		{
+			for (int i = 0; i < Math.ceil((world.width / Tile.SIZE) / (float) Packet05Chunk.SIZE); i++)
+			{
+				for (int j = 0; j < Math.ceil((world.height / Tile.SIZE) / (float) Packet05Chunk.SIZE); j++)
+				{
+					if (user == null) sendPacketToAllClients(new Packet05Chunk(world, new Point(i, j)));
+					else sendPacket(new Packet05Chunk(world, new Point(i, j)), user);
+					
+				}
+			}
+			
+			if (user == null) sendPacketToAllClients(new Packet03Attribute("worldsize", world.width + "_" + world.height));
+			else sendPacket(new Packet03Attribute("worldsize", world.width + "_" + world.height), user);
 		}
 		catch (Exception e)
 		{
@@ -115,7 +142,7 @@ public class Server extends Thread
 		try
 		{
 			sendPacket(new Packet03Attribute("pos", x + "," + y), user);
-			sendPacket(new Packet05World(world), user);
+			sendWorld(user);
 		}
 		catch (IOException e)
 		{
@@ -154,22 +181,22 @@ public class Server extends Thread
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
 						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER), user);
-						return;
+						break;
 					}
 					catch (Exception e)
 					{}
 				}
-				// else if (clients.size() == MAX_PLAYERS)
-				// {
-				// try
-				// {
-				// CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
-				// sendPacket(new Packet02Reject(Cause.FULL), user);
-				// return;
-				// }
-				// catch (Exception e)
-				// {}
-				// }
+				else if (clients.size() == MAX_PLAYERS)
+				{
+					try
+					{
+						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
+						sendPacket(new Packet02Reject(Cause.FULL), user);
+						break;
+					}
+					catch (Exception e)
+					{}
+				}
 				for (User p : clients)
 				{
 					if (p.getUsername().equals(packet.getUsername()))
@@ -178,7 +205,7 @@ public class Server extends Thread
 						{
 							sendPacket(new Packet02Reject(Cause.USERNAMETAKEN), user);
 							CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): username taken");
-							return;
+							break;
 						}
 						catch (Exception e)
 						{}
@@ -202,15 +229,6 @@ public class Server extends Thread
 			{
 				Packet01Disconnect p = new Packet01Disconnect(data);
 				
-				for (User u : clients)
-				{
-					if (u.getUsername().equals(p.getUsername()))
-					{
-						clients.remove(u);
-						break;
-					}
-				}
-				
 				try
 				{
 					sendPacketToAllClients(p);
@@ -218,6 +236,15 @@ public class Server extends Thread
 				catch (Exception e)
 				{
 					e.printStackTrace();
+				}
+				
+				for (User u : clients)
+				{
+					if (u.getUsername().equals(p.getUsername()))
+					{
+						clients.remove(u);
+						break;
+					}
 				}
 				
 				break;
@@ -240,11 +267,11 @@ public class Server extends Thread
 				Packet06PlayerData p = new Packet06PlayerData(data);
 				User user = null;
 				
-				if (Game.world == null) break;
+				if (world == null) break;
 				
 				for (Entity e : world.entities)
 				{
-					if (e instanceof Player && ((Player) e).getUser().getIP().equals(address) && ((Player) e).getUser().getPort() == port)
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()))
 					{
 						e.setPos(p.getPosition());
 						((Player) e).frame = p.getFrame();
@@ -306,19 +333,34 @@ public class Server extends Thread
 				
 				for (User u : clients)
 				{
-					if (u.getUsername().equals(p.getKiller())) u.K++;
+					if (u.getUsername().equals(p.getKiller()) && !p.getDead().equals(p.getKiller())) u.K++;
 					if (u.getUsername().equals(p.getDead())) u.D++;
 				}
 				
 				try
 				{
-					sendPacketToAllClientsExceptOne(p, new User(p.getDead(), address, port));
+					sendPacketToAllClients(p);
 					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
 				}
 				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
+				break;
+			}
+			case ENTITYSTATUS:
+			{
+				Packet10EntityStatus p = new Packet10EntityStatus(data);
+				
+				try
+				{
+					sendPacketToAllClientsExceptOne(p, new User(null, address, port));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
 				break;
 			}
 			default:
@@ -335,7 +377,14 @@ public class Server extends Thread
 	public void sendPacketToAllClientsExceptOne(Packet p, User exception) throws Exception
 	{
 		for (User u : clients)
-			if (!u.getIP().equals(exception.getIP()) && u.getPort() != exception.getPort()) sendPacket(p, u);
+		{
+			if (exception.getUsername() == null)
+			{
+				if (exception.getIP().equals(u.getIP()) && exception.getPort() == u.getPort()) continue;
+			}
+			else if (exception.getUsername().equals(u.getUsername())) continue;
+			sendPacket(p, u);
+		}
 	}
 	
 	public void sendPacket(Packet p, User u) throws IOException
@@ -348,7 +397,6 @@ public class Server extends Thread
 	
 	public void shutdown()
 	{
-		running = false;
 		try
 		{
 			sendPacketToAllClients(new Packet01Disconnect("##", de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.SERVER_CLOSED));
@@ -357,6 +405,7 @@ public class Server extends Thread
 		{
 			e.printStackTrace();
 		}
+		running = false;
 		socket.close();
 		CFG.p("[SERVER]: Server closed");
 	}

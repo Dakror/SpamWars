@@ -1,29 +1,97 @@
 package de.dakror.spamwars.ui;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.weapon.WeaponType;
 
 /**
  * @author Dakror
  */
 public class KillLabel extends Component
 {
-	public KillLabel(int y)
+	public static final int TIME = 60 * 10; // 10 secs
+	public static final int SPACE = 42;
+	int startTick;
+	
+	public boolean dead;
+	
+	String killer, killed;
+	BufferedImage weapon;
+	
+	public KillLabel(int y, String killer, String killed, WeaponType weapon)
 	{
-		super(Game.getWidth() - 380, y, 350, 64);
+		super(Game.getWidth() - 380, y, 0, 40);
+		
+		dead = false;
+		this.killer = killer;
+		this.killed = killed;
+		this.weapon = weapon.getIcon();
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
-		Helper.drawShadow(x, y, width, height, g);
+		if (dead) return;
+		Font f = g.getFont();
+		g.setFont(new Font("", Font.PLAIN, 18));
+		
+		if (width == 0)
+		{
+			FontMetrics fm = g.getFontMetrics();
+			width = fm.stringWidth(killer) + fm.stringWidth(killed) + 150;
+			x = Game.getWidth() - width - 30;
+		}
+		
+		Color o = g.getColor();
+		Composite c = g.getComposite();
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+		g.setColor(Color.black);
+		g.fillRect(x + 8, y + 8, width - 16, height - 16);
+		g.setComposite(c);
 		Helper.drawOutline(x, y, width, height, false, g);
+		
+		g.setColor(killer.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
+		
+		if (!killer.equals(killed))
+		{
+			Helper.drawString(killer, x + 15, y + 26, g, 18);
+			g.setColor(killed.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
+			Helper.drawRightAlignedString(killed, x + width - 15, y + 26, g, 18);
+			
+			g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
+		}
+		else
+		{
+			int[] ints = Helper.drawHorizontallyCenteredString(killer, x - 30, width, y + 26, g, 18);
+			g.drawImage(Game.getImage("icon/kill.png"), ints[0] + ints[1] + 25, y + 10, Game.w);
+		}
+		g.setColor(o);
+		g.setFont(f);
 	}
 	
 	@Override
 	public void update(int tick)
-	{}
+	{
+		if (dead) return;
+		if (startTick == 0)
+		{
+			startTick = tick;
+			return;
+		}
+		
+		if (tick - startTick >= TIME)
+		{
+			if (y > SPACE) y -= SPACE;
+			else dead = true;
+		}
+	}
 }

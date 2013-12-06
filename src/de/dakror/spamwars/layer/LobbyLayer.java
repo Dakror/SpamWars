@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
 
+import javax.swing.JFileChooser;
+
+import de.dakror.gamesetup.ui.ClickEvent;
+import de.dakror.gamesetup.ui.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
-import de.dakror.spamwars.net.packet.Packet05World;
-import de.dakror.spamwars.ui.ClickEvent;
-import de.dakror.spamwars.ui.TextButton;
 
 /**
  * @author Dakror
@@ -25,6 +27,14 @@ public class LobbyLayer extends MPLayer
 	{
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/startGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+		
+		Helper.drawContainer(0, 300, Game.getWidth() / 4, (Game.getHeight() / 4 * 3 - 20 + TextButton.HEIGHT + 40) - 300, false, false, g);
+		
+		if (Game.server != null)
+		{
+			Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, 610, TextButton.HEIGHT + 40, false, false, g);
+			Helper.drawHorizontallyCenteredString("Einstellungen", Game.getWidth() / 4, 340, g, 28);
+		}
 		
 		Color c = g.getColor();
 		g.setColor(Color.decode("#1c0d09"));
@@ -57,11 +67,11 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		if (!Game.client.isConnected()) // host
+		if (!Game.client.isConnected() || Game.server != null) // host
 		{
-			Game.server = new Server(Game.ip);
+			if (Game.server == null) Game.server = new Server(Game.ip);
 			
-			TextButton start = new TextButton(Game.getWidth() / 2 + 50, Game.getHeight() / 4 * 3, 400, 80, "Spiel starten");
+			TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3, "Start");
 			start.addClickEvent(new ClickEvent()
 			{
 				@Override
@@ -72,22 +82,33 @@ public class LobbyLayer extends MPLayer
 			});
 			components.add(start);
 			
-			Game.client.connectToServer(Game.ip);
+			TextButton map = new TextButton((Game.getWidth() / 4 - TextButton.WIDTH) / 2, 380, "Karte");
+			map.addClickEvent(new ClickEvent()
+			{
+				@Override
+				public void trigger()
+				{
+					JFileChooser jfc = new JFileChooser(Game.server.map);
+					jfc.setSelectedFile(Game.server.map);
+					jfc.setMultiSelectionEnabled(false);
+					jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					jfc.setDialogTitle("Server-Karte auswählen");
+					
+					if (jfc.showOpenDialog(Game.w) == JFileChooser.APPROVE_OPTION) Game.server.map = jfc.getSelectedFile();
+				}
+			});
+			components.add(map);
+			
+			if (!Game.client.isConnected()) Game.client.connectToServer(Game.ip);
 		}
 		
-		TextButton disco = new TextButton(Game.getWidth() / 2 - 450, Game.getHeight() / 4 * 3, 400, 80, "Trennen");
+		TextButton disco = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() / 4 * 3, "Trennen");
 		disco.addClickEvent(new ClickEvent()
 		{
 			@Override
 			public void trigger()
 			{
 				Game.client.disconnect();
-				
-				if (Game.server != null)
-				{
-					Game.server.shutdown();
-					Game.server = null;
-				}
 				
 				Game.currentGame.removeLayer(LobbyLayer.this);
 			}
@@ -107,6 +128,6 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet05World) Game.currentGame.fadeTo(1, 0.05f);
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize")) Game.currentGame.fadeTo(1, 0.05f);
 	}
 }

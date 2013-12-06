@@ -1,8 +1,8 @@
 package de.dakror.spamwars.net.packet;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import de.dakror.spamwars.net.User;
 
@@ -16,18 +16,22 @@ public class Packet04ServerInfo extends Packet
 	public Packet04ServerInfo(byte[] data)
 	{
 		super(4);
-		try
+		
+		
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		bb.get(); // skip id
+		int c = bb.get();
+		
+		users = new User[c];
+		
+		for (int i = 0; i < c; i++)
 		{
-			JSONArray arr = new JSONArray(readData(data));
-			users = new User[arr.length()];
-			for (int i = 0; i < arr.length(); i++)
-			{
-				users[i] = new User(arr.getJSONObject(i));
-			}
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
+			int K = bb.getShort();
+			int D = bb.getShort();
+			int len = bb.get();
+			byte[] str = new byte[len];
+			bb.get(str, 0, len);
+			users[i] = new User(new String(str), K, D);
 		}
 	}
 	
@@ -52,18 +56,20 @@ public class Packet04ServerInfo extends Packet
 	{
 		if (users == null) return "".getBytes();
 		
-		JSONArray json = new JSONArray();
-		for (User p : users)
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		baos.write(users.length);
+		for (User u : users)
 		{
 			try
 			{
-				json.put(new JSONObject(p.serializeThin()));
+				baos.write(u.getBytes());
 			}
-			catch (JSONException e)
+			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		return json.toString().getBytes();
+		
+		return baos.toByteArray();
 	}
 }

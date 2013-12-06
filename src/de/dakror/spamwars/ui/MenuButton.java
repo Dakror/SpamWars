@@ -6,13 +6,14 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 
 /**
  * @author Dakror
  */
-public class MenuButton extends Button
+public class MenuButton extends ClickableComponent
 {
 	String image;
 	int y1;

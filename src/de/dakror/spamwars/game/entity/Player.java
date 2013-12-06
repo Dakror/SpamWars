@@ -75,6 +75,9 @@ public class Player extends Entity
 		Color o = g.getColor();
 		g.setColor(Color.darkGray);
 		Helper.drawHorizontallyCenteredString(user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
+		
+		if (!user.getUsername().equals(Game.user.getUsername())) Helper.drawProgressBar((int) mx, (int) (my + height - 5), width, life / (float) maxlife, "ff3232", g);
+		
 		g.setFont(oldF);
 		g.setColor(o);
 		
@@ -115,12 +118,7 @@ public class Player extends Entity
 	{
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
-		lookingLeft = e.getX() < x + width / 2;
-		mouse = e.getPoint();
-		
-		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
-		
-		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
+		handleMouse(e, false);
 	}
 	
 	public Vector getWeaponPoint()
@@ -138,6 +136,12 @@ public class Player extends Entity
 	{
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
+		handleMouse(e, true);
+	}
+	
+	public void handleMouse(MouseEvent e, boolean target)
+	{
+		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
 		
@@ -145,7 +149,21 @@ public class Player extends Entity
 		
 		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 		
-		weapon.target(new Vector(e.getPoint()));
+		if (target)
+		{
+			Point p = new Point((int) x + hand.x, (int) y + hand.y);
+			Point tile = Game.world.getTile(p.x, p.y);
+			Tile t = Tile.values()[Game.world.getTileIdAtPixel(p.x, p.y)];
+			
+			if (t.getBump() != null)
+			{
+				Rectangle r = (Rectangle) t.getBump().clone();
+				r.translate(tile.x * Tile.SIZE, tile.y * Tile.SIZE);
+				if (r.contains(p)) return;
+			}
+			
+			weapon.target(new Vector(e.getPoint()));
+		}
 	}
 	
 	@Override
@@ -153,14 +171,7 @@ public class Player extends Entity
 	{
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || weapon.fireMode != FireMode.AUTO) return;
 		
-		lookingLeft = e.getX() < x + width / 2;
-		mouse = e.getPoint();
-		
-		Vector dif = new Vector(e.getPoint()).sub(getWeaponPoint());
-		
-		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
-		
-		weapon.target(new Vector(e.getPoint()));
+		handleMouse(e, true);
 	}
 	
 	@Override
@@ -276,6 +287,23 @@ public class Player extends Entity
 				left = right = up = down = false;
 				weapon.target(null);
 			}
+			
+			for (Entity e : Game.world.entities)
+			{
+				if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0)))
+				{
+					if (weapon.canRefill() && e instanceof AmmoBox)
+					{
+						e.setEnabled(false, true);
+						weapon.refill(AmmoBox.AMMO);
+					}
+					if (life < maxlife && e instanceof HealthBox)
+					{
+						e.setEnabled(false, true);
+						life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
+					}
+				}
+			}
 		}
 		
 		weapon.left = lookingLeft;
@@ -341,9 +369,15 @@ public class Player extends Entity
 		{
 			if (source instanceof Projectile)
 			{
+				WeaponType w = null;
+				for (Entity e : Game.world.entities)
+				{
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(((Projectile) source).getUsername())) w = ((Player) e).getWeapon().type;
+				}
+				
 				try
 				{
-					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername()));
+					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), w));
 				}
 				catch (IOException e)
 				{

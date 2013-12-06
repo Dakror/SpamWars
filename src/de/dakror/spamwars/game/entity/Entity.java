@@ -4,12 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.world.Tile;
+import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 
 
 /**
@@ -22,6 +24,7 @@ public abstract class Entity extends EventListener implements Drawable
 	protected boolean gravity;
 	public boolean update;
 	protected boolean airborne;
+	private boolean enabled;
 	
 	int life, maxlife;
 	
@@ -37,6 +40,7 @@ public abstract class Entity extends EventListener implements Drawable
 		this.height = height;
 		setVelocity(new Vector(0, 0));
 		update = true;
+		enabled = true;
 	}
 	
 	protected abstract void tick(int tick);
@@ -251,5 +255,23 @@ public abstract class Entity extends EventListener implements Drawable
 	public void setMaxlife(int maxlife)
 	{
 		this.maxlife = maxlife;
+	}
+	
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+	
+	public void setEnabled(boolean enabled, boolean sendState)
+	{
+		this.enabled = enabled;
+		try
+		{
+			if (sendState) Game.client.sendPacket(new Packet10EntityStatus(getPos(), enabled));
+		}
+		catch (IOException e1)
+		{
+			e1.printStackTrace();
+		}
 	}
 }

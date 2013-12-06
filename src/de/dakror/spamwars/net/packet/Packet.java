@@ -15,11 +15,12 @@ public abstract class Packet
 		REJECT,
 		ATTRIBUTE,
 		SERVERINFO,
-		WORLD,
+		CHUNK,
 		PLAYER,
 		ANIMATION,
 		PROJECTILE,
 		KILL,
+		ENTITYSTATUS,
 		
 		;
 		public int getID()

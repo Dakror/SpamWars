@@ -1,9 +1,11 @@
 package de.dakror.spamwars.net;
 
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 /**
  * @author Dakror
@@ -39,6 +41,13 @@ public class User
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public User(String username, int K, int D)
+	{
+		this.username = username;
+		this.K = K;
+		this.D = D;
 	}
 	
 	public InetAddress getIP()
@@ -92,23 +101,15 @@ public class User
 		return o.toString();
 	}
 	
-	public String serializeThin()
+	public byte[] getBytes()
 	{
-		JSONObject o = new JSONObject();
+		ByteBuffer bb = ByteBuffer.allocate(username.length() + 5);
+		bb.putShort((short) K);
+		bb.putShort((short) D);
+		bb.put((byte) username.length());
+		bb.put(username.getBytes());
 		
-		try
-		{
-			o.put("u", username);
-			o.put("K", K);
-			o.put("D", D);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		
-		
-		return o.toString();
+		return bb.array();
 	}
 	
 	@Override

@@ -4,13 +4,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
+import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
+import de.dakror.spamwars.game.world.Tile;
+import de.dakror.spamwars.layer.HUDLayer;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -29,7 +34,7 @@ public abstract class Weapon implements Drawable
 	protected float maxAngle;
 	
 	public float rot, rot2; // in degrees
-	public boolean left;
+	public boolean left, reloading;
 	boolean overangle;
 	
 	public WeaponType type;
@@ -37,17 +42,22 @@ public abstract class Weapon implements Drawable
 	
 	int lastShot;
 	
-	public int speed;
+	public int speed, magazine, capacity, capacityMax, ammo, reloadSpeed;
 	
 	private float x, y;
 	
 	Vector target;
 	
-	public Weapon(Rectangle tex, Point exit, Point grab, FireMode fireMode, int speed, float maxAngle)
+	public Weapon(Rectangle tex, Point exit, Point grab, FireMode fireMode, int speed, float maxAngle, int magazine, int capacity, int reloadSpeed)
 	{
 		this.tex = tex;
 		this.exit = exit;
 		this.fireMode = fireMode;
+		this.reloadSpeed = reloadSpeed;
+		this.magazine = magazine;
+		this.capacity = capacityMax = capacity;
+		ammo = magazine;
+		
 		this.maxAngle = maxAngle;
 		this.speed = speed;
 		this.grab = new Point(grab.x - tex.x, grab.y - tex.y);
@@ -74,12 +84,40 @@ public abstract class Weapon implements Drawable
 		
 		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
 		
+		Point tile = Game.world.getTile((int) pos.x, (int) pos.y);
+		Tile t = Tile.values()[Game.world.getTileIdAtPixel((int) pos.x, (int) pos.y)];
+		
+		if (t.getBump() != null)
+		{
+			Rectangle r = (Rectangle) t.getBump().clone();
+			r.translate(tile.x * Tile.SIZE, tile.y * Tile.SIZE);
+			if (r.contains(pos.x, pos.y)) return;
+		}
+		
 		float rot3 = rot - (float) Math.toRadians(90);
 		if (left) rot3 = (float) Math.toRadians(180) - rot3;
 		
-		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
+		if (target == null || reloading) return;
 		
-		if (target == null) return;
+		if (ammo == 0)
+		{
+			if (CFG.AUTO_RELOAD && capacity > 0)
+			{
+				for (Layer l : Game.currentGame.layers)
+				{
+					if (l instanceof HUDLayer)
+					{
+						((HUDLayer) l).reload = true;
+						((HUDLayer) l).reloadStarted = 0;
+						break;
+					}
+				}
+			}
+			return;
+		}
+		
+		ammo--;
+		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
 		Game.world.addProjectile(getPojectile(pos.clone(), target), true);
 	}
 	
@@ -146,8 +184,12 @@ public abstract class Weapon implements Drawable
 		g.setTransform(at);
 		
 		Helper.drawImage(Game.getImage("weapon/show.png"), -grab.x, -grab.y, tex.width, tex.height, tex.x, tex.y, tex.width, tex.height, g);
-		
 		g.setTransform(old);
+	}
+	
+	public BufferedImage getImage()
+	{
+		return Game.getImage("weapon/show.png").getSubimage(tex.x, tex.y, tex.width, tex.height);
 	}
 	
 	public Vector getMuzzle()
@@ -168,5 +210,32 @@ public abstract class Weapon implements Drawable
 	public Point getGrab()
 	{
 		return grab;
+	}
+	
+	public boolean canReload()
+	{
+		if (capacity == 0) return false;
+		if (ammo == magazine) return false;
+		
+		return true;
+	}
+	
+	public void reload()
+	{
+		if (capacity == 0) return;
+		
+		int sub = capacity >= magazine ? magazine : capacity;
+		ammo = sub;
+		capacity -= sub;
+	}
+	
+	public boolean canRefill()
+	{
+		return capacity < capacityMax;
+	}
+	
+	public void refill(int amount)
+	{
+		capacity = capacity + amount > capacityMax ? capacityMax : capacity + amount;
 	}
 }
