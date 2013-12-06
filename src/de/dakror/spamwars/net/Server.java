@@ -242,6 +242,7 @@ public class Server extends Thread
 				{
 					if (u.getUsername().equals(p.getUsername()))
 					{
+						CFG.p("[SERVER]: " + u.getUsername() + " (" + address.getHostAddress() + ":" + port + ") left the game.");
 						clients.remove(u);
 						break;
 					}

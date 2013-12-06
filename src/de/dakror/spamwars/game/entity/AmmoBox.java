@@ -12,7 +12,7 @@ import de.dakror.spamwars.game.world.Tile;
 public class AmmoBox extends Entity
 {
 	public static final int AMMO = 50;
-	public static final int TIMEOUT = 60 * 60; // 60 secs
+	public static final int TIMEOUT = 60 * 30; // 30 secs
 	int tick;
 	int startTick;
 	int random;

@@ -113,7 +113,7 @@ public class Client extends Thread
 			case DISCONNECT:
 			{
 				Packet01Disconnect p = new Packet01Disconnect(data);
-				if (p.getUsername().equals("##"))
+				if (p.getUsername().equals("##") && serverIP != null)
 				{
 					if (!serverIP.equals(Game.user.getIP())) JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
 					connected = false;
@@ -318,7 +318,7 @@ public class Client extends Thread
 	{
 		if (connected)
 		{
-			System.err.println("Client is already connected to a server. Disconnect first!");
+			CFG.p("Client is already connected to a server. Disconnect first!");
 			return;
 		}
 		

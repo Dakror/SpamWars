@@ -56,7 +56,7 @@ public class HUDLayer extends MPLayer
 		else Helper.drawContainer(0, 0, 80, 80, false, true, g);
 		g.drawImage(Game.getImage("gui/pause.png"), 5, 5, 70, 70, Game.w);
 		
-		if (reload)
+		if (reload && reloadStarted > 0)
 		{
 			Composite c = g.getComposite();
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));

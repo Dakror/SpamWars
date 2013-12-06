@@ -12,7 +12,7 @@ import de.dakror.spamwars.game.world.Tile;
 public class HealthBox extends Entity
 {
 	public static final int HEALTH = 30;
-	public static final int TIMEOUT = 60 * 60; // 60 secs
+	public static final int TIMEOUT = 60 * 30; // 60 secs
 	int tick;
 	int startTick;
 	int random;
