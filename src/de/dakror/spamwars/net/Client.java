@@ -117,11 +117,11 @@ public class Client extends Thread
 				Packet01Disconnect p = new Packet01Disconnect(data);
 				if (p.getUsername().equals("##") && serverIP != null)
 				{
-					setDisconnected();
 					if (!serverIP.equals(Game.user.getIP()))
 					{
 						Game.currentGame.addLayer(new Alert(p.getCause().getDescription(), null));
 					}
+					setDisconnected();
 				}
 				else if (p.getUsername().equals(Game.user.getUsername()))
 				{
