@@ -12,6 +12,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04ServerInfo;
 
@@ -28,12 +29,12 @@ public class LobbyLayer extends MPLayer
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/startGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		Helper.drawContainer(0, 300, Game.getWidth() / 4, (Game.getHeight() / 4 * 3 - 20 + TextButton.HEIGHT + 40) - 300, false, false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, 610, TextButton.HEIGHT + 40, false, false, g);
 		
 		if (Game.server != null)
 		{
-			Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, 610, TextButton.HEIGHT + 40, false, false, g);
-			Helper.drawHorizontallyCenteredString("Einstellungen", Game.getWidth() / 4, 340, g, 28);
+			Helper.drawContainer(0, 300, Game.getWidth() / 4, (Game.getHeight() / 4 * 3 - 20 + TextButton.HEIGHT + 40) - 300, false, false, g);
+			Helper.drawHorizontallyCenteredString("Optionen", Game.getWidth() / 4, 340, g, 28);
 		}
 		
 		Color c = g.getColor();
@@ -102,7 +103,7 @@ public class LobbyLayer extends MPLayer
 			if (!Game.client.isConnected()) Game.client.connectToServer(Game.ip);
 		}
 		
-		TextButton disco = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() / 4 * 3, "Trennen");
+		TextButton disco = new TextButton(Game.getWidth() / 2 - (Game.server != null ? TextButton.WIDTH : TextButton.WIDTH / 2), Game.getHeight() / 4 * 3, "Trennen");
 		disco.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -129,5 +130,16 @@ public class LobbyLayer extends MPLayer
 	public void onPacketReceived(Packet p)
 	{
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize")) Game.currentGame.fadeTo(1, 0.05f);
+		if (p instanceof Packet01Disconnect)
+		{
+			try
+			{
+				Game.client.sendPacket(new Packet04ServerInfo());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 }

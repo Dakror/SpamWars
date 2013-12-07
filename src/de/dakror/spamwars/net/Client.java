@@ -116,24 +116,11 @@ public class Client extends Thread
 				if (p.getUsername().equals("##") && serverIP != null)
 				{
 					if (!serverIP.equals(Game.user.getIP())) JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
-					connected = false;
-					serverInfo = null;
-					serverIP = null;
-					
-					Game.currentGame.setLayer(new MenuLayer());
+					setDisconnected();
 				}
 				else if (p.getUsername().equals(Game.user.getUsername()))
 				{
-					connected = false;
-					serverInfo = null;
-					serverIP = null;
-					
-					if (Game.server != null)
-					{
-						Game.server.shutdown();
-						Game.world = null;
-					}
-					Game.server = null;
+					setDisconnected();
 				}
 				else if (Game.world != null)
 				{
@@ -229,6 +216,8 @@ public class Client extends Thread
 						Game.world.setData(chunk.getChunk().x, chunk.getChunk().y, Packet05Chunk.SIZE, chunk.getWorldData());
 					}
 					
+					chunkPackets.clear();
+					
 					Game.world.addEntity(Game.player);
 					
 					for (User u : serverInfo.getUsers())
@@ -303,6 +292,19 @@ public class Client extends Thread
 		}
 		
 		if (Game.currentGame.getActiveLayer() instanceof MPLayer && packet != null) ((MPLayer) Game.currentGame.getActiveLayer()).onPacketReceived(packet);
+	}
+	
+	private void setDisconnected()
+	{
+		connected = false;
+		serverInfo = null;
+		serverIP = null;
+		
+		if (Game.server != null) Game.server.shutdown();
+		Game.server = null;
+		
+		Game.world = null;
+		Game.currentGame.setLayer(new MenuLayer());
 	}
 	
 	public void sendPacket(Packet p) throws IOException

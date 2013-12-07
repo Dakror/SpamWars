@@ -18,11 +18,10 @@ import javax.swing.JFrame;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
+import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.World;
-import de.dakror.spamwars.layer.LoginLayer;
-import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
@@ -77,7 +76,8 @@ public class Game extends GameFrame implements WindowFocusListener
 		});
 		try
 		{
-			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/Telev2.ttf")));
+			InputField.h = 8;
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
 		}
 		catch (Exception e)
 		{
@@ -87,15 +87,11 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		client = new Client();
 		
-		addLayer(new MenuLayer());
-		if (user == null) addLayer(new LoginLayer());
-		
 		w.addComponentListener(new ComponentAdapter()
 		{
 			@Override
 			public void componentResized(ComponentEvent e)
 			{
-				if (getActiveLayer() instanceof LoginLayer) return;
 				for (Layer l : layers)
 				{
 					l.components.clear();

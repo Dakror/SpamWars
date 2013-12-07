@@ -3,7 +3,6 @@ package de.dakror.spamwars.layer;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -40,12 +39,9 @@ public class HUDLayer extends MPLayer
 	{
 		Helper.drawContainer(Game.getWidth() / 2 - 200, Game.getHeight() - 50, 400, 60, false, false, g);
 		Helper.drawProgressBar(Game.getWidth() / 2 - 180, Game.getHeight() - 30, 360, Game.player.getLife() / (float) Game.player.getMaxlife(), "ff3232", g);
-		Font old = g.getFont();
-		g.setFont(new Font("Arial", Font.PLAIN, 25));
 		Color o = g.getColor();
 		g.setColor(Color.black);
 		Helper.drawHorizontallyCenteredString(Game.player.getLife() + " / " + Game.player.getMaxlife(), Game.getWidth(), Game.getHeight() - 14, g, 14);
-		g.setFont(old);
 		
 		Helper.drawContainer(Game.getWidth() - 175, Game.getHeight() - 110, 175, 110, false, false, g);
 		g.setColor(Color.white);
@@ -105,10 +101,11 @@ public class HUDLayer extends MPLayer
 			@Override
 			public int compare(User o1, User o2)
 			{
-				if (o1.D == 0 && o2.D == 0) return 0;
-				if (o1.D == 0) return -1;
-				if (o2.D == 0) return 1;
-				int compare = Float.compare(o2.K / (float) o2.D, o1.K / (float) o1.D);
+				int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
+				if (D1 == 0) D1++;
+				if (D2 == 0) D2++;
+				
+				int compare = Float.compare(K2 / (float) D2, K1 / (float) D1);
 				return compare;
 			}
 		});
@@ -120,9 +117,9 @@ public class HUDLayer extends MPLayer
 			g.setColor(Color.white);
 			if (users[i].getUsername().equals(Game.user.getUsername())) g.setColor(Color.decode("#3333ff"));
 			Helper.drawString(users[i].getUsername(), Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 110 + i * 30, g, 30);
-			Helper.drawString("/", Game.getWidth() / 2 + 340, Game.getHeight() / 2 - 110 + i * 30, g, 30);
-			Helper.drawRightAlignedString(users[i].K + "", Game.getWidth() / 2 + 325, Game.getHeight() / 2 - 110 + i * 30, g, 30);
-			Helper.drawString(users[i].D + "", Game.getWidth() / 2 + 382, Game.getHeight() / 2 - 110 + i * 30, g, 30);
+			Helper.drawString("/", Game.getWidth() / 2 + 350, Game.getHeight() / 2 - 110 + i * 30, g, 30);
+			Helper.drawRightAlignedString(users[i].K + "", Game.getWidth() / 2 + 331, Game.getHeight() / 2 - 110 + i * 30, g, 30);
+			Helper.drawString(users[i].D + "", Game.getWidth() / 2 + 391, Game.getHeight() / 2 - 110 + i * 30, g, 30);
 		}
 		g.setColor(o);
 	}

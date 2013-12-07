@@ -1,8 +1,5 @@
 package de.dakror.spamwars.layer;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
@@ -30,13 +27,7 @@ public class PauseLayer extends MPLayer
 	@Override
 	public void draw(Graphics2D g)
 	{
-		Composite c = g.getComposite();
-		Color o = g.getColor();
-		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-		g.setColor(Color.black);
-		g.fillRect(0, 0, Game.getWidth(), Game.getHeight());
-		g.setColor(o);
-		g.setComposite(c);
+		drawModality(g);
 		
 		Helper.drawContainer(Game.getWidth() / 2 - 160, Game.getHeight() / 2 - 108, 320, 212, true, false, g);
 		

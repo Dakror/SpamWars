@@ -123,7 +123,6 @@ public class Server extends Thread
 				{
 					if (user == null) sendPacketToAllClients(new Packet05Chunk(world, new Point(i, j)));
 					else sendPacket(new Packet05Chunk(world, new Point(i, j)), user);
-					
 				}
 			}
 			

@@ -1,7 +1,6 @@
 package de.dakror.spamwars.game.entity;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -70,15 +69,11 @@ public class Player extends Entity
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
 		
-		Font oldF = g.getFont();
-		g.setFont(new Font("", Font.PLAIN, 25));
 		Color o = g.getColor();
 		g.setColor(Color.darkGray);
 		Helper.drawHorizontallyCenteredString(user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
 		
 		if (!user.getUsername().equals(Game.user.getUsername())) Helper.drawProgressBar((int) mx, (int) (my + height - 5), width, life / (float) maxlife, "ff3232", g);
-		
-		g.setFont(oldF);
 		g.setColor(o);
 		
 		AffineTransform old = g.getTransform();
@@ -360,6 +355,8 @@ public class Player extends Entity
 		x = spawn.x * Tile.SIZE;
 		y = spawn.y * Tile.SIZE - height + Tile.SIZE;
 		life = maxlife;
+		weapon.ammo = weapon.magazine;
+		weapon.capacity = weapon.capacityMax;
 	}
 	
 	public void dealDamage(float damage, Object source)
