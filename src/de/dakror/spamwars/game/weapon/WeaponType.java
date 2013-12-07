@@ -15,6 +15,7 @@ public enum WeaponType
 {
 	HANDGUN(Handgun.class),
 	ASSAULT_RIFLE(AssauleRifle.class),
+	FALL_DAMAGE(null),
 	
 	;
 	
@@ -49,7 +50,16 @@ public enum WeaponType
 			}
 		}
 		return Game.getImage(class1.getName());
-		
-		
+	}
+	
+	public static String getMessage(WeaponType type)
+	{
+		switch (type)
+		{
+			case FALL_DAMAGE:
+				return "%p% landete nicht weich.";
+			default:
+				return null;
+		}
 	}
 }

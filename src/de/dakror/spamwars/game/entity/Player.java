@@ -363,7 +363,20 @@ public class Player extends Entity
 				{
 					e.printStackTrace();
 				}
+				
 			}
+			else if (source instanceof WeaponType)
+			{
+				try
+				{
+					Game.client.sendPacket(new Packet09Kill(Game.user.getUsername(), Game.user.getUsername(), (WeaponType) source));
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
 			
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
 			x = -10000000;
@@ -408,5 +421,13 @@ public class Player extends Entity
 				}
 			}
 		}
+	}
+	
+	@Override
+	protected void onHitGround(Vector velocity)
+	{
+		float maxFall = 30;
+		float dmgFactor = 5;
+		if (velocity.y > maxFall) dealDamage((velocity.y - maxFall) * dmgFactor, WeaponType.FALL_DAMAGE);
 	}
 }

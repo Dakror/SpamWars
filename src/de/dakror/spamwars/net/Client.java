@@ -7,11 +7,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.gamesetup.layer.Alert;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
@@ -115,8 +114,11 @@ public class Client extends Thread
 				Packet01Disconnect p = new Packet01Disconnect(data);
 				if (p.getUsername().equals("##") && serverIP != null)
 				{
-					if (!serverIP.equals(Game.user.getIP())) JOptionPane.showMessageDialog(Game.w, p.getCause().getDescription(), "Spiel beendet", JOptionPane.ERROR_MESSAGE);
 					setDisconnected();
+					if (!serverIP.equals(Game.user.getIP()))
+					{
+						Game.currentGame.addLayer(new Alert(p.getCause().getDescription(), null));
+					}
 				}
 				else if (p.getUsername().equals(Game.user.getUsername()))
 				{
@@ -301,6 +303,7 @@ public class Client extends Thread
 		connected = false;
 		serverInfo = null;
 		serverIP = null;
+		Game.player = null;
 		
 		if (Game.server != null) Game.server.shutdown();
 		Game.server = null;

@@ -203,6 +203,8 @@ public abstract class Entity extends EventListener implements Drawable
 		}
 		else
 		{
+			
+			if (Math.abs(velocity.y) != 0) onHitGround(velocity);
 			airborne = false;
 			getVelocity().y = 0;
 		}
@@ -279,4 +281,9 @@ public abstract class Entity extends EventListener implements Drawable
 			}
 		}
 	}
+	
+	// -- abstract event methods -- //
+	
+	protected void onHitGround(Vector velocity)
+	{}
 }

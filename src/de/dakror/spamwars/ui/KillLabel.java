@@ -25,6 +25,7 @@ public class KillLabel extends Component
 	public boolean dead;
 	
 	String killer, killed;
+	WeaponType type;
 	BufferedImage weapon;
 	
 	public KillLabel(int y, String killer, String killed, WeaponType weapon)
@@ -34,7 +35,9 @@ public class KillLabel extends Component
 		dead = false;
 		this.killer = killer;
 		this.killed = killed;
-		this.weapon = weapon.getIcon();
+		type = weapon;
+		
+		if (weapon.getClass1() != null) this.weapon = weapon.getIcon();
 	}
 	
 	@Override
@@ -47,7 +50,10 @@ public class KillLabel extends Component
 		if (width == 0)
 		{
 			FontMetrics fm = g.getFontMetrics();
-			width = fm.stringWidth(killer) + fm.stringWidth(killed) + 150;
+			
+			if (WeaponType.getMessage(type) == null) width = fm.stringWidth(killer) + fm.stringWidth(killed) + 150;
+			else width = fm.stringWidth(WeaponType.getMessage(type).replace("%p%", killed)) + 30;
+			
 			x = Game.getWidth() - width - 30;
 		}
 		
@@ -67,12 +73,16 @@ public class KillLabel extends Component
 			g.setColor(killed.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
 			Helper.drawRightAlignedString(killed, x + width - 15, y + 26, g, 18);
 			
-			g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
+			if (weapon != null) g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
 		}
-		else
+		else if (type.getClass1() != null)
 		{
 			int[] ints = Helper.drawHorizontallyCenteredString(killer, x - 30, width, y + 26, g, 18);
 			g.drawImage(Game.getImage("icon/kill.png"), ints[0] + ints[1] + 25, y + 10, Game.w);
+		}
+		else
+		{
+			Helper.drawString(WeaponType.getMessage(type).replace("%p%", killed), x + 15, y + 26, g, 18);
 		}
 		g.setColor(o);
 		g.setFont(f);
