@@ -423,6 +423,14 @@ public class Player extends Entity
 		}
 	}
 	
+	public void stop()
+	{
+		left = false;
+		right = false;
+		up = false;
+		down = false;
+	}
+	
 	@Override
 	protected void onHitGround(Vector velocity)
 	{

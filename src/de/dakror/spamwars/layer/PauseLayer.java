@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
-import de.dakror.gamesetup.ui.TextButton;
+import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
@@ -18,10 +18,7 @@ public class PauseLayer extends MPLayer
 	public PauseLayer()
 	{
 		modal = true;
-		Game.player.left = false;
-		Game.player.right = false;
-		Game.player.up = false;
-		Game.player.down = false;
+		Game.player.stop();
 	}
 	
 	@Override

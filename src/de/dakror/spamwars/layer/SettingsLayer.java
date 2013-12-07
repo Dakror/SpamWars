@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.Checkbox;
 import de.dakror.gamesetup.ui.ClickEvent;
-import de.dakror.gamesetup.ui.TextButton;
+import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
@@ -16,6 +16,11 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class SettingsLayer extends MPLayer
 {
+	public SettingsLayer()
+	{
+		modal = true;
+	}
+	
 	@Override
 	public void draw(Graphics2D g)
 	{

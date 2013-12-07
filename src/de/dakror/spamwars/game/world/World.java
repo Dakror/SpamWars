@@ -45,7 +45,7 @@ public class World extends EventListener implements Drawable
 	
 	URL file;
 	
-	ArrayList<Vector> spawns = new ArrayList<>();
+	public ArrayList<Vector> spawns = new ArrayList<>();
 	
 	public World()
 	{

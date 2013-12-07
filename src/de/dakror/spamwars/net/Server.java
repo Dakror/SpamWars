@@ -8,9 +8,14 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
@@ -23,12 +28,14 @@ import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
-import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet05Chunk;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.net.packet.Packet11GameInfo;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -44,16 +51,16 @@ public class Server extends Thread
 	
 	public File map = new File(CFG.DIR, "maps/BigSnowSurfaceStoneBasementDefault.map");
 	
-	boolean lobby;
+	public boolean lobby;
+	public long gameStarted;
 	
 	DatagramSocket socket;
 	public World world;
 	public ServerUpdater updater;
+	public int minutes;
+	public GameMode mode;
 	
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
-	
-	int x = 140;
-	int y = 500;
 	
 	public Server(InetAddress ip)
 	{
@@ -103,13 +110,37 @@ public class Server extends Thread
 		world.render();
 		world.render.flush();
 		
+		gameStarted = System.currentTimeMillis();
+		
 		updater = new ServerUpdater();
 		try
 		{
-			for (User u : clients)
-				world.addEntity(new Player(x, y, u));
+			final HashMap<Vector, Integer> spots = new HashMap<>();
+			for (Vector v : world.spawns)
+				spots.put(v, 0);
 			
-			sendPacketToAllClients(new Packet03Attribute("pos", x + "," + y));
+			sendPacketToAllClients(new Packet11GameInfo(minutes, mode));
+			
+			for (User u : clients)
+			{
+				ArrayList<Vector> vals = new ArrayList<>(spots.keySet());
+				Collections.sort(vals, new Comparator<Vector>()
+				{
+					@Override
+					public int compare(Vector o1, Vector o2)
+					{
+						return Integer.compare(spots.get(o1), spots.get(o1));
+					}
+				});
+				
+				int x = (int) (vals.get(0).x * Tile.SIZE);
+				int y = (int) (vals.get(0).y * Tile.SIZE);
+				
+				spots.put(vals.get(0), spots.get(vals.get(0)) + 1);
+				
+				world.addEntity(new Player(x, y, u));
+				sendPacketToAllClients(new Packet03Attribute("pos", x + "," + y));
+			}
 			
 			sendWorld(null);
 		}
@@ -143,10 +174,12 @@ public class Server extends Thread
 	
 	public void addLateJoiner(User user)
 	{
-		world.addEntity(new Player(x, y, user));
+		Vector v = world.getBestSpawnPoint();
+		world.addEntity(new Player(v.x * Tile.SIZE, v.x * Tile.SIZE, user));
 		try
 		{
-			sendPacket(new Packet03Attribute("pos", x + "," + y), user);
+			sendPacket(new Packet11GameInfo(minutes, mode), user);
+			sendPacket(new Packet03Attribute("pos", (int) (v.x * Tile.SIZE) + "," + (int) (v.x * Tile.SIZE)), user);
 			sendWorld(user);
 		}
 		catch (IOException e)
@@ -224,7 +257,7 @@ public class Server extends Thread
 				{
 					sendPacket(new Packet03Attribute("user", user.serialize()), user);
 					sendPacketToAllClients(packet);
-					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
+					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {})));
 				}
 				catch (Exception e)
 				{}
@@ -261,7 +294,7 @@ public class Server extends Thread
 				User user = new User(null, address, port);
 				try
 				{
-					sendPacket(new Packet04ServerInfo(clients.toArray(new User[] {})), user);
+					sendPacket(new Packet04PlayerList(clients.toArray(new User[] {})), user);
 				}
 				catch (IOException e)
 				{
@@ -350,7 +383,7 @@ public class Server extends Thread
 				try
 				{
 					sendPacketToAllClients(p);
-					sendPacketToAllClients(new Packet04ServerInfo(clients.toArray(new User[] {})));
+					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {})));
 				}
 				catch (Exception e)
 				{
@@ -401,7 +434,7 @@ public class Server extends Thread
 			e.printStackTrace();
 		}
 		running = false;
-		updater.closeRequested = true;
+		if (updater != null) updater.closeRequested = true;
 		socket.close();
 		CFG.p("[SERVER]: Server closed");
 	}

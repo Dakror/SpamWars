@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.InputField;
+import de.dakror.gamesetup.ui.button.Spinner;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.World;
@@ -76,6 +77,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		});
 		try
 		{
+			Spinner.h = 33;
 			InputField.h = 8;
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
 		}
@@ -179,10 +181,7 @@ public class Game extends GameFrame implements WindowFocusListener
 	{
 		if (player != null)
 		{
-			player.left = false;
-			player.right = false;
-			player.up = false;
-			player.down = false;
+			player.stop();
 		}
 	}
 }

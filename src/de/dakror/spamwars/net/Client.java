@@ -25,13 +25,14 @@ import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet01Disconnect.Cause;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
-import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet05Chunk;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
+import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -46,7 +47,9 @@ public class Client extends Thread
 	
 	InetAddress serverIP;
 	
-	public Packet04ServerInfo serverInfo;
+	public Packet04PlayerList serverInfo;
+	public Packet11GameInfo gameInfo;
+	public long gameStarted;
 	
 	ArrayList<Packet05Chunk> chunkPackets = new ArrayList<>();
 	
@@ -139,7 +142,7 @@ public class Client extends Thread
 					}
 					try
 					{
-						sendPacket(new Packet04ServerInfo());
+						sendPacket(new Packet04PlayerList());
 					}
 					catch (IOException e)
 					{
@@ -161,7 +164,7 @@ public class Client extends Thread
 			}
 			case SERVERINFO:
 			{
-				Packet04ServerInfo p = new Packet04ServerInfo(data);
+				Packet04PlayerList p = new Packet04PlayerList(data);
 				
 				serverInfo = p;
 				packet = p;
@@ -291,6 +294,16 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
+			case GAMEINFO:
+			{
+				Packet11GameInfo p = new Packet11GameInfo(data);
+				
+				gameStarted = System.currentTimeMillis();
+				gameInfo = p;
+				
+				packet = p;
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -301,6 +314,7 @@ public class Client extends Thread
 	private void setDisconnected()
 	{
 		connected = false;
+		gameStarted = 0;
 		serverInfo = null;
 		serverIP = null;
 		Game.player = null;
@@ -356,5 +370,10 @@ public class Client extends Thread
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isGameOver()
+	{
+		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
 }

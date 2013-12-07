@@ -8,15 +8,17 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.ui.KillLabel;
 
@@ -25,6 +27,20 @@ import de.dakror.spamwars.ui.KillLabel;
  */
 public class HUDLayer extends MPLayer
 {
+	public static Comparator<User> sort = new Comparator<User>()
+	{
+		@Override
+		public int compare(User o1, User o2)
+		{
+			int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
+			if (D1 == 0) D1++;
+			if (D2 == 0) D2++;
+			
+			int compare = Float.compare(K2 / (float) D2, K1 / (float) D1);
+			return compare;
+		}
+	};
+	
 	boolean showStats;
 	public boolean reload;
 	public int reloadStarted;
@@ -47,6 +63,11 @@ public class HUDLayer extends MPLayer
 		g.setColor(Color.white);
 		Helper.drawString(Game.player.getWeapon().ammo + "", Game.getWidth() - 165, Game.getHeight() - 50, g, 70);
 		Helper.drawRightAlignedString(Game.player.getWeapon().capacity + "", Game.getWidth() - 10, Game.getHeight() - 15, g, 40);
+		
+		// -- time panel -- //
+		Helper.drawContainer(Game.getWidth() / 2 - 150, 0, 300, 80, true, true, g);
+		Helper.drawHorizontallyCenteredString(Game.client.isGameOver() ? "00:00" : new SimpleDateFormat("mm:ss").format(new Date((Game.client.gameStarted + Game.client.gameInfo.getMinutes() * 60000) - System.currentTimeMillis())), Game.getWidth(), 56, g, 50);
+		
 		
 		if (!new Rectangle(5, 5, 70, 70).contains(Game.currentGame.mouse) || !Game.currentGame.getActiveLayer().equals(this)) Helper.drawContainer(5, 5, 70, 70, false, false, g);
 		else Helper.drawContainer(0, 0, 80, 80, false, true, g);
@@ -96,19 +117,7 @@ public class HUDLayer extends MPLayer
 		Helper.drawHorizontallyCenteredString("Statistik", Game.getWidth(), Game.getHeight() / 2 - 220, g, 80);
 		Helper.drawOutline(Game.getWidth() / 2 - 495, Game.getHeight() / 2 - 295, 990, 100, false, g);
 		User[] users = Game.client.serverInfo.getUsers();
-		Arrays.sort(users, new Comparator<User>()
-		{
-			@Override
-			public int compare(User o1, User o2)
-			{
-				int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
-				if (D1 == 0) D1++;
-				if (D2 == 0) D2++;
-				
-				int compare = Float.compare(K2 / (float) D2, K1 / (float) D1);
-				return compare;
-			}
-		});
+		Arrays.sort(users, sort);
 		Helper.drawString("SPIELERNAME", Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 160, g, 30);
 		Helper.drawString("K / D", Game.getWidth() / 2 + 300, Game.getHeight() / 2 - 160, g, 30);
 		
@@ -164,6 +173,11 @@ public class HUDLayer extends MPLayer
 			}
 		}
 		
+		if (Game.currentGame.getActiveLayer().equals(this) && Game.client.isGameOver())
+		{
+			Game.currentGame.addLayer(new WinnerLayer());
+		}
+		
 		updateComponents(tick);
 	}
 	
@@ -171,7 +185,7 @@ public class HUDLayer extends MPLayer
 	public void onPacketReceived(Packet p)
 	{
 		if (p instanceof Packet09Kill) components.add(new KillLabel(killY, ((Packet09Kill) p).getKiller(), ((Packet09Kill) p).getDead(), ((Packet09Kill) p).getWeapon()));
-		if (p instanceof Packet04ServerInfo) invokeRenderStats = true;
+		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 	}
 	
 	@Override

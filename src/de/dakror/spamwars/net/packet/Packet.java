@@ -21,6 +21,7 @@ public abstract class Packet
 		PROJECTILE,
 		KILL,
 		ENTITYSTATUS,
+		GAMEINFO,
 		
 		;
 		public int getID()

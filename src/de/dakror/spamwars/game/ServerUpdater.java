@@ -28,9 +28,10 @@ public class ServerUpdater extends Thread
 		time = System.currentTimeMillis();
 		while (!closeRequested)
 		{
+			if (Game.server == null) break;
 			if (tick == Integer.MAX_VALUE) tick = 0;
 			
-			Game.server.world.updateServer(tick);
+			if (Game.server.world != null) Game.server.world.updateServer(tick);
 			
 			try
 			{
@@ -41,5 +42,10 @@ public class ServerUpdater extends Thread
 			catch (InterruptedException e)
 			{}
 		}
+	}
+	
+	public boolean isGameOver()
+	{
+		return System.currentTimeMillis() - Game.server.gameStarted >= Game.server.minutes * 60000;
 	}
 }

@@ -7,14 +7,17 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 
 import de.dakror.gamesetup.ui.ClickEvent;
-import de.dakror.gamesetup.ui.TextButton;
+import de.dakror.gamesetup.ui.button.ArrowButton.ArrowType;
+import de.dakror.gamesetup.ui.button.Spinner;
+import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
-import de.dakror.spamwars.net.packet.Packet04ServerInfo;
+import de.dakror.spamwars.net.packet.Packet04PlayerList;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 
 /**
  * @author Dakror
@@ -35,6 +38,9 @@ public class LobbyLayer extends MPLayer
 		{
 			Helper.drawContainer(0, 300, Game.getWidth() / 4, (Game.getHeight() / 4 * 3 - 20 + TextButton.HEIGHT + 40) - 300, false, false, g);
 			Helper.drawHorizontallyCenteredString("Optionen", Game.getWidth() / 4, 340, g, 28);
+			
+			Helper.drawHorizontallyCenteredString("Spielmodus", Game.getWidth() / 4, 480, g, 28);
+			Helper.drawHorizontallyCenteredString("Zeit (min):", Game.getWidth() / 8, 580, g, 28);
 		}
 		
 		Color c = g.getColor();
@@ -72,17 +78,6 @@ public class LobbyLayer extends MPLayer
 		{
 			if (Game.server == null) Game.server = new Server(Game.ip);
 			
-			TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3, "Start");
-			start.addClickEvent(new ClickEvent()
-			{
-				@Override
-				public void trigger()
-				{
-					Game.server.startGame();
-				}
-			});
-			components.add(start);
-			
 			TextButton map = new TextButton((Game.getWidth() / 4 - TextButton.WIDTH) / 2, 380, "Karte");
 			map.addClickEvent(new ClickEvent()
 			{
@@ -99,6 +94,30 @@ public class LobbyLayer extends MPLayer
 				}
 			});
 			components.add(map);
+			
+			final Spinner mode = new Spinner(15, 490, Game.getWidth() / 4 - 30, 0, GameMode.values().length - 1, 1, 0, ArrowType.ARROW_L_HOR, ArrowType.ARROW_R_HOR);
+			for (GameMode g : GameMode.values())
+			{
+				mode.addAlias(g.ordinal(), g.getName());
+			}
+			components.add(mode);
+			
+			final Spinner time = new Spinner(Game.getWidth() / 8, 545, Game.getWidth() / 8 - 15, 1, 30, 1, 5, ArrowType.MINUS_HOR, ArrowType.PLUS_HOR);
+			components.add(time);
+			
+			TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3, "Start");
+			start.addClickEvent(new ClickEvent()
+			{
+				@Override
+				public void trigger()
+				{
+					Game.server.mode = GameMode.values()[mode.value];
+					Game.server.minutes = time.value;
+					
+					Game.server.startGame();
+				}
+			});
+			components.add(start);
 			
 			if (!Game.client.isConnected()) Game.client.connectToServer(Game.ip);
 		}
@@ -118,7 +137,7 @@ public class LobbyLayer extends MPLayer
 		
 		try
 		{
-			Game.client.sendPacket(new Packet04ServerInfo());
+			Game.client.sendPacket(new Packet04PlayerList());
 		}
 		catch (IOException e)
 		{
@@ -134,7 +153,7 @@ public class LobbyLayer extends MPLayer
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet04ServerInfo());
+				Game.client.sendPacket(new Packet04PlayerList());
 			}
 			catch (IOException e)
 			{

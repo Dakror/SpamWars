@@ -9,11 +9,11 @@ import de.dakror.spamwars.net.User;
 /**
  * @author Dakror
  */
-public class Packet04ServerInfo extends Packet
+public class Packet04PlayerList extends Packet
 {
 	User[] users;
 	
-	public Packet04ServerInfo(byte[] data)
+	public Packet04PlayerList(byte[] data)
 	{
 		super(4);
 		
@@ -35,13 +35,13 @@ public class Packet04ServerInfo extends Packet
 		}
 	}
 	
-	public Packet04ServerInfo(User[] users)
+	public Packet04PlayerList(User[] users)
 	{
 		super(4);
 		this.users = users;
 	}
 	
-	public Packet04ServerInfo()
+	public Packet04PlayerList()
 	{
 		super(4);
 	}
