@@ -282,23 +282,6 @@ public class Player extends Entity
 				left = right = up = down = false;
 				weapon.target(null);
 			}
-			
-			for (Entity e : Game.world.entities)
-			{
-				if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0)))
-				{
-					if (weapon.canRefill() && e instanceof AmmoBox)
-					{
-						e.setEnabled(false, true);
-						weapon.refill(AmmoBox.AMMO);
-					}
-					if (life < maxlife && e instanceof HealthBox)
-					{
-						e.setEnabled(false, true);
-						life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
-					}
-				}
-			}
 		}
 		
 		weapon.left = lookingLeft;
@@ -387,6 +370,43 @@ public class Player extends Entity
 			gravity = false;
 			life = 0;
 			Game.currentGame.addLayer(new RespawnLayer());
+		}
+	}
+	
+	@Override
+	public void updateServer(int tick)
+	{
+		for (Entity e : Game.server.world.entities)
+		{
+			if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0)))
+			{
+				if (weapon.canRefill() && e instanceof AmmoBox)
+				{
+					e.setEnabled(false, true, true);
+					weapon.refill(AmmoBox.AMMO);
+					try
+					{
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+				if (life < maxlife && e instanceof HealthBox)
+				{
+					e.setEnabled(false, true, true);
+					life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
+					try
+					{
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 }

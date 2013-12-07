@@ -230,12 +230,11 @@ public class Client extends Thread
 			case PLAYER:
 			{
 				Packet06PlayerData p = new Packet06PlayerData(data);
-				
 				if (Game.world == null) break;
 				
 				for (Entity e : Game.world.entities)
 				{
-					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()) && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()))
 					{
 						e.setPos(p.getPosition());
 						((Player) e).frame = p.getFrame();
@@ -244,7 +243,10 @@ public class Client extends Thread
 						((Player) e).setStyle(p.getStyle());
 						if (((Player) e).getWeapon().type != p.getWeaponType()) ((Player) e).setWeapon(p.getWeaponType());
 						((Player) e).getWeapon().rot2 = p.getRot();
-						e.update = false;
+						((Player) e).getWeapon().ammo = p.getAmmo();
+						((Player) e).getWeapon().capacity = p.getCapacity();
+						
+						if (!p.getUsername().equals(Game.user.getUsername())) e.update = false;
 						break;
 					}
 				}
@@ -280,7 +282,7 @@ public class Client extends Thread
 				{
 					if (!(e instanceof Player) && e.getPos().equals(p.getPos()))
 					{
-						e.setEnabled(p.getState(), false);
+						e.setEnabled(p.getState(), false, false);
 					}
 				}
 				

@@ -12,7 +12,7 @@ import de.dakror.spamwars.game.world.Tile;
 public class HealthBox extends Entity
 {
 	public static final int HEALTH = 30;
-	public static final int TIMEOUT = 60 * 30; // 60 secs
+	public static final int TIMEOUT = 60 * 30; // 30 secs
 	int tick;
 	int startTick;
 	int random;
@@ -29,18 +29,31 @@ public class HealthBox extends Entity
 	protected void tick(int tick)
 	{
 		this.tick = tick;
-		if (!isEnabled())
-		{
-			if (startTick == 0) startTick = tick;
-			
-			if (tick - startTick >= TIMEOUT) setEnabled(true, true);
-		}
-		else startTick = 0;
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
 		g.drawImage(Game.getImage("tile/boxExplosive.png"), (int) (x + Game.world.x) + 10, (int) (y + Game.world.y + 5 * Math.sin((tick + random) / 13f) + 10), width - 20, height - 20, Game.w);
+	}
+	
+	@Override
+	public void updateServer(int tick)
+	{
+		if (!isEnabled())
+		{
+			if (startTick == 0)
+			{
+				startTick = tick;
+				return;
+			}
+			
+			if (tick - startTick >= TIMEOUT)
+			{
+				setEnabled(true, true, true);
+				startTick = 0;
+			}
+		}
+		else startTick = 0;
 	}
 }

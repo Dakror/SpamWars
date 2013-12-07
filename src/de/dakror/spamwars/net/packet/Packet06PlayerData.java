@@ -14,7 +14,7 @@ public class Packet06PlayerData extends Packet
 {
 	Vector position;
 	boolean left;
-	int style, frame, life;
+	int style, frame, life, ammo, capacity;
 	float rot;
 	int weaponID;
 	String username;
@@ -30,6 +30,8 @@ public class Packet06PlayerData extends Packet
 		rot = p.getWeapon().rot;
 		weaponID = p.getWeapon().type.ordinal();
 		username = p.getUser().getUsername();
+		ammo = p.getWeapon().ammo;
+		capacity = p.getWeapon().capacity;
 	}
 	
 	public Packet06PlayerData(byte[] data)
@@ -44,6 +46,8 @@ public class Packet06PlayerData extends Packet
 		rot = bb.getFloat();
 		life = bb.getInt();
 		weaponID = bb.getInt();
+		ammo = bb.getInt();
+		capacity = bb.getInt();
 		
 		int length = bb.getInt();
 		
@@ -56,7 +60,7 @@ public class Packet06PlayerData extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + username.length());
+		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + 8 + username.length());
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
@@ -65,6 +69,8 @@ public class Packet06PlayerData extends Packet
 		bb.putFloat(rot);
 		bb.putInt(life);
 		bb.putInt(weaponID);
+		bb.putInt(ammo);
+		bb.putInt(capacity);
 		
 		bb.putInt(username.length());
 		bb.put(username.getBytes());
@@ -110,5 +116,15 @@ public class Packet06PlayerData extends Packet
 	public String getUsername()
 	{
 		return username;
+	}
+	
+	public int getAmmo()
+	{
+		return ammo;
+	}
+	
+	public int getCapacity()
+	{
+		return capacity;
 	}
 }

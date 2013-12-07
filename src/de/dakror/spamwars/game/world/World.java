@@ -37,7 +37,7 @@ public class World extends EventListener implements Drawable
 	
 	public int[][] data;
 	
-	BufferedImage render;
+	public BufferedImage render;
 	
 	public CopyOnWriteArrayList<Entity> entities = new CopyOnWriteArrayList<>();
 	public CopyOnWriteArrayList<Projectile> projectiles = new CopyOnWriteArrayList<>();
@@ -330,6 +330,12 @@ public class World extends EventListener implements Drawable
 			a.update(tick);
 			if (a.isDead()) animations.remove(a);
 		}
+	}
+	
+	public void updateServer(int tick)
+	{
+		for (Entity e : entities)
+			e.updateServer(tick);
 	}
 	
 	public void addEntity(Entity e)

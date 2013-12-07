@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
@@ -44,6 +43,8 @@ public abstract class Entity extends EventListener implements Drawable
 	}
 	
 	protected abstract void tick(int tick);
+	
+	public abstract void updateServer(int tick);
 	
 	@Override
 	public abstract void draw(Graphics2D g);
@@ -262,16 +263,20 @@ public abstract class Entity extends EventListener implements Drawable
 		return enabled;
 	}
 	
-	public void setEnabled(boolean enabled, boolean sendState)
+	public void setEnabled(boolean enabled, boolean send, boolean server)
 	{
 		this.enabled = enabled;
-		try
+		if (send)
 		{
-			if (sendState) Game.client.sendPacket(new Packet10EntityStatus(getPos(), enabled));
-		}
-		catch (IOException e1)
-		{
-			e1.printStackTrace();
+			try
+			{
+				if (server) Game.server.sendPacketToAllClients(new Packet10EntityStatus(getPos(), enabled));
+				else Game.client.sendPacket(new Packet10EntityStatus(getPos(), enabled));
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.world.Tile;
@@ -28,7 +29,6 @@ import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
-import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -47,7 +47,9 @@ public class Server extends Thread
 	boolean lobby;
 	
 	DatagramSocket socket;
-	World world;
+	public World world;
+	public ServerUpdater updater;
+	
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
 	int x = 140;
@@ -98,6 +100,10 @@ public class Server extends Thread
 	{
 		lobby = false;
 		world = new World(Helper.getFileContent(map));
+		world.render();
+		world.render.flush();
+		
+		updater = new ServerUpdater();
 		try
 		{
 			for (User u : clients)
@@ -156,6 +162,7 @@ public class Server extends Thread
 		switch (type)
 		{
 			case INVALID:
+			case ENTITYSTATUS:
 			{
 				break;
 			}
@@ -277,9 +284,12 @@ public class Server extends Thread
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
 						e.setLife(p.getLife());
+						
 						((Player) e).setStyle(p.getStyle());
 						if (((Player) e).getWeapon().type != p.getWeaponType()) ((Player) e).setWeapon(p.getWeaponType());
 						
+						((Player) e).getWeapon().ammo = p.getAmmo();
+						((Player) e).getWeapon().capacity = p.getCapacity();
 						((Player) e).getWeapon().rot2 = p.getRot();
 						
 						user = ((Player) e).getUser();
@@ -348,21 +358,6 @@ public class Server extends Thread
 				}
 				break;
 			}
-			case ENTITYSTATUS:
-			{
-				Packet10EntityStatus p = new Packet10EntityStatus(data);
-				
-				try
-				{
-					sendPacketToAllClientsExceptOne(p, new User(null, address, port));
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-				
-				break;
-			}
 			default:
 				CFG.p("[SERVER]: reveived unhandled packet (" + address.getHostAddress() + ":" + port + ") " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -406,6 +401,7 @@ public class Server extends Thread
 			e.printStackTrace();
 		}
 		running = false;
+		updater.closeRequested = true;
 		socket.close();
 		CFG.p("[SERVER]: Server closed");
 	}

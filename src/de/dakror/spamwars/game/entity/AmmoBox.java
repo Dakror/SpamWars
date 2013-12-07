@@ -29,18 +29,31 @@ public class AmmoBox extends Entity
 	protected void tick(int tick)
 	{
 		this.tick = tick;
-		if (!isEnabled())
-		{
-			if (startTick == 0) startTick = tick;
-			
-			if (tick - startTick >= TIMEOUT) setEnabled(true, true);
-		}
-		else startTick = 0;
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
 		g.drawImage(Game.getImage("tile/boxCoinAlt.png"), (int) (x + Game.world.x) + 10, (int) (y + Game.world.y + 5 * Math.sin((tick + random) / 13f) + 10), width - 20, height - 20, Game.w);
+	}
+	
+	@Override
+	public void updateServer(int tick)
+	{
+		if (!isEnabled())
+		{
+			if (startTick == 0)
+			{
+				startTick = tick;
+				return;
+			}
+			
+			if (tick - startTick >= TIMEOUT && startTick > 0)
+			{
+				setEnabled(true, true, true);
+				startTick = 0;
+			}
+		}
+		else startTick = 0;
 	}
 }
