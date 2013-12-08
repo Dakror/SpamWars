@@ -49,9 +49,9 @@ public enum Part
 		SCOPE,
 		SUBBARREL,
 		BARRELGRIP,
-		HOOK,
 		ACCESSORY,
-		PULL,
+		HAMMER,
 		DRUM,
+		BACKGROUND,
 	}
 }
