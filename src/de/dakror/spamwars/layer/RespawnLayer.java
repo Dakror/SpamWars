@@ -9,6 +9,7 @@ import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 
 /**
  * @author Dakror
@@ -28,7 +29,7 @@ public class RespawnLayer extends MPLayer
 	@Override
 	public void draw(Graphics2D g)
 	{
-		if (end == 0)
+		if (end == 0 && Game.client.gameInfo.getGameMode() != GameMode.ONE_IN_THE_CHAMBER)
 		{
 			end = System.currentTimeMillis() + RESPAWN_TIME;
 		}
@@ -41,8 +42,16 @@ public class RespawnLayer extends MPLayer
 		g.setColor(o);
 		g.setComposite(oc);
 		
-		Helper.drawHorizontallyCenteredString("RESPAWN in ", Game.getWidth(), Game.getHeight() / 3, g, 70);
-		Helper.drawString((Math.round((end - System.currentTimeMillis()) / 100f) / 10f) + "", Game.getWidth() / 2 - 100, Game.getHeight() / 2, g, 90);
+		if (Game.client.gameInfo.getGameMode() != GameMode.ONE_IN_THE_CHAMBER)
+		{
+			Helper.drawHorizontallyCenteredString("RESPAWN in ", Game.getWidth(), Game.getHeight() / 3, g, 70);
+			Helper.drawString((Math.round((end - System.currentTimeMillis()) / 100f) / 10f) + "", Game.getWidth() / 2 - 100, Game.getHeight() / 2, g, 90);
+		}
+		else
+		{
+			Helper.drawHorizontallyCenteredString("Du bist tot", Game.getWidth(), Game.getHeight() / 3, g, 90);
+			Helper.drawHorizontallyCenteredString("Respawn nächste Runde", Game.getWidth(), Game.getHeight() / 3 + 100, g, 40);
+		}
 	}
 	
 	@Override

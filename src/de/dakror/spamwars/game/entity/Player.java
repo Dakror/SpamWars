@@ -23,6 +23,7 @@ import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
 
 
@@ -347,6 +348,9 @@ public class Player extends Entity
 	public void dealDamage(float damage, Object source)
 	{
 		life -= damage;
+		
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER && source instanceof Projectile) life = 0;
+		
 		if (life <= 0 && x > -10000000)
 		{
 			if (source instanceof Projectile)

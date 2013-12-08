@@ -15,6 +15,7 @@ import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.HUDLayer;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -132,6 +133,12 @@ public abstract class Weapon implements Drawable
 			lastShot = tick;
 			
 			if (fireMode == FireMode.SINGLE) target = null;
+		}
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
+		{
+			capacity = 0;
+			magazine = 1;
+			if (ammo > magazine) ammo = 1;
 		}
 	}
 	
