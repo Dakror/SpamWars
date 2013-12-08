@@ -54,6 +54,8 @@ public class HUDLayer extends MPLayer
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (Game.player == null) return;
+		
 		Helper.drawContainer(Game.getWidth() / 2 - 200, Game.getHeight() - 50, 400, 60, false, false, g);
 		Helper.drawProgressBar(Game.getWidth() / 2 - 180, Game.getHeight() - 30, 360, Game.player.getLife() / (float) Game.player.getMaxlife(), "ff3232", g);
 		Color o = g.getColor();
