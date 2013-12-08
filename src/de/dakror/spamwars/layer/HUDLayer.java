@@ -28,21 +28,6 @@ import de.dakror.spamwars.ui.KillLabel;
  */
 public class HUDLayer extends MPLayer
 {
-	public static Comparator<User> sort = new Comparator<User>()
-	{
-		@Override
-		public int compare(User o1, User o2)
-		{
-			int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
-			if (K1 == 0 && K2 == 0) return Integer.compare(D1, D2);
-			
-			if (D1 == 0) D1++;
-			if (D2 == 0) D2++;
-			
-			return Float.compare(K2 / (float) D2, K1 / (float) D1);
-		}
-	};
-	
 	boolean showStats;
 	public boolean reload;
 	public int reloadStarted;
@@ -121,7 +106,7 @@ public class HUDLayer extends MPLayer
 		Helper.drawHorizontallyCenteredString("Statistik", Game.getWidth(), Game.getHeight() / 2 - 220, g, 80);
 		Helper.drawOutline(Game.getWidth() / 2 - 495, Game.getHeight() / 2 - 295, 990, 100, false, g);
 		User[] users = Game.client.playerList.getUsers();
-		Arrays.sort(users, sort);
+		Arrays.sort(users, getSorter());
 		Helper.drawString("SPIELERNAME", Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 160, g, 30);
 		Helper.drawString("K / D", Game.getWidth() / 2 + 300, Game.getHeight() / 2 - 160, g, 30);
 		
@@ -231,5 +216,27 @@ public class HUDLayer extends MPLayer
 	public void init()
 	{
 		showStats = false;
+	}
+	
+	public static Comparator<User> getSorter()
+	{
+		return new Comparator<User>()
+		{
+			@Override
+			public int compare(User o1, User o2)
+			{
+				int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
+				
+				if (D1 == 3 && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) return 1;
+				if (D2 == 3 && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) return -1;
+				
+				if (K1 == 0 && K2 == 0) return Integer.compare(D1, D2);
+				
+				if (D1 == 0) D1++;
+				if (D2 == 0) D2++;
+				
+				return Float.compare(K2 / (float) D2, K1 / (float) D1);
+			}
+		};
 	}
 }

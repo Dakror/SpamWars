@@ -43,9 +43,4 @@ public class ServerUpdater extends Thread
 			{}
 		}
 	}
-	
-	public boolean isGameOver()
-	{
-		return System.currentTimeMillis() - Game.server.gameStarted >= Game.server.minutes * 60000;
-	}
 }

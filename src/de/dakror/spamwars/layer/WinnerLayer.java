@@ -21,7 +21,7 @@ public class WinnerLayer extends MPLayer
 	{
 		modal = true;
 		User[] users = Game.client.playerList.getUsers();
-		Arrays.sort(users, HUDLayer.sort);
+		Arrays.sort(users, HUDLayer.getSorter());
 		winner = users[0];
 		
 		Game.player.stop();
