@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Properties;
 
+import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 
 /**
@@ -17,7 +20,7 @@ public class CFG
 	public static final File DIR = new File(System.getProperty("user.home") + "/.dakror/SpamWars");
 	
 	// -- UniVersion -- //
-	public static final int VERSION = 2013120812;
+	public static final int VERSION = 2013120818;
 	public static final int PHASE = 1;
 	
 	public static boolean INTERNET;
@@ -71,6 +74,50 @@ public class CFG
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public static Properties loadLogin()
+	{
+		try
+		{
+			File s = new File(DIR, ".login");
+			
+			if (!s.exists()) return null;
+			
+			Properties properties = new Properties();
+			StringReader sr = new StringReader(Compressor.decompressFile(s));
+			properties.load(sr);
+			return properties;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static void deleteLogin()
+	{
+		File s = new File(DIR, ".login");
+		s.delete();
+	}
+	
+	public static void saveLogin(String username, String pwd)
+	{
+		try
+		{
+			File s = new File(DIR, ".login");
+			Properties properties = new Properties();
+			properties.setProperty("username", username);
+			properties.setProperty("pwd", pwd);
+			StringWriter sw = new StringWriter();
+			properties.store(sw, "");
+			Compressor.compressFile(s, sw.toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 	

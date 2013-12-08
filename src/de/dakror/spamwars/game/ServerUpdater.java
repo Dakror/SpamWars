@@ -1,6 +1,7 @@
 package de.dakror.spamwars.game;
 
 import de.dakror.gamesetup.Updater;
+import de.dakror.spamwars.net.packet.Packet03Attribute;
 
 /**
  * @author Dakror
@@ -8,7 +9,9 @@ import de.dakror.gamesetup.Updater;
 public class ServerUpdater extends Thread
 {
 	public int tick, ticks;
-	long time;
+	long time, time2;
+	
+	public int countdown = -1;
 	
 	public int speed = 1;
 	
@@ -32,6 +35,41 @@ public class ServerUpdater extends Thread
 			if (tick == Integer.MAX_VALUE) tick = 0;
 			
 			if (Game.server.world != null) Game.server.world.updateServer(tick);
+			
+			if (countdown > -1 && time2 == 0)
+			{
+				time2 = System.currentTimeMillis();
+				try
+				{
+					Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			if (System.currentTimeMillis() - time2 >= 1000 && time2 > 0)
+			{
+				if (countdown <= 0)
+				{
+					time2 = 0;
+					countdown = -1;
+				}
+				else
+				{
+					countdown--;
+					try
+					{
+						Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown));
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					time2 = System.currentTimeMillis();
+				}
+			}
 			
 			try
 			{

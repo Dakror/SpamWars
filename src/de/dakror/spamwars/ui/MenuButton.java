@@ -41,7 +41,7 @@ public class MenuButton extends ClickableComponent
 		this.width = s.width;
 		this.height = s.height;
 		x = (Game.getWidth() - this.width) / 2;
-		y = Game.getHeight() / 5 * 2 + y1 * (s.height + 20);
+		y = Game.getHeight() / 3 + y1 * (s.height + 20);
 		Composite c = g.getComposite();
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 		Helper.drawImageCenteredRelativeScaled(img, y, width, height, 1920, 1080, Game.getWidth(), Game.getHeight(), g);

@@ -439,8 +439,8 @@ public class Player extends Entity
 	protected void onHitGround(Vector velocity)
 	{
 		float maxFall = 20;
-		float dmgFactor = 5;
-		if (velocity.y > maxFall) dealDamage((velocity.y - maxFall) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
+		float dmgFactor = 0.25f;
+		if (velocity.y > maxFall) dealDamage((float) Math.pow((velocity.y - maxFall), 2) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
 	}
 	
 	@Override

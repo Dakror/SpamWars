@@ -164,7 +164,7 @@ public class HUDLayer extends MPLayer
 			}
 		}
 		
-		if (Game.currentGame.getActiveLayer().equals(this) && Game.client.isGameOver())
+		if (Game.client.isGameOver() && !(Game.currentGame.getActiveLayer() instanceof WinnerLayer))
 		{
 			Game.currentGame.addLayer(new WinnerLayer());
 		}

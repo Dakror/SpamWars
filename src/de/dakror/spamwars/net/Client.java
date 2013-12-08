@@ -17,7 +17,6 @@ import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.weapon.Action;
 import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.World;
-import de.dakror.spamwars.layer.LobbyLayer;
 import de.dakror.spamwars.layer.MPLayer;
 import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.packet.Packet;
@@ -220,7 +219,7 @@ public class Client extends Thread
 				}
 				if (p.getKey().equals("worldsize"))
 				{
-					if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
+					// if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
 					
 					int w = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf("_")));
 					int h = Integer.parseInt(p.getValue().substring(p.getValue().indexOf("_") + 1));

@@ -85,6 +85,7 @@ public class Server extends Thread
 	public void run()
 	{
 		running = true;
+		updater = new ServerUpdater();
 		while (running)
 		{
 			byte[] data = new byte[Server.PACKETSIZE];
@@ -112,8 +113,6 @@ public class Server extends Thread
 		world.render.flush();
 		
 		gameStarted = System.currentTimeMillis();
-		
-		updater = new ServerUpdater();
 		try
 		{
 			final HashMap<Vector, Integer> spots = new HashMap<>();
@@ -330,10 +329,9 @@ public class Server extends Thread
 						break;
 					}
 				}
-				
 				try
 				{
-					sendPacketToAllClientsExceptOne(p, user);
+					if (user != null) sendPacketToAllClientsExceptOne(p, user);
 				}
 				catch (Exception e1)
 				{

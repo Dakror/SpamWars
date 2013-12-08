@@ -83,7 +83,10 @@ public abstract class Weapon implements Drawable
 	{
 		Vector muzzle = getMuzzle();
 		
+		int mal = 30;
+		
 		Vector pos = new Vector(x + muzzle.x - Game.world.x, y + muzzle.y - Game.world.y);
+		
 		
 		Point tile = Game.world.getTile((int) pos.x, (int) pos.y);
 		Tile t = Tile.values()[Game.world.getTileIdAtPixel((int) pos.x, (int) pos.y)];
@@ -116,6 +119,13 @@ public abstract class Weapon implements Drawable
 			}
 			return;
 		}
+		
+		float malus = (float) Math.random() * mal - mal / 2;
+		
+		Vector target = this.target.clone();
+		
+		target.y += malus;
+		pos.y += malus;
 		
 		ammo--;
 		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
