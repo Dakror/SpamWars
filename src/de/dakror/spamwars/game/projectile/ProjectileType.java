@@ -7,10 +7,7 @@ import java.awt.Rectangle;
  */
 public enum ProjectileType
 {
-	HANDGUN(new Rectangle(275, 89, 20, 10), 50, 5, 1000),
-	ASSAULT_RIFLE(new Rectangle(275, 89, 20, 10), 70, 5, 1400),
-	
-	;
+	DEFAUL_LEAD(new Rectangle(275, 89, 20, 10), 50, 5, 1000), ;
 	
 	private Rectangle tex;
 	private float speed, damage, range;

@@ -63,7 +63,7 @@ public class Player extends Entity
 		
 		life = maxlife = 100;
 		
-		setWeapon(WeaponType.HANDGUN);
+		setWeapon(WeaponType.PISTOL);
 	}
 	
 	@Override
