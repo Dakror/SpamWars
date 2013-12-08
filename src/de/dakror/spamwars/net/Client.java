@@ -403,6 +403,7 @@ public class Client extends Thread
 			
 			if (notOuts < 2) return true;
 		}
+		
 		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
 }

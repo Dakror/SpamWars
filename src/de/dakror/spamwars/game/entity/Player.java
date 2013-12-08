@@ -438,7 +438,7 @@ public class Player extends Entity
 	@Override
 	protected void onHitGround(Vector velocity)
 	{
-		float maxFall = 30;
+		float maxFall = 20;
 		float dmgFactor = 5;
 		if (velocity.y > maxFall) dealDamage((velocity.y - maxFall) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
 	}
@@ -446,7 +446,7 @@ public class Player extends Entity
 	@Override
 	protected void onHitEntity(Entity e, Vector velocity)
 	{
-		if (e instanceof Player && velocity.y > 14)
+		if (e instanceof Player && velocity.y > 5)
 		{
 			try
 			{

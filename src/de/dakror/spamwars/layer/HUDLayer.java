@@ -40,41 +40,43 @@ public class HUDLayer extends MPLayer
 	@Override
 	public void draw(Graphics2D g)
 	{
-		if (Game.player == null) return;
-		
-		Helper.drawContainer(Game.getWidth() / 2 - 200, Game.getHeight() - 50, 400, 60, false, false, g);
-		Helper.drawProgressBar(Game.getWidth() / 2 - 180, Game.getHeight() - 30, 360, Game.player.getLife() / (float) Game.player.getMaxlife(), "ff3232", g);
-		Color o = g.getColor();
-		g.setColor(Color.black);
-		Helper.drawHorizontallyCenteredString(Game.player.getLife() + " / " + Game.player.getMaxlife(), Game.getWidth(), Game.getHeight() - 14, g, 14);
-		
-		Helper.drawContainer(Game.getWidth() - 175, Game.getHeight() - 110, 175, 110, false, false, g);
-		g.setColor(Color.white);
-		Helper.drawString(Game.player.getWeapon().ammo + "", Game.getWidth() - 165, Game.getHeight() - 50, g, 70);
-		Helper.drawRightAlignedString(Game.player.getWeapon().capacity + "", Game.getWidth() - 10, Game.getHeight() - 15, g, 40);
-		
-		// -- time panel -- //
-		Helper.drawContainer(Game.getWidth() / 2 - 150, 0, 300, 80, true, true, g);
-		Helper.drawHorizontallyCenteredString(Game.client.isGameOver() ? "00:00" : new SimpleDateFormat("mm:ss").format(new Date((Game.client.gameStarted + Game.client.gameInfo.getMinutes() * 60000) - System.currentTimeMillis())), Game.getWidth(), 56, g, 50);
-		
-		
-		if (!new Rectangle(5, 5, 70, 70).contains(Game.currentGame.mouse) || !Game.currentGame.getActiveLayer().equals(this)) Helper.drawContainer(5, 5, 70, 70, false, false, g);
-		else Helper.drawContainer(0, 0, 80, 80, false, true, g);
-		g.drawImage(Game.getImage("gui/pause.png"), 5, 5, 70, 70, Game.w);
-		
-		if (reload && reloadStarted > 0)
+		try
 		{
-			Composite c = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
-			Helper.drawShadow(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, g);
-			Helper.drawOutline(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, false, g);
-			Helper.drawProgressBar(Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().reloadSpeed, "2a86e7", g);
+			Helper.drawContainer(Game.getWidth() / 2 - 200, Game.getHeight() - 50, 400, 60, false, false, g);
+			Helper.drawProgressBar(Game.getWidth() / 2 - 180, Game.getHeight() - 30, 360, Game.player.getLife() / (float) Game.player.getMaxlife(), "ff3232", g);
+			Color o = g.getColor();
 			g.setColor(Color.black);
-			Helper.drawHorizontallyCenteredString("Nachladen", Game.getWidth(), Game.getHeight() / 3 * 2 + 16, g, 20);
-			g.setComposite(c);
+			Helper.drawHorizontallyCenteredString(Game.player.getLife() + " / " + Game.player.getMaxlife(), Game.getWidth(), Game.getHeight() - 14, g, 14);
+			
+			Helper.drawContainer(Game.getWidth() - 175, Game.getHeight() - 110, 175, 110, false, false, g);
+			g.setColor(Color.white);
+			Helper.drawString(Game.player.getWeapon().ammo + "", Game.getWidth() - 165, Game.getHeight() - 50, g, 70);
+			Helper.drawRightAlignedString(Game.player.getWeapon().capacity + "", Game.getWidth() - 10, Game.getHeight() - 15, g, 40);
+			
+			// -- time panel -- //
+			Helper.drawContainer(Game.getWidth() / 2 - 150, 0, 300, 80, true, true, g);
+			Helper.drawHorizontallyCenteredString(Game.client.isGameOver() ? "00:00" : new SimpleDateFormat("mm:ss").format(new Date((Game.client.gameStarted + Game.client.gameInfo.getMinutes() * 60000) - System.currentTimeMillis())), Game.getWidth(), 56, g, 50);
+			
+			
+			if (!new Rectangle(5, 5, 70, 70).contains(Game.currentGame.mouse) || !Game.currentGame.getActiveLayer().equals(this)) Helper.drawContainer(5, 5, 70, 70, false, false, g);
+			else Helper.drawContainer(0, 0, 80, 80, false, true, g);
+			g.drawImage(Game.getImage("gui/pause.png"), 5, 5, 70, 70, Game.w);
+			
+			if (reload && reloadStarted > 0)
+			{
+				Composite c = g.getComposite();
+				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+				Helper.drawShadow(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, g);
+				Helper.drawOutline(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, false, g);
+				Helper.drawProgressBar(Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().reloadSpeed, "2a86e7", g);
+				g.setColor(Color.black);
+				Helper.drawHorizontallyCenteredString("Nachladen", Game.getWidth(), Game.getHeight() / 3 * 2 + 16, g, 20);
+				g.setComposite(c);
+			}
+			g.setColor(o);
 		}
-		
-		g.setColor(o);
+		catch (NullPointerException e)
+		{}
 		
 		drawComponents(g);
 		
