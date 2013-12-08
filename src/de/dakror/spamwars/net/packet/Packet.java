@@ -14,7 +14,7 @@ public abstract class Packet
 		DISCONNECT,
 		REJECT,
 		ATTRIBUTE,
-		SERVERINFO,
+		PLAYERLIST,
 		CHUNK,
 		PLAYER,
 		ANIMATION,

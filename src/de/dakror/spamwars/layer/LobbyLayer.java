@@ -45,11 +45,11 @@ public class LobbyLayer extends MPLayer
 		
 		Color c = g.getColor();
 		g.setColor(Color.decode("#1c0d09"));
-		if (Game.client.serverInfo != null)
+		if (Game.client.playerList != null)
 		{
-			for (int i = 0; i < Game.client.serverInfo.getUsers().length; i++)
+			for (int i = 0; i < Game.client.playerList.getUsers().length; i++)
 			{
-				Helper.drawHorizontallyCenteredString(Game.client.serverInfo.getUsers()[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
+				Helper.drawHorizontallyCenteredString(Game.client.playerList.getUsers()[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
 			}
 		}
 		g.setColor(c);

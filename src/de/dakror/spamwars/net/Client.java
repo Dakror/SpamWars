@@ -50,7 +50,7 @@ public class Client extends Thread
 	
 	InetAddress serverIP;
 	
-	public Packet04PlayerList serverInfo;
+	public Packet04PlayerList playerList;
 	public Packet11GameInfo gameInfo;
 	public long gameStarted;
 	
@@ -156,17 +156,26 @@ public class Client extends Thread
 			case REJECT:
 			{
 				connected = false;
-				serverInfo = null;
+				playerList = null;
 				serverIP = null;
 				packet = new Packet02Reject(data);
 				
 				break;
 			}
-			case SERVERINFO:
+			case PLAYERLIST:
 			{
 				Packet04PlayerList p = new Packet04PlayerList(data);
 				
-				serverInfo = p;
+				for (User u : p.getUsers())
+				{
+					if (u.getUsername().equals(Game.user.getUsername()))
+					{
+						Game.user = u;
+						break;
+					}
+				}
+				
+				playerList = p;
 				packet = p;
 				break;
 			}
@@ -225,7 +234,7 @@ public class Client extends Thread
 					
 					Game.world.addEntity(Game.player);
 					
-					for (User u : serverInfo.getUsers())
+					for (User u : playerList.getUsers())
 						if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
 				}
 				
@@ -324,7 +333,7 @@ public class Client extends Thread
 	{
 		connected = false;
 		gameStarted = 0;
-		serverInfo = null;
+		playerList = null;
 		serverIP = null;
 		Game.player = null;
 		

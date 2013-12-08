@@ -290,7 +290,7 @@ public class Server extends Thread
 				
 				break;
 			}
-			case SERVERINFO:
+			case PLAYERLIST:
 			{
 				User user = new User(null, address, port);
 				try

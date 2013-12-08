@@ -29,9 +29,11 @@ public class RespawnLayer extends MPLayer
 	@Override
 	public void draw(Graphics2D g)
 	{
-		if (end == 0 && Game.client.gameInfo.getGameMode() != GameMode.ONE_IN_THE_CHAMBER)
+		if (end == 0)
 		{
-			end = System.currentTimeMillis() + RESPAWN_TIME;
+			boolean oitc = Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER;
+			
+			if (!oitc || (oitc && Game.user.D < 3)) end = System.currentTimeMillis() + RESPAWN_TIME;
 		}
 		
 		Composite oc = g.getComposite();
@@ -42,7 +44,7 @@ public class RespawnLayer extends MPLayer
 		g.setColor(o);
 		g.setComposite(oc);
 		
-		if (Game.client.gameInfo.getGameMode() != GameMode.ONE_IN_THE_CHAMBER)
+		if (end > 0)
 		{
 			Helper.drawHorizontallyCenteredString("RESPAWN in ", Game.getWidth(), Game.getHeight() / 3, g, 70);
 			Helper.drawString((Math.round((end - System.currentTimeMillis()) / 100f) / 10f) + "", Game.getWidth() / 2 - 100, Game.getHeight() / 2, g, 90);

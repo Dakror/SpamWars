@@ -23,7 +23,7 @@ public class HealthBox extends Entity
 		update = false;
 		bump = new Rectangle(0, 0, Tile.SIZE, Tile.SIZE);
 		random = (int) (Math.random() * 1000);
-		massive = true;
+		massive = false;
 	}
 	
 	@Override
