@@ -26,6 +26,18 @@ public class WeaponryLayer extends MPLayer
 	public void update(int tick)
 	{
 		updateComponents(tick);
+		if (Game.currentFrame.alpha == 1 && enabled)
+		{
+			Game.currentFrame.fadeTo(0, 0.05f);
+			new Thread()
+			{
+				@Override
+				public void run()
+				{
+					Game.currentGame.removeLayer(WeaponryLayer.this);
+				}
+			}.start();
+		}
 	}
 	
 	@Override
@@ -41,10 +53,9 @@ public class WeaponryLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.removeLayer(WeaponryLayer.this);
+				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		components.add(back);
 	}
-	
 }
