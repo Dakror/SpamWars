@@ -59,7 +59,7 @@ public class JoinLayer extends MPLayer
 	public void init()
 	{
 		final InputField usr = new InputField(Game.getWidth() / 2 - 290, Game.getHeight() / 2 - 50, 580, 30);
-		usr.setHint("Benutzername");
+		usr.setHint(CFG.INTERNET ? "Benutzername" : "IP-Adresse");
 		usr.setMaxlength(50);
 		components.add(usr);
 		

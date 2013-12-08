@@ -14,6 +14,8 @@ import de.dakror.gamesetup.layer.Alert;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.weapon.Action;
+import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.layer.LobbyLayer;
 import de.dakror.spamwars.layer.MPLayer;
@@ -33,6 +35,7 @@ import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
+import de.dakror.spamwars.net.packet.Packet12Stomp;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -300,6 +303,15 @@ public class Client extends Thread
 				
 				gameStarted = System.currentTimeMillis();
 				gameInfo = p;
+				
+				packet = p;
+				break;
+			}
+			case STOMP:
+			{
+				Packet12Stomp p = new Packet12Stomp(data);
+				
+				Game.player.dealDamage(p.getDamage(), new Action(WeaponType.STOMP, p.getUsername()));
 				
 				packet = p;
 				break;

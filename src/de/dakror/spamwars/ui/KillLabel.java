@@ -52,7 +52,7 @@ public class KillLabel extends Component
 			FontMetrics fm = g.getFontMetrics();
 			
 			if (WeaponType.getMessage(type) == null) width = fm.stringWidth(killer) + fm.stringWidth(killed) + 150;
-			else width = fm.stringWidth(WeaponType.getMessage(type).replace("%p%", killed)) + 30;
+			else width = fm.stringWidth(WeaponType.getMessage(type).replace("%killer%", killer).replace("%dead%", killed)) + 30;
 			
 			x = Game.getWidth() - width - 30;
 		}
@@ -67,22 +67,25 @@ public class KillLabel extends Component
 		
 		g.setColor(killer.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
 		
-		if (!killer.equals(killed))
+		if (type.getClass1() != null)
 		{
-			Helper.drawString(killer, x + 15, y + 26, g, 18);
-			g.setColor(killed.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
-			Helper.drawRightAlignedString(killed, x + width - 15, y + 26, g, 18);
-			
-			if (weapon != null) g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
-		}
-		else if (type.getClass1() != null)
-		{
-			int[] ints = Helper.drawHorizontallyCenteredString(killer, x - 30, width, y + 26, g, 18);
-			g.drawImage(Game.getImage("icon/kill.png"), ints[0] + ints[1] + 25, y + 10, Game.w);
+			if (killed.equals(killer))
+			{
+				int[] ints = Helper.drawHorizontallyCenteredString(killer, x - 30, width, y + 26, g, 18);
+				g.drawImage(Game.getImage("icon/kill.png"), ints[0] + ints[1] + 25, y + 10, Game.w);
+			}
+			else
+			{
+				Helper.drawString(killer, x + 15, y + 26, g, 18);
+				g.setColor(killed.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
+				Helper.drawRightAlignedString(killed, x + width - 15, y + 26, g, 18);
+				
+				if (weapon != null) g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
+			}
 		}
 		else
 		{
-			Helper.drawString(WeaponType.getMessage(type).replace("%p%", killed), x + 15, y + 26, g, 18);
+			Helper.drawString(WeaponType.getMessage(type).replace("%killer%", killer).replace("%dead%", killed), x + 15, y + 26, g, 18);
 		}
 		g.setColor(o);
 		g.setFont(f);

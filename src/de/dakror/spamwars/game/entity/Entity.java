@@ -21,6 +21,7 @@ public abstract class Entity extends EventListener implements Drawable
 	public float x, y;
 	public int width, height;
 	protected boolean gravity;
+	protected boolean massive;
 	public boolean update;
 	protected boolean airborne;
 	private boolean enabled;
@@ -40,6 +41,7 @@ public abstract class Entity extends EventListener implements Drawable
 		setVelocity(new Vector(0, 0));
 		update = true;
 		enabled = true;
+		massive = true;
 	}
 	
 	protected abstract void tick(int tick);
@@ -103,6 +105,7 @@ public abstract class Entity extends EventListener implements Drawable
 		float x = nx;
 		float y = ny;
 		
+		// -- world -- //
 		Rectangle g = getGridBump(nx, ny);
 		for (int i = g.x; i < g.x + g.width; i++)
 		{
@@ -186,6 +189,35 @@ public abstract class Entity extends EventListener implements Drawable
 			}
 		}
 		
+		// -- entities -- //
+		for (Entity e : Game.world.entities)
+		{
+			if (!e.isMassive() || !e.isEnabled() || e.equals(this) || getPos().equals(e.getPos())) continue;
+			
+			Rectangle bump = getBump(x, y);
+			if ((bump.y + bump.height) % Tile.SIZE == 0) bump.y--;
+			
+			Rectangle ebump = e.getBump(e.getVelocity().x, e.getVelocity().y);
+			
+			Rectangle is = bump.intersection(ebump);
+			
+			if (is.height < 0 || is.width < 0) continue; // no intersection
+			
+			if (is.height <= is.width)
+			{
+				y += is.y == bump.y ? is.height : -is.height;
+				
+				if (is.y == bump.y)
+				{
+					airborne = true;
+					// getVelocity().y = 0;
+					y = 0;
+				}
+				else airborne = false;
+			}
+			else x += is.x == bump.x ? is.width : -is.width;
+		}
+		
 		return new Point2D.Float(x, y);
 	}
 	
@@ -196,18 +228,24 @@ public abstract class Entity extends EventListener implements Drawable
 		Rectangle g = getGridBump(0, getVelocity().y + 2 * G);
 		Rectangle b = getBump(0, getVelocity().y + 2 * G);
 		
-		if (!Game.world.intersects(g, b))
+		if (Game.world.intersects(g, b))
 		{
-			airborne = true;
-			getVelocity().y += G;
-		}
-		else
-		{
-			
 			if (Math.abs(velocity.y) != 0) onHitGround(velocity);
 			airborne = false;
 			getVelocity().y = 0;
+			return;
 		}
+		
+		if (Game.world.intersectsEntities(this, b))
+		{
+			if (Math.abs(velocity.y) != 0) onHitEntity(Game.world.intersectionEntity(this, b), velocity);
+			airborne = false;
+			getVelocity().y = 0;
+			return;
+		}
+		
+		airborne = true;
+		getVelocity().y += G;
 	}
 	
 	public Rectangle getBump(float tX, float tY)
@@ -282,8 +320,22 @@ public abstract class Entity extends EventListener implements Drawable
 		}
 	}
 	
+	public boolean isMassive()
+	{
+		return massive;
+	}
+	
+	public void setMassive(boolean m)
+	{
+		massive = m;
+	}
+	
 	// -- abstract event methods -- //
 	
 	protected void onHitGround(Vector velocity)
 	{}
+	
+	protected void onHitEntity(Entity e, Vector velocity)
+	{}
+	
 }

@@ -58,7 +58,7 @@ public class LobbyLayer extends MPLayer
 		
 		if (Game.currentGame.alpha == 1 && Game.world != null)
 		{
-			Game.world.render();
+			Game.world.render(Game.client.gameInfo.getGameMode());
 			Game.currentGame.setLayer(new HUDLayer());
 			
 			Game.currentGame.fadeTo(0, 0.05f);

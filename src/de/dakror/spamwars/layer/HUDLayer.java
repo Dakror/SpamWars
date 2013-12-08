@@ -33,11 +33,12 @@ public class HUDLayer extends MPLayer
 		public int compare(User o1, User o2)
 		{
 			int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
+			if (K1 == 0 && K2 == 0) return Integer.compare(D1, D2);
+			
 			if (D1 == 0) D1++;
 			if (D2 == 0) D2++;
 			
-			int compare = Float.compare(K2 / (float) D2, K1 / (float) D1);
-			return compare;
+			return Float.compare(K2 / (float) D2, K1 / (float) D1);
 		}
 	};
 	

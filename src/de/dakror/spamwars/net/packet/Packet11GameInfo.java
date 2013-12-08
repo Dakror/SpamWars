@@ -8,7 +8,7 @@ public class Packet11GameInfo extends Packet
 	public enum GameMode
 	{
 		DEATHMATCH("Deathmatch"),
-		// ONE_IN_THE_CHAMBER("Eine im Lauf"),
+		ONE_IN_THE_CHAMBER("Eine im Lauf"),
 		
 		;
 		

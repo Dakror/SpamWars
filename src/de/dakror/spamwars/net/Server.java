@@ -36,6 +36,7 @@ import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
+import de.dakror.spamwars.net.packet.Packet12Stomp;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -107,7 +108,7 @@ public class Server extends Thread
 	{
 		lobby = false;
 		world = new World(Helper.getFileContent(map));
-		world.render();
+		world.render(mode);
 		world.render.flush();
 		
 		gameStarted = System.currentTimeMillis();
@@ -389,6 +390,28 @@ public class Server extends Thread
 				{
 					e.printStackTrace();
 				}
+				break;
+			}
+			case STOMP:
+			{
+				Packet12Stomp p = new Packet12Stomp(data);
+				
+				try
+				{
+					for (User u : clients)
+					{
+						if (u.getUsername().equals(p.getStomped()))
+						{
+							sendPacket(p, u);
+							break;
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
 				break;
 			}
 			default:

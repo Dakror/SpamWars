@@ -26,6 +26,7 @@ import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.net.packet.Packet07Animation;
 import de.dakror.spamwars.net.packet.Packet08Projectile;
+import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 
 /**
  * @author Dakror
@@ -137,7 +138,7 @@ public class World extends EventListener implements Drawable
 		}
 	}
 	
-	public void render()
+	public void render(GameMode mode)
 	{
 		if (render == null) render = new BufferedImage(data.length * Tile.SIZE, data[0].length * Tile.SIZE, BufferedImage.TYPE_INT_ARGB);
 		
@@ -157,13 +158,13 @@ public class World extends EventListener implements Drawable
 				
 				if (t == Tile.boxCoinAlt)
 				{
-					addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
+					if (mode == GameMode.DEATHMATCH) addEntity(new AmmoBox(i * Tile.SIZE, j * Tile.SIZE));
 					continue;
 				}
 				
 				if (t == Tile.boxExplosive)
 				{
-					addEntity(new HealthBox(i * Tile.SIZE, j * Tile.SIZE));
+					if (mode == GameMode.DEATHMATCH) addEntity(new HealthBox(i * Tile.SIZE, j * Tile.SIZE));
 					continue;
 				}
 				
@@ -260,6 +261,28 @@ public class World extends EventListener implements Drawable
 	public boolean intersects(Rectangle grid, Rectangle bump)
 	{
 		return !intersection(grid, bump).isEmpty();
+	}
+	
+	public boolean intersectsEntities(Entity e, Rectangle r)
+	{
+		for (Entity entity : entities)
+		{
+			if (e.equals(entity) || !entity.isEnabled() || !entity.isMassive()) continue;
+			if (entity.getBump(entity.getVelocity().x, entity.getVelocity().y).intersects(r)) return true;
+		}
+		
+		return false;
+	}
+	
+	public Entity intersectionEntity(Entity e, Rectangle r)
+	{
+		for (Entity entity : entities)
+		{
+			if (e.equals(entity) || !entity.isEnabled() || !entity.isMassive()) continue;
+			if (entity.getBump(entity.getVelocity().x, entity.getVelocity().y).intersects(r)) return entity;
+		}
+		
+		return null;
 	}
 	
 	public Area intersection(Rectangle grid, Rectangle bump)

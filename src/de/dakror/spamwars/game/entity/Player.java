@@ -14,6 +14,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
+import de.dakror.spamwars.game.weapon.Action;
 import de.dakror.spamwars.game.weapon.Weapon;
 import de.dakror.spamwars.game.weapon.Weapon.FireMode;
 import de.dakror.spamwars.game.weapon.WeaponType;
@@ -22,6 +23,7 @@ import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet09Kill;
+import de.dakror.spamwars.net.packet.Packet12Stomp;
 
 
 /**
@@ -335,8 +337,8 @@ public class Player extends Entity
 	{
 		gravity = true;
 		Vector spawn = Game.world.getBestSpawnPoint();
-		x = spawn.x * Tile.SIZE;
-		y = spawn.y * Tile.SIZE - height + Tile.SIZE;
+		x = spawn.x * Tile.SIZE + (int) (Math.random() * Tile.SIZE - Tile.SIZE / 2);
+		y = spawn.y * Tile.SIZE - height + Tile.SIZE + (int) (Math.random() * Tile.SIZE - Tile.SIZE / 2);
 		life = maxlife;
 		weapon.ammo = weapon.magazine;
 		weapon.capacity = weapon.capacityMax;
@@ -363,20 +365,18 @@ public class Player extends Entity
 				{
 					e.printStackTrace();
 				}
-				
 			}
-			else if (source instanceof WeaponType)
+			else if (source instanceof Action)
 			{
 				try
 				{
-					Game.client.sendPacket(new Packet09Kill(Game.user.getUsername(), Game.user.getUsername(), (WeaponType) source));
+					Game.client.sendPacket(new Packet09Kill(((Action) source).username, Game.user.getUsername(), ((Action) source).type));
 				}
 				catch (IOException e)
 				{
 					e.printStackTrace();
 				}
 			}
-			
 			
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
 			x = -10000000;
@@ -436,6 +436,22 @@ public class Player extends Entity
 	{
 		float maxFall = 30;
 		float dmgFactor = 5;
-		if (velocity.y > maxFall) dealDamage((velocity.y - maxFall) * dmgFactor, WeaponType.FALL_DAMAGE);
+		if (velocity.y > maxFall) dealDamage((velocity.y - maxFall) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
+	}
+	
+	@Override
+	protected void onHitEntity(Entity e, Vector velocity)
+	{
+		if (e instanceof Player && velocity.y > 14)
+		{
+			try
+			{
+				Game.client.sendPacket(new Packet12Stomp(Game.user.getUsername(), ((Player) e).getUser().getUsername(), velocity.y * 2));
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
 	}
 }

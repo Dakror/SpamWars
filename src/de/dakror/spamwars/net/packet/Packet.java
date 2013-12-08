@@ -22,6 +22,7 @@ public abstract class Packet
 		KILL,
 		ENTITYSTATUS,
 		GAMEINFO,
+		STOMP,
 		
 		;
 		public int getID()

@@ -16,6 +16,7 @@ public enum WeaponType
 	HANDGUN(Handgun.class),
 	ASSAULT_RIFLE(AssauleRifle.class),
 	FALL_DAMAGE(null),
+	STOMP(null),
 	
 	;
 	
@@ -57,7 +58,9 @@ public enum WeaponType
 		switch (type)
 		{
 			case FALL_DAMAGE:
-				return "%p% landete nicht weich.";
+				return "%dead% landete nicht weich";
+			case STOMP:
+				return "%killer% zerstampfte %dead%";
 			default:
 				return null;
 		}
