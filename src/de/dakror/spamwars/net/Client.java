@@ -34,7 +34,6 @@ import de.dakror.spamwars.net.packet.Packet08Projectile;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
-import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
 import de.dakror.spamwars.settings.CFG;
 
@@ -269,6 +268,9 @@ public class Client extends Thread
 			case ANIMATION:
 			{
 				Packet07Animation p = new Packet07Animation(data);
+				
+				if (Game.world == null) break;
+				
 				Game.world.addAnimation(p.getAnimation(), false);
 				
 				break;
@@ -276,12 +278,14 @@ public class Client extends Thread
 			case PROJECTILE:
 			{
 				Packet08Projectile p = new Packet08Projectile(data);
+				if (Game.world == null) break;
 				Game.world.addProjectile(p.getProjectile(), false);
 				
 				break;
 			}
 			case KILL:
 			{
+				if (Game.world == null) break;
 				packet = new Packet09Kill(data);
 				
 				break;
@@ -392,17 +396,6 @@ public class Client extends Thread
 	
 	public boolean isGameOver()
 	{
-		if (gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
-		{
-			int notOuts = 0;
-			for (User u : playerList.getUsers())
-			{
-				if (u.D < 3) notOuts++;
-			}
-			
-			if (notOuts < 2) return true;
-		}
-		
 		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
 }

@@ -19,8 +19,8 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.game.world.World;
+import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet00Connect;
@@ -442,6 +442,15 @@ public class Server extends Thread
 		DatagramPacket packet = new DatagramPacket(data, data.length, u.getIP(), u.getPort());
 		
 		socket.send(packet);
+	}
+	
+	public void resetScoreboard()
+	{
+		for (User u : clients)
+		{
+			u.K = 0;
+			u.D = 0;
+		}
 	}
 	
 	public void shutdown()

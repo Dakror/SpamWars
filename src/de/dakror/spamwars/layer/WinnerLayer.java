@@ -64,6 +64,7 @@ public class WinnerLayer extends MPLayer
 				{
 					Game.server.lobby = true;
 					Game.server.world = null;
+					Game.server.resetScoreboard();
 				}
 				
 				Game.currentGame.setLayer(new MenuLayer());

@@ -92,6 +92,8 @@ public abstract class Entity extends EventListener implements Drawable
 			if (gravity) affectByGravity();
 			else getVelocity().y = 0;
 			
+			checkAndHandleStomp();
+			
 			x += nx;
 			y += ny;
 		}
@@ -189,36 +191,27 @@ public abstract class Entity extends EventListener implements Drawable
 			}
 		}
 		
-		// -- entities -- //
-		for (Entity e : Game.world.entities)
-		{
-			if (!e.isMassive() || !e.isEnabled() || e.equals(this) || getPos().equals(e.getPos())) continue;
-			
-			Rectangle bump = getBump(x, y);
-			if ((bump.y + bump.height) % Tile.SIZE == 0) bump.y--;
-			
-			Rectangle ebump = e.getBump(e.getVelocity().x, e.getVelocity().y);
-			
-			Rectangle is = bump.intersection(ebump);
-			
-			if (is.height < 0 || is.width < 0) continue; // no intersection
-			
-			if (is.height <= is.width)
-			{
-				y += is.y == bump.y ? is.height : -is.height;
-				
-				if (is.y == bump.y)
-				{
-					airborne = true;
-					// getVelocity().y = 0;
-					y = 0;
-				}
-				else airborne = false;
-			}
-			else x += is.x == bump.x ? is.width : -is.width;
-		}
-		
 		return new Point2D.Float(x, y);
+	}
+	
+	public void checkAndHandleStomp()
+	{
+		if (getVelocity().y > 0)
+		{
+			Rectangle bump = getBump(velocity.x, velocity.y);
+			for (Entity e : Game.world.entities)
+			{
+				if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
+				{
+					if (!e.getBump(0, 0).contains(bump.x, bump.y) && (e.getBump(0, 0).contains(bump.x, bump.y + bump.height) || e.getBump(0, 0).contains(x + bump.width, y + bump.height)))
+					{
+						onHitEntity(e, velocity);
+						velocity.y = 0;
+						airborne = false;
+					}
+				}
+			}
+		}
 	}
 	
 	public void affectByGravity()
@@ -235,15 +228,14 @@ public abstract class Entity extends EventListener implements Drawable
 			getVelocity().y = 0;
 			return;
 		}
-		
-		if (Game.world.intersectsEntities(this, b))
-		{
-			if (Math.abs(velocity.y) != 0) onHitEntity(Game.world.intersectionEntity(this, b), velocity);
-			airborne = false;
-			getVelocity().y = 0;
-			return;
-		}
-		
+		//
+		// if (Game.world.intersectsEntities(this, b))
+		// {
+		// airborne = false;
+		// getVelocity().y = 0;
+		// return;
+		// }
+		//
 		airborne = true;
 		getVelocity().y += G;
 	}

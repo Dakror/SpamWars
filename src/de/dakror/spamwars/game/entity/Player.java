@@ -56,8 +56,8 @@ public class Player extends Entity
 		super(x, y, 72, 97);
 		
 		style = (int) (Math.random() * 3 + 1);
-		bump = new Rectangle(10, 7, 44, 84);
 		gravity = true;
+		bump = new Rectangle(11, 7, 44, 84);
 		
 		this.user = user;
 		
@@ -69,6 +69,8 @@ public class Player extends Entity
 	@Override
 	public void draw(Graphics2D g)
 	{
+		if (Game.world == null) return;
+		
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
 		
@@ -109,6 +111,10 @@ public class Player extends Entity
 		weapon.draw(g);
 		
 		g.setTransform(old);
+		
+		Rectangle bump = getBump(0, 0);
+		
+		g.drawRect(bump.x + (int) Game.world.x, bump.y + (int) Game.world.y, bump.width, bump.height);
 	}
 	
 	@Override
@@ -279,6 +285,9 @@ public class Player extends Entity
 				
 				if (fx < Game.getWidth() && fx > 0) Game.world.x += Game.getWidth() - fx;
 				else if (Game.world.x > 0) Game.world.x = 0;
+				
+				if (lookingLeft) bump = new Rectangle(11, 7, 44, 84);
+				else bump = new Rectangle(15, 7, 44, 84);
 			}
 			else
 			{

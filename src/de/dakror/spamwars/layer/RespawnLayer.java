@@ -9,7 +9,6 @@ import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 
 /**
  * @author Dakror
@@ -31,9 +30,7 @@ public class RespawnLayer extends MPLayer
 	{
 		if (end == 0)
 		{
-			boolean oitc = Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER;
-			
-			if (!oitc || (oitc && Game.user.D < 3)) end = System.currentTimeMillis() + RESPAWN_TIME;
+			end = System.currentTimeMillis() + RESPAWN_TIME;
 		}
 		
 		Composite oc = g.getComposite();

@@ -121,7 +121,8 @@ public class LoginLayer extends MPLayer
 		try
 		{
 			String result = Helper.getURLContent(new URL("http://dakror.de/mp-api/login?username=" + username + "&password=" + passwordMD5 + "&ip=" + Game.ip.getHostAddress()));
-			if (result.equals("faillogin")) Game.currentGame.addLayer(new Alert("Anmeldung fehlgeschlagen!", null));
+			
+			if (result == null || result.equals("faillogin")) Game.currentGame.addLayer(new Alert("Anmeldung fehlgeschlagen!", null));
 			else if (result.startsWith("true"))
 			{
 				Game.user = new User(new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?id=" + result.substring(result.indexOf(":") + 1)))).getString("USERNAME"), null, 0);

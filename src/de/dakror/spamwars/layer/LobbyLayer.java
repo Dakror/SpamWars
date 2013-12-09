@@ -206,7 +206,7 @@ public class LobbyLayer extends MPLayer
 	public void onPacketReceived(Packet p)
 	{
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer());
-		if (p instanceof Packet00Connect) sendInfo();
+		if (p instanceof Packet00Connect && Game.server != null) sendInfo();
 		if (p instanceof Packet01Disconnect)
 		{
 			try
