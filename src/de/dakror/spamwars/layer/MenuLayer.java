@@ -17,7 +17,7 @@ import de.dakror.universion.UniVersion;
  */
 public class MenuLayer extends MPLayer
 {
-	boolean gotolobby;
+	boolean gotoweapon;
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -50,12 +50,13 @@ public class MenuLayer extends MPLayer
 				@Override
 				public void run()
 				{
-					if (gotolobby)
+					if (gotoweapon)
 					{
-						Game.currentFrame.addLayer(new LobbyLayer());
-						gotolobby = false;
+						Game.currentFrame.addLayer(new WeaponryLayer());
+						
+						gotoweapon = false;
 					}
-					else Game.currentFrame.addLayer(new WeaponryLayer());
+					else Game.currentFrame.addLayer(new LobbyLayer());
 				}
 			}.start();
 		}
@@ -72,7 +73,6 @@ public class MenuLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				gotolobby = true;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
@@ -93,12 +93,12 @@ public class MenuLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				gotolobby = false;
+				gotoweapon = true;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		// components.add(wpn);
-		MenuButton opt = new MenuButton("options", 2);
+		MenuButton opt = new MenuButton("options", 3);
 		opt.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -108,7 +108,7 @@ public class MenuLayer extends MPLayer
 			}
 		});
 		components.add(opt);
-		MenuButton end = new MenuButton("endGame", 3);
+		MenuButton end = new MenuButton("endGame", 4);
 		end.addClickEvent(new ClickEvent()
 		{
 			@Override
