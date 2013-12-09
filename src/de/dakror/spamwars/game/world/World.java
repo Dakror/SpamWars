@@ -201,7 +201,6 @@ public class World extends EventListener implements Drawable
 				clostestPlayer = dist;
 			}
 		}
-		
 		return point;
 	}
 	

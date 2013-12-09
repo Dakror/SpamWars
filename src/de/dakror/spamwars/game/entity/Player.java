@@ -111,10 +111,6 @@ public class Player extends Entity
 		weapon.draw(g);
 		
 		g.setTransform(old);
-		
-		Rectangle bump = getBump(0, 0);
-		
-		g.drawRect(bump.x + (int) Game.world.x, bump.y + (int) Game.world.y, bump.width, bump.height);
 	}
 	
 	@Override

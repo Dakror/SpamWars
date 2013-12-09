@@ -97,7 +97,7 @@ public class MenuLayer extends MPLayer
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
-		// components.add(wpn);
+		components.add(wpn);
 		MenuButton opt = new MenuButton("options", 3);
 		opt.addClickEvent(new ClickEvent()
 		{

@@ -1,6 +1,5 @@
 package de.dakror.spamwars;
 
-import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -8,7 +7,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import de.dakror.gamesetup.util.Helper;
-import de.dakror.reporter.Reporter;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
 import de.dakror.spamwars.layer.LoginLayer;
@@ -40,7 +38,7 @@ public class SpamWars
 		UniVersion.offline = !CFG.INTERNET;
 		
 		UniVersion.init(SpamWars.class, CFG.VERSION, CFG.PHASE);
-		if (!UniVersion.offline) Reporter.init(new File(CFG.DIR, "log"));
+		// if (!UniVersion.offline) Reporter.init(new File(CFG.DIR, "log"));
 		
 		if (!CFG.INTERNET)
 		{

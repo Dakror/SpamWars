@@ -19,8 +19,8 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.game.world.Tile;
+import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet00Connect;
@@ -129,7 +129,7 @@ public class Server extends Thread
 					@Override
 					public int compare(Vector o1, Vector o2)
 					{
-						return Integer.compare(spots.get(o1), spots.get(o1));
+						return Integer.compare(spots.get(o1), spots.get(o2));
 					}
 				});
 				
@@ -139,7 +139,7 @@ public class Server extends Thread
 				spots.put(vals.get(0), spots.get(vals.get(0)) + 1);
 				
 				world.addEntity(new Player(x, y, u));
-				sendPacketToAllClients(new Packet03Attribute("pos", x + "," + y));
+				sendPacket(new Packet03Attribute("pos", x + "," + y), u);
 			}
 			
 			sendWorld(null);
@@ -175,11 +175,11 @@ public class Server extends Thread
 	public void addLateJoiner(User user)
 	{
 		Vector v = world.getBestSpawnPoint();
-		world.addEntity(new Player(v.x * Tile.SIZE, v.x * Tile.SIZE, user));
+		world.addEntity(new Player(v.x * Tile.SIZE, v.y * Tile.SIZE, user));
 		try
 		{
 			sendPacket(new Packet11GameInfo(minutes, mode), user);
-			sendPacket(new Packet03Attribute("pos", (int) (v.x * Tile.SIZE) + "," + (int) (v.x * Tile.SIZE)), user);
+			sendPacket(new Packet03Attribute("pos", (int) (v.x * Tile.SIZE) + "," + (int) (v.y * Tile.SIZE)), user);
 			sendWorld(user);
 		}
 		catch (IOException e)
