@@ -26,7 +26,7 @@ public enum Part
 		tex = new Rectangle(x, y, width, height);
 	}
 	
-	public Rectangle getTexture()
+	public Rectangle getIcon()
 	{
 		return tex;
 	}
@@ -43,15 +43,28 @@ public enum Part
 	
 	public enum Category
 	{
-		HANDLE,
-		TRIGGER,
-		BARREL,
-		SCOPE,
-		SUBBARREL,
-		BARRELGRIP,
-		ACCESSORY,
-		HAMMER,
-		DRUM,
-		BACKGROUND,
+		HANDLE(202, 1538, 87, 103),
+		TRIGGER(609, 983, 51, 31),
+		BARREL(1484, 1842, 525, 40),
+		SCOPE(363, 1855, 273, 83),
+		SUBBARREL(1385, 1146, 328, 28),
+		BARRELGRIP(1381, 1101, 230, 37),
+		ACCESSORY(1253, 462, 149, 91),
+		HAMMER(1244, 908, 77, 98),
+		DRUM(245, 422, 76, 52),
+		BACKGROUND(248, 283, 74, 64),
+		
+		;
+		private Rectangle icon;
+		
+		private Category(int x, int y, int width, int height)
+		{
+			icon = new Rectangle(x, y, width, height);
+		}
+		
+		public Rectangle getIcon()
+		{
+			return icon;
+		}
 	}
 }

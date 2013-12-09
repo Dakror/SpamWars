@@ -97,8 +97,8 @@ public class MenuLayer extends MPLayer
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
-		components.add(wpn);
-		MenuButton opt = new MenuButton("options", 3);
+		// components.add(wpn);
+		MenuButton opt = new MenuButton("options", 2);
 		opt.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -108,7 +108,7 @@ public class MenuLayer extends MPLayer
 			}
 		});
 		components.add(opt);
-		MenuButton end = new MenuButton("endGame", 4);
+		MenuButton end = new MenuButton("endGame", 3);
 		end.addClickEvent(new ClickEvent()
 		{
 			@Override
