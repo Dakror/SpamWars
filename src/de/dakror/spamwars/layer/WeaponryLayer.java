@@ -6,10 +6,7 @@ import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
-import de.dakror.spamwars.game.weapon.Part;
-import de.dakror.spamwars.game.weapon.Part.Category;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.ui.WeaponryButton;
 import de.dakror.spamwars.ui.WeaponryGroup;
 
 /**
@@ -18,6 +15,7 @@ import de.dakror.spamwars.ui.WeaponryGroup;
 public class WeaponryLayer extends MPLayer
 {
 	WeaponryGroup[] groups;
+	int goingto = 0;
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -40,7 +38,10 @@ public class WeaponryLayer extends MPLayer
 				@Override
 				public void run()
 				{
-					Game.currentGame.removeLayer(WeaponryLayer.this);
+					if (goingto == 1) Game.currentGame.removeLayer(WeaponryLayer.this);
+					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer());
+					
+					goingto = 0;
 				}
 			}.start();
 		}
@@ -53,63 +54,27 @@ public class WeaponryLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		new Thread()
+		TextButton build = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() / 2, "Neu");
+		build.addClickEvent(new ClickEvent()
 		{
 			@Override
-			public void run()
+			public void trigger()
 			{
-				TextButton back = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT, "Zurück");
-				back.addClickEvent(new ClickEvent()
-				{
-					@Override
-					public void trigger()
-					{
-						Game.currentFrame.fadeTo(1, 0.05f);
-					}
-				});
-				components.add(back);
-				
-				WeaponryGroup categories = new WeaponryGroup(0, 0);
-				categories.extending = true;
-				components.add(categories);
-				
-				groups = new WeaponryGroup[Category.values().length];
-				
-				for (Category c : Category.values())
-				{
-					categories.addButton(new WeaponryButton(c.getIcon()));
-					
-					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
-				}
-				
-				for (Part part : Part.values())
-					groups[part.getCategory().ordinal()].addButton(new WeaponryButton(part.getIcon()));
-				
-				for (int i = 0; i < categories.length(); i++)
-				{
-					final int j = i;
-					
-					if (groups[i].length() == 0) categories.getButton(i).enabled = false;
-					else categories.getButton(i).addClickEvent(new ClickEvent()
-					{
-						@Override
-						public void trigger()
-						{
-							if (components.size() < 3)
-							{
-								components.add(groups[j]);
-							}
-							else
-							{
-								components.get(2).enabled = false;
-								components.get(2).update(0);
-								components.set(2, groups[j]);
-								components.get(2).enabled = true;
-							}
-						}
-					});
-				}
+				goingto = 2;
+				Game.currentFrame.fadeTo(1, 0.05f);
 			}
-		}.start();
+		});
+		components.add(build);
+		TextButton back = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() / 2 + TextButton.HEIGHT, "Zurück");
+		back.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				goingto = 1;
+				Game.currentFrame.fadeTo(1, 0.05f);
+			}
+		});
+		components.add(back);
 	}
 }

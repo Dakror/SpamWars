@@ -20,6 +20,7 @@ public class WeaponryButton extends ClickableComponent
 	BufferedImage icon;
 	
 	boolean selected;
+	public boolean loseSelectionOnRMB;
 	
 	public WeaponryButton(Rectangle icon)
 	{
@@ -29,6 +30,8 @@ public class WeaponryButton extends ClickableComponent
 		Dimension dim = Helper.scaleTo(new Dimension(icon.width, icon.height), new Dimension(SIZE - 30, SIZE - 30));
 		selected = false;
 		this.icon = Helper.toBufferedImage(this.icon.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH));
+		
+		loseSelectionOnRMB = false;
 	}
 	
 	@Override
@@ -57,15 +60,19 @@ public class WeaponryButton extends ClickableComponent
 	{
 		if (contains(e.getX(), e.getY()) && enabled)
 		{
-			if (selected)
+			if (e.getButton() == MouseEvent.BUTTON1)
 			{
-				selected = false;
-				state = 2;
-				return;
+				if (selected)
+				{
+					selected = false;
+					state = 2;
+					return;
+				}
+				
+				triggerEvents();
+				selected = true;
 			}
-			
-			triggerEvents();
-			selected = true;
+			else if (e.getButton() == MouseEvent.BUTTON3 && loseSelectionOnRMB) selected = false;
 		}
 	}
 }

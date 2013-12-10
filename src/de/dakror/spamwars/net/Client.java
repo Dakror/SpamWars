@@ -218,8 +218,6 @@ public class Client extends Thread
 				}
 				if (p.getKey().equals("worldsize"))
 				{
-					// if (!(Game.currentGame.getActiveLayer() instanceof LobbyLayer)) Game.currentGame.addLayer(new LobbyLayer());
-					
 					int w = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf("_")));
 					int h = Integer.parseInt(p.getValue().substring(p.getValue().indexOf("_") + 1));
 					Game.world = new World(w, h);
@@ -235,6 +233,9 @@ public class Client extends Thread
 					
 					for (User u : playerList.getUsers())
 						if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
+					
+					
+					if (Game.server != null) Game.server.updater.countdown = 5;
 				}
 				
 				packet = p;

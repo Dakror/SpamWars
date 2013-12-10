@@ -18,6 +18,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
@@ -175,13 +176,14 @@ public class HUDLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer(false));
+		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 		if (p instanceof Packet09Kill)
 		{
 			components.add(new KillLabel(killY, ((Packet09Kill) p).getKiller(), ((Packet09Kill) p).getDead(), ((Packet09Kill) p).getWeapon()));
 			
 			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()) && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) Game.player.getWeapon().ammo = 1;
 		}
-		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 	}
 	
 	@Override

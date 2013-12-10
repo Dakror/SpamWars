@@ -48,6 +48,7 @@ public abstract class Weapon implements Drawable
 	private float x, y;
 	
 	Vector target;
+	public boolean enabled;
 	
 	public Weapon(Rectangle tex, Point exit, Point grab, FireMode fireMode, int speed, float maxAngle, int magazine, int capacity, int reloadSpeed)
 	{
@@ -58,6 +59,7 @@ public abstract class Weapon implements Drawable
 		this.magazine = magazine;
 		this.capacity = capacityMax = capacity;
 		ammo = magazine;
+		enabled = false;
 		
 		this.maxAngle = maxAngle;
 		this.speed = speed;
@@ -69,6 +71,8 @@ public abstract class Weapon implements Drawable
 	
 	public void target(Vector target)
 	{
+		if (!enabled) return;
+		
 		if (overangle)
 		{
 			this.target = null;
@@ -81,6 +85,8 @@ public abstract class Weapon implements Drawable
 	
 	protected void shoot()
 	{
+		if (!enabled) return;
+		
 		Vector muzzle = getMuzzle();
 		
 		int mal = 30;
@@ -137,6 +143,8 @@ public abstract class Weapon implements Drawable
 	@Override
 	public void update(int tick)
 	{
+		if (!enabled) return;
+		
 		if (target != null && (tick - lastShot) >= speed)
 		{
 			shoot();

@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
@@ -15,6 +16,8 @@ import de.dakror.spamwars.game.Game;
 public class WeaponryGroup extends Component
 {
 	CopyOnWriteArrayList<WeaponryButton> buttons;
+	
+	public ClickEvent onUnselect;
 	
 	public boolean extending;
 	
@@ -119,11 +122,23 @@ public class WeaponryGroup extends Component
 		if (!enabled) return;
 		
 		e.translatePoint(-x, -y);
-		for (Component c : buttons)
+		for (WeaponryButton c : buttons)
 		{
-			if (contains(e.getX(), e.getY())) ((WeaponryButton) c).selected = false;
+			if (contains(e.getX(), e.getY()) && e.getButton() == MouseEvent.BUTTON1) c.selected = false;
 			c.mouseReleased(e);
 		}
+		
+		boolean unselect = true;
+		for (WeaponryButton c : buttons)
+		{
+			if (c.selected)
+			{
+				unselect = false;
+				break;
+			}
+		}
+		if (unselect && onUnselect != null) onUnselect.trigger();
+		
 		e.translatePoint(x, y);
 	}
 }

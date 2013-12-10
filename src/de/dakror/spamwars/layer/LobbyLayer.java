@@ -158,7 +158,7 @@ public class LobbyLayer extends MPLayer
 			{
 				Game.server.mode = GameMode.values()[mode.value];
 				Game.server.minutes = time.value;
-				Game.currentGame.addLayer(new GameStartLayer());
+				Game.currentGame.addLayer(new GameStartLayer(true));
 			}
 		});
 		if (host) components.add(start);
@@ -205,7 +205,7 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer());
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer(true));
 		if (p instanceof Packet00Connect && Game.server != null) sendInfo();
 		if (p instanceof Packet01Disconnect)
 		{
