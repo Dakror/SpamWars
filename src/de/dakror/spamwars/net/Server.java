@@ -61,6 +61,8 @@ public class Server extends Thread
 	public int minutes;
 	public GameMode mode;
 	
+	ArrayList<User> lateUsers = new ArrayList<>();
+	
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
 	public Server(InetAddress ip)
@@ -253,6 +255,7 @@ public class Server extends Thread
 				CFG.p("[SERVER]: " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + ") has connected.");
 				user.setPort(port);
 				clients.add(user);
+				if (!lobby) lateUsers.add(user);
 				try
 				{
 					sendPacket(new Packet03Attribute("user", user.serialize()), user);
@@ -261,7 +264,6 @@ public class Server extends Thread
 				}
 				catch (Exception e)
 				{}
-				if (!lobby) addLateJoiner(user);
 				break;
 			}
 			case DISCONNECT:
@@ -295,6 +297,15 @@ public class Server extends Thread
 				try
 				{
 					sendPacket(new Packet04PlayerList(clients.toArray(new User[] {})), user);
+					for (User u : lateUsers)
+					{
+						if (user.getIP().equals(address) && user.getPort() == port)
+						{
+							addLateJoiner(u);
+							lateUsers.remove(u);
+							break;
+						}
+					}
 				}
 				catch (IOException e)
 				{
