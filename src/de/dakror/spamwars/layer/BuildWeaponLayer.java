@@ -81,19 +81,20 @@ public class BuildWeaponLayer extends MPLayer
 			
 			selectedPart.x = x;
 			selectedPart.y = y;
-			
 		}
-		// for (WeaponryPart c : parts)
-		// {
-		// // categories.getButton(c.part.getCategory().ordinal()).enabled = !c.enabled;
-		// // if (c.enabled)
-		// // {
-		// // categories.onUnselect.trigger();
-		// // categories.getButton(c.part.getCategory().ordinal()).selected = false;
-		// // }
-		//
-		// if (!c.enabled) parts.remove(c);
-		// }
+		
+		for (Component c : components)
+		{
+			if (c instanceof WeaponryPart)
+			{
+				if (!c.enabled)
+				{
+					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = true;
+					components.remove(c);
+				}
+				else categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = false;
+			}
+		}
 		
 		updateComponents(tick);
 		

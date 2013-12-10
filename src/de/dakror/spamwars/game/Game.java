@@ -1,7 +1,6 @@
 package de.dakror.spamwars.game;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -13,8 +12,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.InetAddress;
-
-import javax.swing.JFrame;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
@@ -114,20 +111,6 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void keyReleased(KeyEvent e)
 	{
 		super.keyReleased(e);
-		
-		if (e.getKeyCode() == KeyEvent.VK_F11)
-		{
-			if (w.isUndecorated())
-			{
-				setWindowed();
-				w.setMinimumSize(new Dimension(1280, 720));
-			}
-			else
-			{
-				setFullscreen();
-				w.setExtendedState(JFrame.NORMAL);
-			}
-		}
 		
 		if (world != null && !getActiveLayer().isModal()) world.keyReleased(e);
 	}
