@@ -11,6 +11,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.game.weapon.Part.Category;
+import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.ui.WeaponryButton;
 import de.dakror.spamwars.ui.WeaponryGroup;
@@ -47,7 +48,7 @@ public class BuildWeaponLayer extends MPLayer
 		Helper.drawShadow(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, g);
 		Helper.drawOutline(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, false, g);
 		
-		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2, TextButton.HEIGHT * 2, false, false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2, false, false, g);
 		
 		drawComponents(g);
 		
@@ -83,6 +84,8 @@ public class BuildWeaponLayer extends MPLayer
 			selectedPart.y = y;
 		}
 		
+		boolean hasParts = false;
+		
 		for (Component c : components)
 		{
 			if (c instanceof WeaponryPart)
@@ -92,9 +95,15 @@ public class BuildWeaponLayer extends MPLayer
 					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = true;
 					components.remove(c);
 				}
-				else categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = false;
+				else
+				{
+					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = false;
+					hasParts = true;
+				}
 			}
 		}
+		
+		components.get(1).enabled = hasParts;
 		
 		updateComponents(tick);
 		
@@ -145,7 +154,7 @@ public class BuildWeaponLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		TextButton back = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT, "Zurück");
+		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
 		back.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -155,6 +164,18 @@ public class BuildWeaponLayer extends MPLayer
 			}
 		});
 		components.add(back);
+		
+		TextButton build = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT - 10, "Bauen");
+		build.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.addLayer(new PurchaseWeaponLayer(getWeaponData()));
+			}
+		});
+		build.enabled = false;
+		components.add(build);
 		
 		new Thread()
 		{
@@ -182,10 +203,10 @@ public class BuildWeaponLayer extends MPLayer
 					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
 				}
 				
-				
 				for (final Part part : Part.values())
 				{
 					final WeaponryButton b = new WeaponryButton(part.getIcon());
+					b.setPart(part);
 					b.loseSelectionOnRMB = true;
 					b.addClickEvent(new ClickEvent()
 					{
@@ -220,9 +241,25 @@ public class BuildWeaponLayer extends MPLayer
 	
 	public void removeGroups()
 	{
-		for (int i = 2; i < components.size(); i++)
+		for (int i = 3; i < components.size(); i++)
 		{
 			if (components.get(i) instanceof WeaponryGroup) components.remove(i);
 		}
+	}
+	
+	public WeaponData getWeaponData()
+	{
+		WeaponData data = new WeaponData();
+		
+		for (Component c : components)
+		{
+			if (c instanceof WeaponryPart)
+			{
+				WeaponryPart p = (WeaponryPart) c;
+				data.addPart(p.part, p.x / (double) buildPlate.width, p.y / (double) buildPlate.height);
+			}
+		}
+		
+		return data;
 	}
 }

@@ -127,6 +127,8 @@ public class LoginLayer extends MPLayer
 			{
 				Game.user = new User(new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?id=" + result.substring(result.indexOf(":") + 1)))).getString("USERNAME"), null, 0);
 				
+				// CFG.p(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + username + "&password=" + passwordMD5)));
+				
 				return true;
 			}
 		}

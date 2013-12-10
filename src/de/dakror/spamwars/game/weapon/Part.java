@@ -7,6 +7,7 @@ import java.awt.Rectangle;
  */
 public enum Part
 {
+	// -- !!! Don't change the order, it is important for weapon saves !!! -- //
 	
 	PISTOL_SILVER_HANDLE(593, 1250, 64, 88, 0, Category.HANDLE),
 	PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, Category.BARREL),
