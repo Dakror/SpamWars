@@ -45,10 +45,10 @@ public class GameStartLayer extends MPLayer
 			cd = -1;
 			
 		}
-		if (cd == 0)
+		if (cd == 0 && !modal)
 		{
 			Game.currentGame.removeLayer(this);
-			if (!modal) Game.player.getWeapon().enabled = true;
+			Game.player.getWeapon().enabled = true;
 		}
 	}
 	

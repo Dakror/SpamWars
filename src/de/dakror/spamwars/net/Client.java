@@ -234,7 +234,6 @@ public class Client extends Thread
 					for (User u : playerList.getUsers())
 						if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
 					
-					
 					if (Game.server != null) Game.server.updater.countdown = 5;
 				}
 				
