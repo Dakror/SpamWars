@@ -141,4 +141,13 @@ public class WeaponryGroup extends Component
 		
 		e.translatePoint(x, y);
 	}
+	
+	public void deselectAll()
+	{
+		for (WeaponryButton c : buttons)
+		{
+			c.selected = false;
+			c.state = 0;
+		}
+	}
 }

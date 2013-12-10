@@ -19,7 +19,7 @@ public class WeaponryButton extends ClickableComponent
 	
 	BufferedImage icon;
 	
-	boolean selected;
+	public boolean selected;
 	public boolean loseSelectionOnRMB;
 	
 	public WeaponryButton(Rectangle icon)

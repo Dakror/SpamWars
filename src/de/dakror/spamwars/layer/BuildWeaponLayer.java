@@ -3,7 +3,6 @@ package de.dakror.spamwars.layer;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
@@ -13,22 +12,23 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.game.weapon.Part.Category;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.ui.WeaponPart;
 import de.dakror.spamwars.ui.WeaponryButton;
 import de.dakror.spamwars.ui.WeaponryGroup;
+import de.dakror.spamwars.ui.WeaponryPart;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
  */
 public class BuildWeaponLayer extends MPLayer
 {
+	WeaponryGroup categories;
 	WeaponryGroup[] groups;
 	
-	CopyOnWriteArrayList<WeaponPart> parts = new CopyOnWriteArrayList<WeaponPart>();
+	WeaponryPart selectedPart;
+	WeaponryButton selectedButton;
 	
-	Part selectedPart;
-	
-	Rectangle buildPlate;
+	public static Rectangle buildPlate;
 	
 	public BuildWeaponLayer()
 	{
@@ -44,7 +44,6 @@ public class BuildWeaponLayer extends MPLayer
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		
 		Helper.drawShadow(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, g);
 		Helper.drawOutline(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, false, g);
 		
@@ -52,29 +51,52 @@ public class BuildWeaponLayer extends MPLayer
 		
 		drawComponents(g);
 		
-		if (selectedPart != null)
-		{
-			Rectangle ic = selectedPart.getIcon();
-			Helper.drawImage(Game.getImage("weapon/explode.png"), Game.currentGame.mouse.x - ic.width / 2, Game.currentGame.mouse.y - ic.height / 2, ic.width, ic.height, ic.x, ic.y, ic.width, ic.height, g);
-		}
+		if (selectedPart != null) selectedPart.draw(g);
 	}
 	
 	@Override
 	public void update(int tick)
 	{
-		for (Component c : components)
+		if (selectedPart != null)
 		{
-			if (c instanceof WeaponPart)
+			int x = Game.currentGame.mouse.x - selectedPart.width / 2;
+			int y = Game.currentGame.mouse.y - selectedPart.height / 2;
+			
+			int snap = 10;
+			int fac = 5;
+			
+			for (Component c : components)
 			{
-				if (!c.enabled)
+				if (c instanceof WeaponryPart)
 				{
-					components.remove(c);
-					parts.remove(c);
+					boolean xIs = Assistant.isBetween(x, c.x, c.x + c.width) || Assistant.isBetween(x + selectedPart.width, c.x, c.x + c.width) || Assistant.isBetween(c.x, x, x + selectedPart.width) || Assistant.isBetween(c.x + c.width, x, x + selectedPart.width);
+					boolean yIs = Assistant.isBetween(y, c.y, c.y + c.height) || Assistant.isBetween(y + selectedPart.height, c.y, c.y + c.height) || Assistant.isBetween(c.y, y, y + selectedPart.height) || Assistant.isBetween(c.y + c.height, y, y + selectedPart.height);
+					if (Math.abs(x - (c.x + c.width)) < snap && yIs) x = c.x + c.width - fac;
+					if (Math.abs((x + selectedPart.width) - c.x) < snap && yIs) x = c.x - selectedPart.width + fac;
+					
+					if (Math.abs(y - (c.y + c.height)) < snap && xIs) y = c.y + c.height - fac;
+					if (Math.abs((y + selectedPart.height) - c.y) < snap && xIs) y = c.y - selectedPart.height + fac;
 				}
 			}
+			
+			selectedPart.x = x;
+			selectedPart.y = y;
+			
 		}
+		// for (WeaponryPart c : parts)
+		// {
+		// // categories.getButton(c.part.getCategory().ordinal()).enabled = !c.enabled;
+		// // if (c.enabled)
+		// // {
+		// // categories.onUnselect.trigger();
+		// // categories.getButton(c.part.getCategory().ordinal()).selected = false;
+		// // }
+		//
+		// if (!c.enabled) parts.remove(c);
+		// }
 		
 		updateComponents(tick);
+		
 		if (Game.currentFrame.alpha == 1 && enabled)
 		{
 			Game.currentFrame.fadeTo(0, 0.05f);
@@ -100,18 +122,23 @@ public class BuildWeaponLayer extends MPLayer
 		
 		if (e.getButton() == MouseEvent.BUTTON1 && selectedPart != null)
 		{
-			int x = e.getX() - selectedPart.getIcon().width / 2;
-			int y = e.getY() - selectedPart.getIcon().height / 2;
-			
-			if (buildPlate.contains(x, y, selectedPart.getIcon().width, selectedPart.getIcon().height))
+			if (buildPlate.contains(selectedPart.x, selectedPart.y, selectedPart.width, selectedPart.height))
 			{
-				WeaponPart p = new WeaponPart(x, y, selectedPart);
+				WeaponryPart p = new WeaponryPart(selectedPart.x, selectedPart.y, selectedPart.part);
 				components.add(p);
-				parts.add(p);
+				selectedPart = null;
+				selectedButton.selected = false;
+				selectedButton = null;
+				removeGroups();
+				categories.deselectAll();
 			}
 		}
-		if (e.getButton() == MouseEvent.BUTTON3) selectedPart = null;
-		
+		if (e.getButton() == MouseEvent.BUTTON3 && selectedPart != null)
+		{
+			selectedPart = null;
+			selectedButton.selected = false;
+			selectedButton = null;
+		}
 	}
 	
 	@Override
@@ -133,13 +160,13 @@ public class BuildWeaponLayer extends MPLayer
 			@Override
 			public void run()
 			{
-				WeaponryGroup categories = new WeaponryGroup(0, 0);
+				categories = new WeaponryGroup(0, 0);
 				categories.onUnselect = new ClickEvent()
 				{
 					@Override
 					public void trigger()
 					{
-						if (components.size() > 2) components.remove(2);
+						removeGroups();
 					}
 				};
 				categories.extending = true;
@@ -154,16 +181,18 @@ public class BuildWeaponLayer extends MPLayer
 					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
 				}
 				
+				
 				for (final Part part : Part.values())
 				{
-					WeaponryButton b = new WeaponryButton(part.getIcon());
+					final WeaponryButton b = new WeaponryButton(part.getIcon());
 					b.loseSelectionOnRMB = true;
 					b.addClickEvent(new ClickEvent()
 					{
 						@Override
 						public void trigger()
 						{
-							selectedPart = part;
+							selectedPart = new WeaponryPart(Game.currentGame.mouse.x - part.getIcon().width / 2, Game.currentGame.mouse.y - part.getIcon().height / 2, part);
+							selectedButton = b;
 						}
 					});
 					groups[part.getCategory().ordinal()].addButton(b);
@@ -179,21 +208,20 @@ public class BuildWeaponLayer extends MPLayer
 						@Override
 						public void trigger()
 						{
-							if (components.size() < 3)
-							{
-								components.add(groups[j]);
-							}
-							else
-							{
-								components.get(2).enabled = false;
-								components.get(2).update(0);
-								components.set(2, groups[j]);
-								components.get(2).enabled = true;
-							}
+							removeGroups();
+							components.add(groups[j]);
 						}
 					});
 				}
 			}
 		}.start();
+	}
+	
+	public void removeGroups()
+	{
+		for (int i = 2; i < components.size(); i++)
+		{
+			if (components.get(i) instanceof WeaponryGroup) components.remove(i);
+		}
 	}
 }

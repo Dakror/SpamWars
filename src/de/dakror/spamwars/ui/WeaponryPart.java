@@ -2,22 +2,26 @@ package de.dakror.spamwars.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.ui.ClickableComponent;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.Part;
+import de.dakror.spamwars.layer.BuildWeaponLayer;
 
 /**
  * @author Dakror
  */
-public class WeaponPart extends ClickableComponent
+public class WeaponryPart extends ClickableComponent
 {
-	Part part;
+	public Part part;
 	BufferedImage icon;
 	
-	public WeaponPart(int x, int y, Part part)
+	Point dragStart;
+	
+	public WeaponryPart(int x, int y, Part part)
 	{
 		super(x, y, part.getIcon().width, part.getIcon().height);
 		
@@ -54,5 +58,18 @@ public class WeaponPart extends ClickableComponent
 		{
 			if (e.getButton() == MouseEvent.BUTTON3) enabled = false;
 		}
+		
+		dragStart = null;
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		if (!contains(e.getX(), e.getY())) return;
+		
+		if (dragStart == null) dragStart = new Point(e.getX() - x, e.getY() - y);
+		
+		if (BuildWeaponLayer.buildPlate.contains(e.getX() - dragStart.x, y, width, height)) x = e.getX() - dragStart.x;
+		if (BuildWeaponLayer.buildPlate.contains(x, e.getY() - dragStart.y, width, height)) y = e.getY() - dragStart.y;
 	}
 }
