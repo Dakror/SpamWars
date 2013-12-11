@@ -194,6 +194,11 @@ public class HUDLayer extends MPLayer
 			}
 			if (killer != null && killed != null) components.add(new KillLabel(killY, killer, killed, ((Packet09Kill) p).getWeapon()));
 			
+			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()))
+			{
+				Game.subMoney(-25);
+			}
+			
 			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()) && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) Game.player.getWeapon().ammo = 1;
 		}
 	}
