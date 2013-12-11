@@ -3,9 +3,10 @@ package de.dakror.spamwars.net.packet;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.entity.Player;
-import de.dakror.spamwars.game.weapon.WeaponType;
+import de.dakror.spamwars.game.weapon.WeaponData;
 
 /**
  * @author Dakror
@@ -16,7 +17,7 @@ public class Packet06PlayerData extends Packet
 	boolean left;
 	int style, frame, life, ammo, capacity;
 	float rot;
-	int weaponID;
+	WeaponData data;
 	String username;
 	
 	public Packet06PlayerData(Player p)
@@ -28,7 +29,7 @@ public class Packet06PlayerData extends Packet
 		frame = p.frame;
 		life = p.getLife();
 		rot = p.getWeapon().rot;
-		weaponID = p.getWeapon().type.ordinal();
+		data = p.getWeapon().getData();
 		username = p.getUser().getUsername();
 		ammo = p.getWeapon().ammo;
 		capacity = p.getWeapon().capacity;
@@ -45,13 +46,18 @@ public class Packet06PlayerData extends Packet
 		frame = bb.get();
 		rot = bb.getFloat();
 		life = bb.getInt();
-		weaponID = bb.getInt();
 		ammo = bb.getInt();
 		capacity = bb.getInt();
 		
 		int length = bb.getInt();
 		
 		byte[] str = new byte[length];
+		bb.get(str, 0, length);
+		this.data = WeaponData.load(new String(Compressor.decompress(str)));
+		
+		length = bb.getInt();
+		
+		str = new byte[length];
 		bb.get(str, 0, length);
 		
 		username = new String(str);
@@ -60,7 +66,9 @@ public class Packet06PlayerData extends Packet
 	@Override
 	protected byte[] getPacketData()
 	{
-		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + 8 + username.length());
+		byte[] comprData = Compressor.compress(data.toString().getBytes());
+		
+		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + 8 + username.length() + comprData.length + 4);
 		bb.putFloat(position.x);
 		bb.putFloat(position.y);
 		bb.put(left ? (byte) -127 : (byte) -128);
@@ -68,9 +76,11 @@ public class Packet06PlayerData extends Packet
 		bb.put((byte) (frame - 128));
 		bb.putFloat(rot);
 		bb.putInt(life);
-		bb.putInt(weaponID);
 		bb.putInt(ammo);
 		bb.putInt(capacity);
+		
+		bb.putInt(comprData.length);
+		bb.put(comprData);
 		
 		bb.putInt(username.length());
 		bb.put(username.getBytes());
@@ -108,9 +118,9 @@ public class Packet06PlayerData extends Packet
 		return life;
 	}
 	
-	public WeaponType getWeaponType()
+	public WeaponData getWeaponData()
 	{
-		return WeaponType.values()[weaponID];
+		return data;
 	}
 	
 	public String getUsername()

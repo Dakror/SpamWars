@@ -180,7 +180,7 @@ public class HUDLayer extends MPLayer
 		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 		if (p instanceof Packet09Kill)
 		{
-			components.add(new KillLabel(killY, ((Packet09Kill) p).getKiller(), ((Packet09Kill) p).getDead(), ((Packet09Kill) p).getWeapon()));
+			// TODO: components.add(new KillLabel(killY, ((Packet09Kill) p).getKiller(), ((Packet09Kill) p).getDead(), ((Packet09Kill) p).getWeapon()));
 			
 			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()) && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) Game.player.getWeapon().ammo = 1;
 		}

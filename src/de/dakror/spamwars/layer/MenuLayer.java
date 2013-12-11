@@ -63,6 +63,12 @@ public class MenuLayer extends MPLayer
 			}.start();
 		}
 		
+		if (Game.weapons != null)
+		{
+			components.get(0).enabled = Game.weapons.length() > 0;
+			components.get(1).enabled = Game.weapons.length() > 0;
+		}
+		
 		enabled = Game.currentGame.getActiveLayer().equals(this);
 	}
 	

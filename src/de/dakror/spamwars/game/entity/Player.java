@@ -17,6 +17,7 @@ import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.weapon.Action;
 import de.dakror.spamwars.game.weapon.Weapon;
 import de.dakror.spamwars.game.weapon.Weapon.FireMode;
+import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.RespawnLayer;
@@ -63,13 +64,14 @@ public class Player extends Entity
 		
 		life = maxlife = 100;
 		
-		// setWeapon(WeaponType.PISTOL);
+		if (user.getUsername().equals(Game.user.getUsername())) setWeapon(Game.activeWeapon);
 	}
 	
 	@Override
 	public void draw(Graphics2D g)
 	{
 		if (Game.world == null) return;
+		if (weapon == null) return;
 		
 		float mx = x + Game.world.x;
 		float my = y + Game.world.y;
@@ -123,6 +125,7 @@ public class Player extends Entity
 	
 	public Vector getWeaponPoint()
 	{
+		if (weapon == null) return null;
 		Vector exit = new Vector(weapon.getExit()).mul(Weapon.scale);
 		exit.x = 0;
 		
@@ -141,6 +144,7 @@ public class Player extends Entity
 	
 	public void handleMouse(MouseEvent e, boolean target)
 	{
+		if (weapon == null) return;
 		
 		lookingLeft = e.getX() < x + width / 2;
 		mouse = e.getPoint();
@@ -246,6 +250,8 @@ public class Player extends Entity
 	@Override
 	protected void tick(int tick)
 	{
+		if (weapon == null) return;
+		
 		int speed = airborne ? 3 : 4;
 		
 		if (user.getUsername().equals(Game.user.getUsername()))
@@ -327,11 +333,11 @@ public class Player extends Entity
 		return weapon;
 	}
 	
-	public void setWeapon(WeaponType weapon)
+	public void setWeapon(WeaponData data)
 	{
 		try
 		{
-			this.weapon = (Weapon) weapon.getClass1().getConstructor().newInstance();
+			weapon = new Weapon(data, FireMode.SINGLE, 10, 50, 9, 90, 35); // TODO: Weapon attributes
 		}
 		catch (Exception e)
 		{
@@ -360,15 +366,9 @@ public class Player extends Entity
 		{
 			if (source instanceof Projectile)
 			{
-				WeaponType w = null;
-				for (Entity e : Game.world.entities)
-				{
-					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(((Projectile) source).getUsername())) w = ((Player) e).getWeapon().type;
-				}
-				
 				try
 				{
-					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), w));
+					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), WeaponType.WEAPON));
 				}
 				catch (IOException e)
 				{
@@ -398,6 +398,7 @@ public class Player extends Entity
 	@Override
 	public void updateServer(int tick)
 	{
+		if (weapon == null) return;
 		for (Entity e : Game.server.world.entities)
 		{
 			if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0)))

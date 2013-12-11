@@ -330,7 +330,7 @@ public class Server extends Thread
 						e.setLife(p.getLife());
 						
 						((Player) e).setStyle(p.getStyle());
-						if (((Player) e).getWeapon().type != p.getWeaponType()) ((Player) e).setWeapon(p.getWeaponType());
+						if (((Player) e).getWeapon() == null || !((Player) e).getWeapon().getData().equals(p.getWeaponData())) ((Player) e).setWeapon(p.getWeaponData());
 						
 						((Player) e).getWeapon().ammo = p.getAmmo();
 						((Player) e).getWeapon().capacity = p.getCapacity();

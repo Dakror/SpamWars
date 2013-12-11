@@ -36,7 +36,7 @@ public class LobbyLayer extends MPLayer
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/startGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, 610, TextButton.HEIGHT + 40, false, false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2 + 40, false, false, g);
 		
 		
 		Helper.drawContainer(0, 300, Game.getWidth() / 4, (Game.getHeight() / 4 * 3 - 20 + TextButton.HEIGHT + 40) - 300, false, false, g);
@@ -150,7 +150,18 @@ public class LobbyLayer extends MPLayer
 		});
 		components.add(time);
 		
-		TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3, "Start");
+		TextButton wpn = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() / 4 * 3, "Waffe");
+		wpn.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.addLayer(new WeaponryLayer(false));
+			}
+		});
+		components.add(wpn);
+		
+		TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Start");
 		start.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -165,7 +176,7 @@ public class LobbyLayer extends MPLayer
 		
 		if (!Game.client.isConnected()) Game.client.connectToServer(Game.ip);
 		
-		TextButton disco = new TextButton(Game.getWidth() / 2 - (host ? TextButton.WIDTH : TextButton.WIDTH / 2), Game.getHeight() / 4 * 3, "Trennen");
+		TextButton disco = new TextButton(Game.getWidth() / 2 - (host ? TextButton.WIDTH : TextButton.WIDTH / 2), Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Trennen");
 		disco.addClickEvent(new ClickEvent()
 		{
 			@Override

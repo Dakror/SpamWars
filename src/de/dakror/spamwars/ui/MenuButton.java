@@ -51,6 +51,7 @@ public class MenuButton extends ClickableComponent
 	@Override
 	public void update(int tick)
 	{
+		if (!enabled) return;
 		if (state == 2 || state == 1)
 		{
 			alpha += speed;

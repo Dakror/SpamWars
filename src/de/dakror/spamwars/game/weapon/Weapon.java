@@ -12,6 +12,7 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
+import de.dakror.spamwars.game.projectile.ProjectileType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
@@ -20,7 +21,7 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public abstract class Weapon implements Drawable
+public class Weapon implements Drawable
 {
 	public enum FireMode
 	{
@@ -39,7 +40,6 @@ public abstract class Weapon implements Drawable
 	public boolean left, reloading;
 	boolean overangle;
 	
-	public WeaponType type;
 	public FireMode fireMode;
 	
 	int lastShot;
@@ -140,7 +140,10 @@ public abstract class Weapon implements Drawable
 		Game.world.addProjectile(getPojectile(pos.clone(), target), true);
 	}
 	
-	protected abstract Projectile getPojectile(Vector pos, Vector target);
+	public Projectile getPojectile(Vector pos, Vector target)
+	{
+		return new Projectile(pos, target, Game.user.getUsername(), ProjectileType.DEFAUL_LEAD);
+	}
 	
 	@Override
 	public void update(int tick)
@@ -225,7 +228,7 @@ public abstract class Weapon implements Drawable
 	{
 		Vector v = new Vector(exit).mul(scale).sub(new Vector(grab).mul(scale));
 		
-		float radius = exit.x * Weapon.scale;
+		float radius = (exit.x - grab.x + 50) * Weapon.scale;
 		float rot2 = (float) (rot + Math.atan2(v.y, v.x)) * (left ? -1 : 1);
 		
 		return new Vector((float) Math.cos(rot2) * radius, (float) Math.sin(rot2) * radius);
@@ -266,5 +269,10 @@ public abstract class Weapon implements Drawable
 	public void refill(int amount)
 	{
 		capacity = capacity + amount > capacityMax ? capacityMax : capacity + amount;
+	}
+	
+	public WeaponData getData()
+	{
+		return data;
 	}
 }

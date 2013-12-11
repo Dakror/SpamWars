@@ -23,6 +23,7 @@ public class WeaponryLayer extends MPLayer
 	
 	public WeaponryLayer(boolean build)
 	{
+		modal = true;
 		this.build = build;
 	}
 	

@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.weapon.WeaponType;
 
 /**
@@ -28,16 +29,16 @@ public class KillLabel extends Component
 	WeaponType type;
 	BufferedImage weapon;
 	
-	public KillLabel(int y, String killer, String killed, WeaponType weapon)
+	public KillLabel(int y, Player killer, Player killed, WeaponType type)
 	{
 		super(Game.getWidth() - 380, y, 0, 40);
 		
 		dead = false;
-		this.killer = killer;
-		this.killed = killed;
-		type = weapon;
+		this.killer = killer.getUser().getUsername();
+		this.killed = killed.getUser().getUsername();
+		this.type = type;
 		
-		if (weapon.getClass1() != null) this.weapon = weapon.getIcon();
+		if (type == WeaponType.WEAPON) weapon = killer.getWeapon().getImage();
 	}
 	
 	@Override
@@ -67,7 +68,7 @@ public class KillLabel extends Component
 		
 		g.setColor(killer.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
 		
-		if (type.getClass1() != null)
+		if (type == WeaponType.WEAPON)
 		{
 			if (killed.equals(killer))
 			{
