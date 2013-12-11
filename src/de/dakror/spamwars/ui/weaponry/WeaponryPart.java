@@ -1,4 +1,4 @@
-package de.dakror.spamwars.ui;
+package de.dakror.spamwars.ui.weaponry;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,7 +19,8 @@ public class WeaponryPart extends ClickableComponent
 	public Part part;
 	BufferedImage icon;
 	
-	Point dragStart;
+	public static Point dragStart;
+	public static WeaponryPart dragInstance;
 	
 	public WeaponryPart(int x, int y, Part part)
 	{
@@ -60,6 +61,7 @@ public class WeaponryPart extends ClickableComponent
 		}
 		
 		dragStart = null;
+		dragInstance = null;
 	}
 	
 	@Override
@@ -67,7 +69,13 @@ public class WeaponryPart extends ClickableComponent
 	{
 		if (!contains(e.getX(), e.getY())) return;
 		
-		if (dragStart == null) dragStart = new Point(e.getX() - x, e.getY() - y);
+		if (dragStart == null)
+		{
+			dragStart = new Point(e.getX() - x, e.getY() - y);
+			dragInstance = this;
+		}
+		
+		if (!dragInstance.equals(this)) return;
 		
 		if (BuildWeaponLayer.buildPlate.contains(e.getX() - dragStart.x, y, width, height)) x = e.getX() - dragStart.x;
 		if (BuildWeaponLayer.buildPlate.contains(x, e.getY() - dragStart.y, width, height)) y = e.getY() - dragStart.y;

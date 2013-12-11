@@ -35,6 +35,8 @@ public class MenuLayer extends MPLayer
 		
 		Helper.drawString(UniVersion.prettyVersion(), 10, Game.getHeight() - 10, g, 18);
 		
+		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2, false, false, g);
+		
 		drawComponents(g);
 	}
 	
@@ -52,7 +54,7 @@ public class MenuLayer extends MPLayer
 				{
 					if (gotoweapon)
 					{
-						Game.currentFrame.addLayer(new WeaponryLayer());
+						Game.currentFrame.addLayer(new WeaponryLayer(true));
 						
 						gotoweapon = false;
 					}

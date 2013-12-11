@@ -1,4 +1,4 @@
-package de.dakror.spamwars.ui;
+package de.dakror.spamwars.ui.weaponry;
 
 import java.awt.Color;
 import java.awt.Dimension;

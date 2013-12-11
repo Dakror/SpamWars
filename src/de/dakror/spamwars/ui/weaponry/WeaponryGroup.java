@@ -1,4 +1,4 @@
-package de.dakror.spamwars.ui;
+package de.dakror.spamwars.ui.weaponry;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;

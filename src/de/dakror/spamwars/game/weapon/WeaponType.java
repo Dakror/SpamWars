@@ -13,7 +13,7 @@ import de.dakror.spamwars.game.Game;
  */
 public enum WeaponType
 {
-	PISTOL(Pistol.class),
+	// PISTOL(Pistol.class),
 	FALL_DAMAGE(null),
 	STOMP(null),
 	

@@ -12,6 +12,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.net.InetAddress;
+import java.net.URL;
+
+import org.json.JSONArray;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Layer;
@@ -19,7 +22,10 @@ import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Player;
+import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.game.world.World;
+import de.dakror.spamwars.layer.GameStartLayer;
+import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
@@ -35,7 +41,11 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static Server server;
 	public static InetAddress ip;
 	public static User user;
+	public static String passwordMD5;
 	public static Player player;
+	public static JSONArray weapons;
+	public static WeaponData activeWeapon;
+	public static int money;
 	
 	public Game()
 	{
@@ -49,6 +59,13 @@ public class Game extends GameFrame implements WindowFocusListener
 		if (world != null) world.draw(g);
 		
 		drawLayers(g);
+		
+		if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer) && user != null)
+		{
+			Helper.drawContainer(getWidth() - 200, getHeight() - 60, 200, 60, false, false, g);
+			g.setColor(Color.darkGray);
+			Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
+		}
 		
 		g.setColor(Color.green);
 		g.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -166,5 +183,47 @@ public class Game extends GameFrame implements WindowFocusListener
 		{
 			player.stop();
 		}
+	}
+	
+	public static void pullMoney()
+	{
+		try
+		{
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5)));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static void pullWeapons()
+	{
+		try
+		{
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + passwordMD5)));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static boolean subMoney(int money)
+	{
+		try
+		{
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5 + "&sub=" + money));
+			if (!response.contains("false"))
+			{
+				Game.money = Integer.parseInt(response);
+				return true;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

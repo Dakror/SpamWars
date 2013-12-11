@@ -192,7 +192,7 @@ public class HUDLayer extends MPLayer
 		super.keyPressed(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = true;
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) Game.currentGame.addLayer(new PauseLayer());
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !(Game.currentGame.getActiveLayer() instanceof GameStartLayer)) Game.currentGame.addLayer(new PauseLayer());
 		if (e.getKeyCode() == KeyEvent.VK_R && Game.player.getWeapon().canReload() && !reload)
 		{
 			reload = true;
@@ -213,7 +213,7 @@ public class HUDLayer extends MPLayer
 	{
 		super.mousePressed(e);
 		
-		if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) Game.currentGame.addLayer(new PauseLayer());
+		if (new Rectangle(5, 5, 70, 70).contains(e.getPoint()) && !(Game.currentGame.getActiveLayer() instanceof GameStartLayer)) Game.currentGame.addLayer(new PauseLayer());
 	}
 	
 	@Override

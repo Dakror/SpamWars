@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Drawable;
-import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
@@ -30,7 +29,9 @@ public abstract class Weapon implements Drawable
 	}
 	
 	public static final float scale = 0.25f;
-	protected Rectangle tex;
+	protected WeaponData data;
+	protected BufferedImage image;
+	
 	protected Point exit, grab;
 	protected float maxAngle;
 	
@@ -50,10 +51,11 @@ public abstract class Weapon implements Drawable
 	Vector target;
 	public boolean enabled;
 	
-	public Weapon(Rectangle tex, Point exit, Point grab, FireMode fireMode, int speed, float maxAngle, int magazine, int capacity, int reloadSpeed)
+	public Weapon(WeaponData data, FireMode fireMode, int speed, float maxAngle, int magazine, int capacity, int reloadSpeed)
 	{
-		this.tex = tex;
-		this.exit = exit;
+		this.data = data;
+		image = data.getImage();
+		
 		this.fireMode = fireMode;
 		this.reloadSpeed = reloadSpeed;
 		this.magazine = magazine;
@@ -63,8 +65,8 @@ public abstract class Weapon implements Drawable
 		
 		this.maxAngle = maxAngle;
 		this.speed = speed;
-		this.grab = new Point(grab.x - tex.x, grab.y - tex.y);
-		this.exit = new Point(exit.x - tex.x, exit.y - tex.y);
+		grab = data.getGrab();
+		exit = data.getExit();
 		rot = 0;
 		left = false;
 	}
@@ -143,6 +145,13 @@ public abstract class Weapon implements Drawable
 	@Override
 	public void update(int tick)
 	{
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
+		{
+			capacity = 0;
+			magazine = 1;
+			if (ammo > magazine) ammo = 1;
+		}
+		
 		if (!enabled) return;
 		
 		if (target != null && (tick - lastShot) >= speed)
@@ -152,12 +161,7 @@ public abstract class Weapon implements Drawable
 			
 			if (fireMode == FireMode.SINGLE) target = null;
 		}
-		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
-		{
-			capacity = 0;
-			magazine = 1;
-			if (ammo > magazine) ammo = 1;
-		}
+		
 	}
 	
 	@Override
@@ -208,13 +212,13 @@ public abstract class Weapon implements Drawable
 		at.rotate(rot, 0, 0);
 		g.setTransform(at);
 		
-		Helper.drawImage(Game.getImage("weapon/show.png"), -grab.x, -grab.y, tex.width, tex.height, tex.x, tex.y, tex.width, tex.height, g);
+		g.drawImage(image, -grab.x, -grab.y, Game.w);
 		g.setTransform(old);
 	}
 	
 	public BufferedImage getImage()
 	{
-		return Game.getImage("weapon/show.png").getSubimage(tex.x, tex.y, tex.width, tex.height);
+		return image;
 	}
 	
 	public Vector getMuzzle()

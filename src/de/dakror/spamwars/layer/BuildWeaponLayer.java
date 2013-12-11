@@ -13,9 +13,9 @@ import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.game.weapon.Part.Category;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.ui.WeaponryButton;
-import de.dakror.spamwars.ui.WeaponryGroup;
-import de.dakror.spamwars.ui.WeaponryPart;
+import de.dakror.spamwars.ui.weaponry.WeaponryButton;
+import de.dakror.spamwars.ui.weaponry.WeaponryGroup;
+import de.dakror.spamwars.ui.weaponry.WeaponryPart;
 import de.dakror.spamwars.util.Assistant;
 
 /**
@@ -256,7 +256,7 @@ public class BuildWeaponLayer extends MPLayer
 			if (c instanceof WeaponryPart)
 			{
 				WeaponryPart p = (WeaponryPart) c;
-				data.addPart(p.part, p.x / (double) buildPlate.width, p.y / (double) buildPlate.height);
+				data.addPart(p.part, p.x, p.y);
 			}
 		}
 		
