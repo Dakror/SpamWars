@@ -96,7 +96,7 @@ public class LobbyLayer extends MPLayer
 		}
 		else if (Game.server != null)
 		{
-			components.get(4).enabled = ready.size() == Game.client.playerList.getUsers().length; // start button
+			if (components.size() > 4) components.get(4).enabled = ready.size() == Game.client.playerList.getUsers().length && Game.activeWeapon != null; // start button
 		}
 	}
 	
@@ -195,7 +195,7 @@ public class LobbyLayer extends MPLayer
 				{
 					Game.server.mode = GameMode.values()[mode.value];
 					Game.server.minutes = time.value;
-					Game.currentGame.addLayer(new GameStartLayer(true));
+					Game.server.updater.countdown = 5;
 				}
 				else
 				{
@@ -271,7 +271,7 @@ public class LobbyLayer extends MPLayer
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
+				if (start != null) Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
 			}
 			catch (IOException e)
 			{
@@ -279,6 +279,7 @@ public class LobbyLayer extends MPLayer
 			}
 		}
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize")) Game.currentGame.fadeTo(1, 0.05f);
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer(true));
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().startsWith("ready_"))
 		{
 			String user = ((Packet03Attribute) p).getKey().replace("ready_", "");

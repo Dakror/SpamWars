@@ -44,6 +44,7 @@ public class JoinLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
+		// CFG.p(p, Packet.readData(p.getData()), Game.user.getUsername());
 		if (p instanceof Packet00Connect && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))
 		{
 			Game.currentGame.removeLayer(JoinLayer.this);

@@ -43,7 +43,6 @@ public class GameStartLayer extends MPLayer
 		{
 			Game.server.startGame();
 			cd = -1;
-			
 		}
 		if (cd == 0 && !modal)
 		{
@@ -61,7 +60,5 @@ public class GameStartLayer extends MPLayer
 	
 	@Override
 	public void init()
-	{
-		if (Game.server != null) Game.server.updater.countdown = 5;
-	}
+	{}
 }
