@@ -21,7 +21,6 @@ import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -255,7 +254,6 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		CFG.p(Game.user.getUsername(), p);
 		if (p instanceof Packet00Connect && Game.server != null)
 		{
 			sendInfo();
