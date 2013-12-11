@@ -16,6 +16,8 @@ import java.util.Date;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.entity.Entity;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet03Attribute;
@@ -180,7 +182,17 @@ public class HUDLayer extends MPLayer
 		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 		if (p instanceof Packet09Kill)
 		{
-			// TODO: components.add(new KillLabel(killY, ((Packet09Kill) p).getKiller(), ((Packet09Kill) p).getDead(), ((Packet09Kill) p).getWeapon()));
+			Player killer = null;
+			Player killed = null;
+			for (Entity e : Game.world.entities)
+			{
+				if (e instanceof Player)
+				{
+					if (((Player) e).getUser().getUsername().equals(((Packet09Kill) p).getKiller())) killer = (Player) e;
+					if (((Player) e).getUser().getUsername().equals(((Packet09Kill) p).getDead())) killed = (Player) e;
+				}
+			}
+			if (killer != null && killed != null) components.add(new KillLabel(killY, killer, killed, ((Packet09Kill) p).getWeapon()));
 			
 			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()) && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) Game.player.getWeapon().ammo = 1;
 		}

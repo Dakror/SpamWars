@@ -84,6 +84,7 @@ public class WeaponryLayer extends MPLayer
 				
 				if (!build)
 				{
+					if (Game.activeWeapon != null && Game.activeWeapon.equals(wd)) wwb.selected = true;
 					wwb.addClickEvent(new ClickEvent()
 					{
 						@Override

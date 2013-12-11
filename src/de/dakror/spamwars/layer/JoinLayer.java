@@ -49,10 +49,11 @@ public class JoinLayer extends MPLayer
 			Game.currentGame.removeLayer(JoinLayer.this);
 			Game.currentFrame.fadeTo(1, 0.05f);
 		}
-		if (p instanceof Packet02Reject)
+		else if (p instanceof Packet02Reject)
 		{
 			Game.currentGame.addLayer(new Alert(((Packet02Reject) p).getCause().getDescription(), null));
 		}
+		else MenuLayer.ll.onPacketReceived(p);
 	}
 	
 	@Override

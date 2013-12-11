@@ -3,6 +3,7 @@ package de.dakror.spamwars.layer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFileChooser;
 
@@ -20,6 +21,7 @@ import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -29,6 +31,15 @@ public class LobbyLayer extends MPLayer
 	boolean fade;
 	
 	Spinner mode, time;
+	
+	CopyOnWriteArrayList<String> ready;
+	
+	TextButton start;
+	
+	public LobbyLayer()
+	{
+		ready = new CopyOnWriteArrayList<>();
+	}
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -46,11 +57,13 @@ public class LobbyLayer extends MPLayer
 		Helper.drawHorizontallyCenteredString("Zeit (min):", Game.getWidth() / 8, 580, g, 28);
 		
 		Color c = g.getColor();
-		g.setColor(Color.decode("#1c0d09"));
 		if (Game.client.playerList != null)
 		{
 			for (int i = 0; i < Game.client.playerList.getUsers().length; i++)
 			{
+				if (ready.contains(Game.client.playerList.getUsers()[i].getUsername())) g.setColor(Color.decode("#186b0d"));
+				else g.setColor(Color.decode("#1c0d09"));
+				
 				Helper.drawHorizontallyCenteredString(Game.client.playerList.getUsers()[i].getUsername(), Game.getWidth(), 400 + i * 60, g, 60);
 			}
 		}
@@ -79,14 +92,25 @@ public class LobbyLayer extends MPLayer
 			
 			Spinner time = (Spinner) components.get(2);
 			time.value = Game.client.gameInfo.getMinutes();
+			
+			components.get(4).enabled = Game.activeWeapon != null; // ready button
+		}
+		else if (Game.server != null)
+		{
+			components.get(4).enabled = ready.size() == Game.client.playerList.getUsers().length; // start button
 		}
 	}
 	
 	@Override
 	public void init()
 	{
-		boolean host = !Game.client.isConnected() || Game.server != null;
-		if (host && Game.server == null) Game.server = new Server(Game.ip); // host
+		
+		final boolean host = !Game.client.isConnected() || Game.server != null;
+		if (host && Game.server == null)
+		{
+			Game.server = new Server(Game.ip); // host
+			ready.add(Game.user.getUsername());
+		}
 		
 		TextButton map = new TextButton((Game.getWidth() / 4 - TextButton.WIDTH) / 2, 380, "Karte");
 		map.addClickEvent(new ClickEvent()
@@ -161,22 +185,37 @@ public class LobbyLayer extends MPLayer
 		});
 		components.add(wpn);
 		
-		TextButton start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Start");
+		start = new TextButton(Game.getWidth() / 2, Game.getHeight() / 4 * 3 + TextButton.HEIGHT, host ? "Start" : "Bereit");
 		start.addClickEvent(new ClickEvent()
 		{
 			@Override
 			public void trigger()
 			{
-				Game.server.mode = GameMode.values()[mode.value];
-				Game.server.minutes = time.value;
-				Game.currentGame.addLayer(new GameStartLayer(true));
+				if (host)
+				{
+					Game.server.mode = GameMode.values()[mode.value];
+					Game.server.minutes = time.value;
+					Game.currentGame.addLayer(new GameStartLayer(true));
+				}
+				else
+				{
+					try
+					{
+						Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
 			}
 		});
-		if (host) components.add(start);
+		if (!host) start.setToggleMode(true);
+		components.add(start);
 		
 		if (!Game.client.isConnected()) Game.client.connectToServer(Game.ip);
 		
-		TextButton disco = new TextButton(Game.getWidth() / 2 - (host ? TextButton.WIDTH : TextButton.WIDTH / 2), Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Trennen");
+		TextButton disco = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Trennen");
 		disco.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -216,8 +255,37 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet00Connect && Game.server != null) sendInfo();
+		CFG.p(Game.user.getUsername(), p);
+		if (p instanceof Packet00Connect && Game.server != null)
+		{
+			sendInfo();
+			try
+			{
+				Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), "true"));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		if (p instanceof Packet00Connect && Game.server == null)
+		{
+			try
+			{
+				Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize")) Game.currentGame.fadeTo(1, 0.05f);
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().startsWith("ready_"))
+		{
+			String user = ((Packet03Attribute) p).getKey().replace("ready_", "");
+			if (Boolean.parseBoolean(((Packet03Attribute) p).getValue()) && !ready.contains(user)) ready.add(user);
+			else ready.remove(user);
+		}
 		if (p instanceof Packet01Disconnect)
 		{
 			try

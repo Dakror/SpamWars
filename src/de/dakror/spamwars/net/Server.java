@@ -291,6 +291,18 @@ public class Server extends Thread
 				
 				break;
 			}
+			case ATTRIBUTE:
+			{
+				try
+				{
+					sendPacketToAllClients(new Packet03Attribute(data));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				break;
+			}
 			case PLAYERLIST:
 			{
 				User user = new User(null, address, port);

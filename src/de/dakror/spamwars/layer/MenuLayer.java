@@ -19,6 +19,8 @@ public class MenuLayer extends MPLayer
 {
 	boolean gotoweapon;
 	
+	static LobbyLayer ll;
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -58,7 +60,7 @@ public class MenuLayer extends MPLayer
 						
 						gotoweapon = false;
 					}
-					else Game.currentFrame.addLayer(new LobbyLayer());
+					else Game.currentFrame.addLayer(ll);
 				}
 			}.start();
 		}
@@ -75,6 +77,8 @@ public class MenuLayer extends MPLayer
 	@Override
 	public void init()
 	{
+		ll = new LobbyLayer();
+		
 		MenuButton start = new MenuButton("startGame", 0);
 		start.addClickEvent(new ClickEvent()
 		{
@@ -142,5 +146,7 @@ public class MenuLayer extends MPLayer
 	
 	@Override
 	public void onPacketReceived(Packet p)
-	{}
+	{
+		ll.onPacketReceived(p);
+	}
 }
