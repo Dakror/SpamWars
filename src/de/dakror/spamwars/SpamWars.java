@@ -69,8 +69,14 @@ public class SpamWars
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");
-		Game.currentFrame.setFullscreen();
-		
+		try
+		{
+			Game.currentFrame.setFullscreen();
+		}
+		catch (IllegalStateException e)
+		{
+			System.exit(0);
+		}
 		Game.currentGame.addLayer(new MenuLayer());
 		if (Game.user == null) Game.currentGame.addLayer(new LoginLayer());
 		

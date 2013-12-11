@@ -137,6 +137,7 @@ public class LoginLayer extends MPLayer
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			Game.currentGame.addLayer(new Alert("Anmeldung fehlgeschlagen!", null));
 		}
 		return false;
 	}

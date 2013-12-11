@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Properties;
 
-import de.dakror.gamesetup.util.Compressor;
 import de.dakror.gamesetup.util.Helper;
 
 /**
@@ -20,7 +17,7 @@ public class CFG
 	public static final File DIR = new File(System.getProperty("user.home") + "/.dakror/SpamWars");
 	
 	// -- UniVersion -- //
-	public static final int VERSION = 2013121120;
+	public static final int VERSION = 2013121122;
 	public static final int PHASE = 1;
 	
 	public static boolean INTERNET;
@@ -86,8 +83,7 @@ public class CFG
 			if (!s.exists()) return null;
 			
 			Properties properties = new Properties();
-			StringReader sr = new StringReader(Compressor.decompressFile(s));
-			properties.load(sr);
+			properties.load(new FileReader(s));
 			return properties;
 		}
 		catch (IOException e)
@@ -111,9 +107,7 @@ public class CFG
 			Properties properties = new Properties();
 			properties.setProperty("username", username);
 			properties.setProperty("pwd", pwd);
-			StringWriter sw = new StringWriter();
-			properties.store(sw, "");
-			Compressor.compressFile(s, sw.toString());
+			properties.store(new FileWriter(s), "");
 		}
 		catch (IOException e)
 		{
