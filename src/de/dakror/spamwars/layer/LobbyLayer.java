@@ -108,8 +108,9 @@ public class LobbyLayer extends MPLayer
 		if (host && Game.server == null)
 		{
 			Game.server = new Server(Game.ip); // host
-			ready.add(Game.user.getUsername());
 		}
+		
+		if (host) ready.add(Game.user.getUsername());
 		
 		TextButton map = new TextButton((Game.getWidth() / 4 - TextButton.WIDTH) / 2, 380, "Karte");
 		map.addClickEvent(new ClickEvent()
@@ -281,7 +282,10 @@ public class LobbyLayer extends MPLayer
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().startsWith("ready_"))
 		{
 			String user = ((Packet03Attribute) p).getKey().replace("ready_", "");
-			if (Boolean.parseBoolean(((Packet03Attribute) p).getValue()) && !ready.contains(user)) ready.add(user);
+			if (Boolean.parseBoolean(((Packet03Attribute) p).getValue()))
+			{
+				if (!ready.contains(user)) ready.add(user);
+			}
 			else ready.remove(user);
 		}
 		if (p instanceof Packet01Disconnect)

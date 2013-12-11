@@ -3,6 +3,7 @@ package de.dakror.spamwars.ui;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -38,7 +39,12 @@ public class KillLabel extends Component
 		this.killed = killed.getUser().getUsername();
 		this.type = type;
 		
-		if (type == WeaponType.WEAPON) weapon = killer.getWeapon().getImage();
+		if (type == WeaponType.WEAPON)
+		{
+			weapon = killer.getWeapon().getImage();
+			Dimension dim = Helper.scaleTo(new Dimension(weapon.getWidth(), weapon.getHeight()), new Dimension(150, 20));
+			if (dim.width < weapon.getWidth() || dim.height < weapon.getHeight()) weapon = Helper.toBufferedImage(weapon.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH));
+		}
 	}
 	
 	@Override
