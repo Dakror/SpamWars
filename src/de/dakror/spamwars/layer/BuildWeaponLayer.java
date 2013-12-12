@@ -31,6 +31,8 @@ public class BuildWeaponLayer extends MPLayer
 	
 	public static Rectangle buildPlate;
 	
+	WeaponData cacheData;
+	
 	public BuildWeaponLayer()
 	{
 		modal = true;
@@ -48,11 +50,11 @@ public class BuildWeaponLayer extends MPLayer
 		Helper.drawShadow(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, g);
 		Helper.drawOutline(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, false, g);
 		
-		int x = Game.getWidth() / 2 - TextButton.WIDTH - 15, y = Game.getHeight() - 115, width = Game.getWidth() / 2 - 200 - TextButton.WIDTH - WeaponryButton.SIZE, height = 115;
-		// Helper.drawShadow(x, y, width, height, g);
-		// Helper.drawOutline(x, y, width, height, false, g);
+		int x = Game.getWidth() / 2 - TextButton.WIDTH - 15, height = 85, y = Game.getHeight() - TextButton.HEIGHT * 3 / 2 - height, width = TextButton.WIDTH * 2 + 30;
+		Helper.drawShadow(x - 5, y, width + 10, height, g);
+		Helper.drawOutline(x - 5, y, width + 10, height, false, g);
 		
-		Helper.drawContainer(x, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2, false, false, g);
+		Helper.drawContainer(x, y + height, width, TextButton.HEIGHT * 2, false, false, g);
 		
 		drawComponents(g);
 		
@@ -133,6 +135,8 @@ public class BuildWeaponLayer extends MPLayer
 	public void mousePressed(MouseEvent e)
 	{
 		super.mousePressed(e);
+		
+		cacheData = getWeaponData();
 		
 		if (e.getButton() == MouseEvent.BUTTON1 && selectedPart != null)
 		{
