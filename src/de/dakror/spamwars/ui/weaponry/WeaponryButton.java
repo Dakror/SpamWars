@@ -89,6 +89,19 @@ public class WeaponryButton extends ClickableComponent
 		}
 	}
 	
+	@Override
+	public void drawTooltip(int x, int y, Graphics2D g)
+	{
+		if (part == null) return;
+		
+		int size = 150;
+		Helper.drawShadow(x, y, size, size, g);
+		Helper.drawOutline(x, y, size, size, false, g);
+		
+		Helper.drawProgressBar(x + 15, y + 15, size - 30, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
+		// Helper.drawHorizontallyCenteredString("Geschwindigkeit", x, size, y + 35, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
+	}
+	
 	public void setPart(Part part)
 	{
 		this.part = part;

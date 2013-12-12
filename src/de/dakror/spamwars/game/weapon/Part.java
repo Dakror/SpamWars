@@ -2,6 +2,8 @@ package de.dakror.spamwars.game.weapon;
 
 import java.awt.Rectangle;
 
+import de.dakror.spamwars.game.weapon.Weapon.FireMode;
+
 /**
  * @author Dakror
  */
@@ -9,42 +11,16 @@ public enum Part
 {
 	// -- !!! Don't change the order, it is important for weapon saves !!! -- //
 	
-	PISTOL_SILVER_HANDLE(593, 1250, 64, 88, 0, Category.HANDLE),
-	PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, Category.BARREL),
-	PISTOL_SILVER_TRIGGER(671, 1254, 51, 31, 0, Category.TRIGGER),
+	PISTOL_SILVER_HANDLE(593, 1250, 64, 88, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.HANDLE),
+	PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
+	PISTOL_SILVER_TRIGGER(671, 1254, 51, 31, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.TRIGGER),
 	
-	MINIGUN_BARREL(1378, 1006, 456, 83, 5000, Category.BARREL),
+	MINIGUN_BARREL(1378, 1006, 456, 83, 5000, 1, 100, 30, 1000, FireMode.AUTO, Category.BARREL),
 	
-	ASSAULT_RIFLE_GRAY_SHOULDER(95, 2074, 237, 115, 500, Category.SHOULDER),
+	ASSAULT_RIFLE_GRAY_SHOULDER(95, 2074, 237, 115, 500, 2, 30, 40, 150, FireMode.AUTO, Category.SHOULDER),
 	
 	// -- coming much more soon(-ish) -- //
 	;
-	
-	Rectangle tex;
-	Category category;
-	int price;
-	
-	private Part(int x, int y, int width, int height, int price, Category category)
-	{
-		this.category = category;
-		this.price = price;
-		tex = new Rectangle(x, y, width, height);
-	}
-	
-	public Rectangle getIcon()
-	{
-		return tex;
-	}
-	
-	public Category getCategory()
-	{
-		return category;
-	}
-	
-	public int getPrice()
-	{
-		return price;
-	}
 	
 	public enum Category
 	{
@@ -72,5 +48,110 @@ public enum Part
 		{
 			return icon;
 		}
+	}
+	
+	public static int highest_speed = 0;
+	public static int highest_magazine = 0;
+	public static float highest_angle = 0;
+	public static int highest_reload = 0;
+	
+	static
+	{
+		highest_speed = getHighestSpeed();
+		highest_magazine = getHighestMagazine();
+		highest_angle = getHighestAngle();
+		highest_reload = getHighestReload();
+	}
+	
+	Rectangle tex;
+	Category category;
+	int price, speed, magazine, reload;
+	float angle;
+	FireMode mode;
+	
+	private Part(int x, int y, int width, int height, int price, int speed, int magazine, float angle, int reload, FireMode mode, Category category)
+	{
+		this.category = category;
+		this.price = price;
+		this.speed = speed;
+		this.magazine = magazine;
+		this.angle = angle;
+		this.reload = reload;
+		this.mode = mode;
+		tex = new Rectangle(x, y, width, height);
+	}
+	
+	public Rectangle getIcon()
+	{
+		return tex;
+	}
+	
+	public Category getCategory()
+	{
+		return category;
+	}
+	
+	public int getPrice()
+	{
+		return price;
+	}
+	
+	public int getSpeed()
+	{
+		return speed;
+	}
+	
+	public int getMagazine()
+	{
+		return magazine;
+	}
+	
+	public int getReload()
+	{
+		return reload;
+	}
+	
+	public float getAngle()
+	{
+		return angle;
+	}
+	
+	public FireMode getMode()
+	{
+		return mode;
+	}
+	
+	// -- highest-X functions -- //
+	
+	public static int getHighestSpeed()
+	{
+		int x = 0;
+		for (Part p : values())
+			if (p.speed > x) x = p.speed;
+		return x;
+	}
+	
+	public static int getHighestMagazine()
+	{
+		int x = 0;
+		for (Part p : values())
+			if (p.magazine > x) x = p.magazine;
+		return x;
+	}
+	
+	public static float getHighestAngle()
+	{
+		float x = 0;
+		for (Part p : values())
+			if (p.angle > x) x = p.angle;
+		return x;
+	}
+	
+	public static int getHighestReload()
+	{
+		int x = 0;
+		for (Part p : values())
+			if (p.reload > x) x = p.reload;
+		return x;
 	}
 }
