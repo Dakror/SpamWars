@@ -72,6 +72,7 @@ public class SpamWars
 		try
 		{
 			Game.currentFrame.setFullscreen();
+			// Game.currentFrame.w.setSize(1280, 720);
 		}
 		catch (IllegalStateException e)
 		{

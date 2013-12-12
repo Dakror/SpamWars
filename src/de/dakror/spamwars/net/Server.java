@@ -182,6 +182,7 @@ public class Server extends Thread
 		{
 			sendPacket(new Packet11GameInfo(minutes, mode), user);
 			sendPacket(new Packet03Attribute("pos", (int) (v.x * Tile.SIZE) + "," + (int) (v.y * Tile.SIZE)), user);
+			sendPacket(new Packet03Attribute("latejoin", "true"), user);
 			sendWorld(user);
 		}
 		catch (IOException e)
