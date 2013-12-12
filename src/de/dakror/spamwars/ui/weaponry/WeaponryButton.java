@@ -94,12 +94,24 @@ public class WeaponryButton extends ClickableComponent
 	{
 		if (part == null) return;
 		
-		int size = 150;
-		Helper.drawShadow(x, y, size, size, g);
-		Helper.drawOutline(x, y, size, size, false, g);
+		int size = 190, height = 115;
+		Helper.drawShadow(x, y, size, height, g);
+		Helper.drawOutline(x, y, size, height, false, g);
 		
+		Color c = g.getColor();
+		g.setColor(Color.black);
 		Helper.drawProgressBar(x + 15, y + 15, size - 30, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
-		// Helper.drawHorizontallyCenteredString("Geschwindigkeit", x, size, y + 35, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
+		Helper.drawHorizontallyCenteredString("Verzögerung", x, size, y + 31, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 35, size - 30, part.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
+		Helper.drawHorizontallyCenteredString("Munition", x, size, y + 51, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 55, size - 30, part.getAngle() / Part.highest_angle, "7dd33c", g);
+		Helper.drawHorizontallyCenteredString("Winkel", x, size, y + 71, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 75, size - 30, part.getReload() / (float) Part.highest_reload, "2a86e7", g);
+		Helper.drawHorizontallyCenteredString("Nachladen", x, size, y + 91, g, 15);
+		g.setColor(c);
 	}
 	
 	public void setPart(Part part)
