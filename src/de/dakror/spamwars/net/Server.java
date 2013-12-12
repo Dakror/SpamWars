@@ -61,8 +61,6 @@ public class Server extends Thread
 	public int minutes;
 	public GameMode mode;
 	
-	ArrayList<User> lateUsers = new ArrayList<>();
-	
 	public CopyOnWriteArrayList<User> clients = new CopyOnWriteArrayList<>();
 	
 	public Server(InetAddress ip)
@@ -174,24 +172,6 @@ public class Server extends Thread
 		}
 	}
 	
-	public void addLateJoiner(User user)
-	{
-		Vector v = world.getBestSpawnPoint();
-		world.addEntity(new Player(v.x * Tile.SIZE, v.y * Tile.SIZE, user));
-		try
-		{
-			sendPacket(new Packet11GameInfo(minutes, mode), user);
-			sendPacket(new Packet03Attribute("pos", (int) (v.x * Tile.SIZE) + "," + (int) (v.y * Tile.SIZE)), user);
-			sendPacket(new Packet03Attribute("latejoin", "true"), user);
-			sendWorld(user);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		
-	}
-	
 	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
@@ -239,6 +219,17 @@ public class Server extends Thread
 					catch (Exception e)
 					{}
 				}
+				else if (!lobby)
+				{
+					try
+					{
+						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game started");
+						sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
+						break;
+					}
+					catch (Exception e)
+					{}
+				}
 				for (User p : clients)
 				{
 					if (p.getUsername().equals(packet.getUsername()))
@@ -256,7 +247,6 @@ public class Server extends Thread
 				CFG.p("[SERVER]: " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + ") has connected.");
 				user.setPort(port);
 				clients.add(user);
-				if (!lobby) lateUsers.add(user);
 				try
 				{
 					sendPacket(new Packet03Attribute("user", user.serialize()), user);
@@ -310,15 +300,6 @@ public class Server extends Thread
 				try
 				{
 					sendPacket(new Packet04PlayerList(clients.toArray(new User[] {})), user);
-					for (User u : lateUsers)
-					{
-						if (user.getIP().equals(address) && user.getPort() == port)
-						{
-							addLateJoiner(u);
-							lateUsers.remove(u);
-							break;
-						}
-					}
 				}
 				catch (IOException e)
 				{

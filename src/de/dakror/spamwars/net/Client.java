@@ -52,7 +52,6 @@ public class Client extends Thread
 	public Packet04PlayerList playerList;
 	public Packet11GameInfo gameInfo;
 	public long gameStarted;
-	public boolean lateJoin;
 	
 	ArrayList<Packet05Chunk> chunkPackets = new ArrayList<>();
 	
@@ -235,10 +234,6 @@ public class Client extends Thread
 					for (User u : playerList.getUsers())
 						if (!u.getUsername().equals(Game.user.getUsername())) Game.world.addEntity(new Player(0, 0, u));
 				}
-				if (p.getKey().equals("latejoin"))
-				{
-					lateJoin = true;
-				}
 				
 				packet = p;
 				break;
@@ -345,7 +340,6 @@ public class Client extends Thread
 		playerList = null;
 		serverIP = null;
 		Game.player = null;
-		lateJoin = false;
 		
 		if (Game.server != null) Game.server.shutdown();
 		Game.server = null;

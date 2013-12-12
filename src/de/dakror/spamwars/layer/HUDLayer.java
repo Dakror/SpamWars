@@ -142,12 +142,6 @@ public class HUDLayer extends MPLayer
 			started = true;
 		}
 		
-		if (Game.client.lateJoin)
-		{
-			Game.player.getWeapon().enabled = true;
-			Game.client.lateJoin = false;
-		}
-		
 		if (reload)
 		{
 			if (reloadStarted == 0) reloadStarted = tick;
