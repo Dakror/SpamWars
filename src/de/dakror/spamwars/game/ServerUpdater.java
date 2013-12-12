@@ -9,7 +9,7 @@ import de.dakror.spamwars.net.packet.Packet03Attribute;
 public class ServerUpdater extends Thread
 {
 	public int tick, ticks;
-	long time, time2;
+	public long time, time2;
 	
 	public int countdown = -1;
 	

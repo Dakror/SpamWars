@@ -39,6 +39,7 @@ public class HUDLayer extends MPLayer
 	
 	BufferedImage stats;
 	boolean invokeRenderStats = false;
+	boolean started = false;
 	
 	@Override
 	public void draw(Graphics2D g)
@@ -134,6 +135,13 @@ public class HUDLayer extends MPLayer
 		
 		if (Game.activeWeapon == null || Game.player.getWeapon() == null) return;
 		
+		if (Game.server != null && !started)
+		{
+			Game.server.updater.time2 = 0;
+			Game.server.updater.countdown = 5;
+			started = true;
+		}
+		
 		if (Game.client.lateJoin)
 		{
 			Game.player.getWeapon().enabled = true;
@@ -186,7 +194,10 @@ public class HUDLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) Game.currentGame.addLayer(new GameStartLayer(false));
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown"))
+		{
+			Game.currentGame.addLayer(new GameStartLayer(false));
+		}
 		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
 		if (p instanceof Packet09Kill)
 		{

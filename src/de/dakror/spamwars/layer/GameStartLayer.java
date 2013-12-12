@@ -41,6 +41,7 @@ public class GameStartLayer extends MPLayer
 	{
 		if (cd == 0 && Game.server != null && modal)
 		{
+			Game.currentGame.removeLayer(this);
 			Game.server.startGame();
 			cd = -1;
 		}

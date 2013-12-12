@@ -195,6 +195,7 @@ public class LobbyLayer extends MPLayer
 				{
 					Game.server.mode = GameMode.values()[mode.value];
 					Game.server.minutes = time.value;
+					Game.server.updater.time2 = 0;
 					Game.server.updater.countdown = 5;
 				}
 				else
