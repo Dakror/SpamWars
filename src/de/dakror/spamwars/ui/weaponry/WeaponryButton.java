@@ -101,7 +101,7 @@ public class WeaponryButton extends ClickableComponent
 		Color c = g.getColor();
 		g.setColor(Color.black);
 		Helper.drawProgressBar(x + 15, y + 15, size - 30, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
-		Helper.drawHorizontallyCenteredString("VerzÃ¶gerung", x, size, y + 31, g, 15);
+		Helper.drawHorizontallyCenteredString("Verzögerung", x, size, y + 31, g, 15);
 		
 		Helper.drawProgressBar(x + 15, y + 35, size - 30, part.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
 		Helper.drawHorizontallyCenteredString("Munition", x, size, y + 51, g, 15);

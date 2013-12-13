@@ -1,5 +1,6 @@
 package de.dakror.spamwars.layer;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -29,6 +30,8 @@ public class BuildWeaponLayer extends MPLayer
 	WeaponryPart selectedPart;
 	WeaponryButton selectedButton;
 	
+	TextButton auto;
+	
 	public static Rectangle buildPlate;
 	
 	WeaponData cacheData;
@@ -50,9 +53,26 @@ public class BuildWeaponLayer extends MPLayer
 		Helper.drawShadow(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, g);
 		Helper.drawOutline(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, false, g);
 		
-		int x = Game.getWidth() / 2 - TextButton.WIDTH - 15, height = 85, y = Game.getHeight() - TextButton.HEIGHT * 3 / 2 - height, width = TextButton.WIDTH * 2 + 30;
+		int x = Game.getWidth() / 2 - TextButton.WIDTH - 15, height = 55, y = Game.getHeight() - TextButton.HEIGHT * 3 / 2 - height, width = TextButton.WIDTH * 2 + 30;
 		Helper.drawShadow(x - 5, y, width + 10, height, g);
 		Helper.drawOutline(x - 5, y, width + 10, height, false, g);
+		
+		Color c = g.getColor();
+		g.setColor(Color.black);
+		
+		Helper.drawProgressBar(x + 5, y + 8, TextButton.WIDTH + 10, cacheData.getSpeed() / (float) Part.highest_speed, "ff3232", g);
+		Helper.drawHorizontallyCenteredString("Verzögerung", x, TextButton.WIDTH + 10, y + 24, g, 15);
+		
+		Helper.drawProgressBar(x + TextButton.WIDTH + 15, y + 8, TextButton.WIDTH + 10, cacheData.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
+		Helper.drawHorizontallyCenteredString("Munition", x + TextButton.WIDTH + 15, TextButton.WIDTH + 10, y + 24, g, 15);
+		
+		Helper.drawProgressBar(x + 5, y + 25, TextButton.WIDTH + 10, cacheData.getAngle() / Part.highest_angle, "7dd33c", g);
+		Helper.drawHorizontallyCenteredString("Winkel", x, TextButton.WIDTH + 10, y + 41, g, 15);
+		
+		Helper.drawProgressBar(x + TextButton.WIDTH + 15, y + 25, TextButton.WIDTH + 10, cacheData.getReload() / (float) Part.highest_reload, "2a86e7", g);
+		Helper.drawHorizontallyCenteredString("Nachladen", x + TextButton.WIDTH + 15, TextButton.WIDTH + 10, y + 41, g, 15);
+		
+		g.setColor(c);
 		
 		Helper.drawContainer(x, y + height, width, TextButton.HEIGHT * 2, false, false, g);
 		
@@ -100,6 +120,8 @@ public class BuildWeaponLayer extends MPLayer
 				{
 					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = true;
 					components.remove(c);
+					
+					cacheData = getWeaponData();
 				}
 				else
 				{
@@ -136,8 +158,6 @@ public class BuildWeaponLayer extends MPLayer
 	{
 		super.mousePressed(e);
 		
-		cacheData = getWeaponData();
-		
 		if (e.getButton() == MouseEvent.BUTTON1 && selectedPart != null)
 		{
 			if (buildPlate.contains(selectedPart.x, selectedPart.y, selectedPart.width, selectedPart.height))
@@ -157,11 +177,21 @@ public class BuildWeaponLayer extends MPLayer
 			selectedButton.selected = false;
 			selectedButton = null;
 		}
+		
+		cacheData = getWeaponData();
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		super.mouseReleased(e);
 	}
 	
 	@Override
 	public void init()
 	{
+		cacheData = getWeaponData();
+		
 		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "ZurÃ¼ck");
 		back.addClickEvent(new ClickEvent()
 		{
@@ -184,6 +214,10 @@ public class BuildWeaponLayer extends MPLayer
 		});
 		build.enabled = false;
 		components.add(build);
+		
+		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 3 / 2 - 55 - TextButton.HEIGHT, "Automatik");
+		auto.setToggleMode(true);
+		components.add(auto);
 		
 		new Thread()
 		{
@@ -249,7 +283,7 @@ public class BuildWeaponLayer extends MPLayer
 	
 	public void removeGroups()
 	{
-		for (int i = 3; i < components.size(); i++)
+		for (int i = 4; i < components.size(); i++)
 		{
 			if (components.get(i) instanceof WeaponryGroup) components.remove(i);
 		}
@@ -267,6 +301,10 @@ public class BuildWeaponLayer extends MPLayer
 				data.addPart(p.part, p.x, p.y);
 			}
 		}
+		
+		if (auto != null) data.setAutomatic(auto.isSelected());
+		
+		data.calculateStats();
 		
 		return data;
 	}

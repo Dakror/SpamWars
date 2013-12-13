@@ -94,7 +94,7 @@ public class LobbyLayer extends MPLayer
 			
 			components.get(4).enabled = Game.activeWeapon != null; // ready button
 		}
-		else if (Game.server != null)
+		else if (Game.server != null && Game.client.playerList != null)
 		{
 			if (components.size() > 4) components.get(4).enabled = ready.size() == Game.client.playerList.getUsers().length && Game.activeWeapon != null; // start button
 		}

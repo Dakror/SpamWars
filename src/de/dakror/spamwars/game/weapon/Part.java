@@ -12,12 +12,12 @@ public enum Part
 	// -- !!! Don't change the order, it is important for weapon saves !!! -- //
 	
 	PISTOL_SILVER_HANDLE(593, 1250, 64, 88, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.HANDLE),
-	PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
+	PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, 20, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
 	PISTOL_SILVER_TRIGGER(671, 1254, 51, 31, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.TRIGGER),
 	
-	MINIGUN_BARREL(1378, 1006, 456, 83, 5000, 1, 100, 30, 1000, FireMode.AUTO, Category.BARREL),
+	MINIGUN_BARREL(1378, 1006, 456, 83, 5000, 3, 100, 1, 1000, FireMode.AUTO, Category.BARREL),
 	
-	ASSAULT_RIFLE_GRAY_SHOULDER(95, 2074, 237, 115, 500, 2, 30, 40, 150, FireMode.AUTO, Category.SHOULDER),
+	ASSAULT_RIFLE_GRAY_SHOULDER(95, 2074, 237, 115, 500, 3, 30, 30, 150, FireMode.AUTO, Category.SHOULDER),
 	
 	// -- coming much more soon(-ish) -- //
 	;

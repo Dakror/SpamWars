@@ -337,7 +337,8 @@ public class Player extends Entity
 	{
 		try
 		{
-			weapon = new Weapon(data, FireMode.SINGLE, 10, 50, 9, 90, 35); // TODO: Weapon attributes
+			data.calculateStats();
+			weapon = new Weapon(data, data.isAutomatic() ? FireMode.AUTO : FireMode.SINGLE, data.getSpeed(), data.getAngle(), data.getMagazine(), data.getMagazine() * 5, data.getReload());
 		}
 		catch (Exception e)
 		{

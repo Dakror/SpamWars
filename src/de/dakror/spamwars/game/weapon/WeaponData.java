@@ -16,9 +16,15 @@ public class WeaponData
 {
 	ArrayList<DataPart> parts;
 	
+	int speed, magazine, reload;
+	float angle;
+	
+	boolean automatic;
+	
 	public WeaponData()
 	{
 		parts = new ArrayList<>();
+		automatic = false;
 	}
 	
 	public void addPart(Part p, double x, double y)
@@ -49,7 +55,8 @@ public class WeaponData
 		{
 			s += p.toString() + ";";
 		}
-		s = s.substring(0, s.length() - 1);
+		
+		s += Boolean.toString(automatic);
 		
 		return s;
 	}
@@ -86,6 +93,27 @@ public class WeaponData
 		}
 		
 		return wd;
+	}
+	
+	public void calculateStats()
+	{
+		int speed = 0, magazine = 0, reload = 0;
+		float angle = 0;
+		
+		for (DataPart p : parts)
+		{
+			speed += p.part.speed;
+			magazine += p.part.magazine;
+			reload += p.part.reload;
+			angle += p.part.angle;
+		}
+		
+		float c = parts.size();
+		
+		this.speed = Math.round(speed / c);
+		this.magazine = Math.round(magazine / c);
+		this.reload = Math.round(reload / c);
+		this.angle = Math.round(angle / c);
 	}
 	
 	public DataPart getOrigin()
@@ -138,6 +166,41 @@ public class WeaponData
 		return bi;
 	}
 	
+	public ArrayList<DataPart> getParts()
+	{
+		return parts;
+	}
+	
+	public int getSpeed()
+	{
+		return speed;
+	}
+	
+	public int getMagazine()
+	{
+		return magazine;
+	}
+	
+	public int getReload()
+	{
+		return reload;
+	}
+	
+	public float getAngle()
+	{
+		return angle;
+	}
+	
+	public boolean isAutomatic()
+	{
+		return automatic;
+	}
+	
+	public void setAutomatic(boolean automatic)
+	{
+		this.automatic = automatic;
+	}
+	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -155,10 +218,12 @@ public class WeaponData
 		
 		String[] parts = s.split(";");
 		
-		for (String p : parts)
+		for (int i = 0; i < parts.length - 1; i++)
 		{
-			wd.addPart(DataPart.load(p));
+			wd.addPart(DataPart.load(parts[i]));
 		}
+		
+		wd.automatic = parts[parts.length - 1].equals("true");
 		
 		return wd;
 	}

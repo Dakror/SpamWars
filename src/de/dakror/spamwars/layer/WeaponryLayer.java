@@ -68,7 +68,6 @@ public class WeaponryLayer extends MPLayer
 	public void init()
 	{
 		components.clear();
-		
 		Game.pullWeapons();
 		
 		int mw = Game.getWidth() - 200;
