@@ -85,6 +85,8 @@ public class WeaponryGroup extends Component
 		
 		if (height < Game.getHeight()) return;
 		
+		if (e.getX() < x || e.getX() > x + width) return;
+		
 		int y = this.y + e.getScrollAmount() * 15 * -e.getWheelRotation();
 		
 		if (y > 0) y = 0;

@@ -110,7 +110,7 @@ public class BuildWeaponLayer extends MPLayer
 			selectedPart.y = y;
 		}
 		
-		boolean hasParts = false;
+		boolean hasParts = false, hasTrigger = false, hasHandle = false, hasBarrel = false;
 		
 		for (Component c : components)
 		{
@@ -127,11 +127,14 @@ public class BuildWeaponLayer extends MPLayer
 				{
 					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = false;
 					hasParts = true;
+					if (((WeaponryPart) c).part.getCategory() == Category.BARREL) hasBarrel = true;
+					if (((WeaponryPart) c).part.getCategory() == Category.HANDLE) hasHandle = true;
+					if (((WeaponryPart) c).part.getCategory() == Category.TRIGGER) hasTrigger = true;
 				}
 			}
 		}
 		
-		components.get(1).enabled = hasParts;
+		components.get(1).enabled = hasParts && hasBarrel && hasHandle && hasTrigger;
 		
 		updateComponents(tick);
 		
