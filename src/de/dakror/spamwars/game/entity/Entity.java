@@ -79,7 +79,10 @@ public abstract class Entity extends EventListener implements Drawable
 	@Override
 	public void update(int tick)
 	{
+		if (Game.world == null) return;
+		
 		tick(tick);
+		
 		if (update)
 		{
 			float nx = getVelocity().x;

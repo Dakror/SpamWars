@@ -61,7 +61,7 @@ public class BuildWeaponLayer extends MPLayer
 		g.setColor(Color.black);
 		
 		Helper.drawProgressBar(x + 5, y + 8, TextButton.WIDTH + 10, cacheData.getSpeed() / (float) Part.highest_speed, "ff3232", g);
-		Helper.drawHorizontallyCenteredString("Verzögerung", x, TextButton.WIDTH + 10, y + 24, g, 15);
+		Helper.drawHorizontallyCenteredString("VerzÃ¶gerung", x, TextButton.WIDTH + 10, y + 24, g, 15);
 		
 		Helper.drawProgressBar(x + TextButton.WIDTH + 15, y + 8, TextButton.WIDTH + 10, cacheData.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
 		Helper.drawHorizontallyCenteredString("Munition", x + TextButton.WIDTH + 15, TextButton.WIDTH + 10, y + 24, g, 15);
@@ -177,14 +177,14 @@ public class BuildWeaponLayer extends MPLayer
 			selectedButton.selected = false;
 			selectedButton = null;
 		}
-		
-		cacheData = getWeaponData();
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
 		super.mouseReleased(e);
+		
+		cacheData = getWeaponData();
 	}
 	
 	@Override
@@ -215,8 +215,16 @@ public class BuildWeaponLayer extends MPLayer
 		build.enabled = false;
 		components.add(build);
 		
-		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 3 / 2 - 55 - TextButton.HEIGHT, "Automatik");
+		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 3 / 2 - 55 - TextButton.HEIGHT, "Manuell");
 		auto.setToggleMode(true);
+		auto.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				auto.setText(!auto.isSelected() ? "Manuell" : "Automatik");
+			}
+		});
 		components.add(auto);
 		
 		new Thread()

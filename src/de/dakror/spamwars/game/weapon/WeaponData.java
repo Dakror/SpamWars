@@ -44,6 +44,8 @@ public class WeaponData
 		for (DataPart p : parts)
 			price += p.part.getPrice();
 		
+		if (automatic) price += 500;
+		
 		return price;
 	}
 	
@@ -91,6 +93,8 @@ public class WeaponData
 			p.y -= minY;
 			wd.addPart(p.part, p.x, p.y);
 		}
+		
+		wd.automatic = automatic;
 		
 		return wd;
 	}

@@ -1,9 +1,13 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.json.JSONException;
 
+import de.dakror.gamesetup.layer.Alert;
+import de.dakror.gamesetup.layer.Confirm;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.ui.button.TextButton;
@@ -20,6 +24,7 @@ public class WeaponryLayer extends MPLayer
 {
 	int goingto = 0;
 	boolean build;
+	TextButton sell;
 	
 	public WeaponryLayer(boolean build)
 	{
@@ -33,7 +38,7 @@ public class WeaponryLayer extends MPLayer
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2, false, false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
 		
 		drawComponents(g);
 	}
@@ -42,6 +47,15 @@ public class WeaponryLayer extends MPLayer
 	public void update(int tick)
 	{
 		updateComponents(tick);
+		
+		if (build)
+		{
+			boolean sel = false;
+			for (Component c : components)
+				if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) sel = true;
+			
+			sell.enabled = sel;
+		}
 		
 		if (Game.currentFrame.alpha == 1 && enabled)
 		{
@@ -80,27 +94,26 @@ public class WeaponryLayer extends MPLayer
 			{
 				final WeaponData wd = WeaponData.load(Game.weapons.getJSONObject(i).getString("WEAPONDATA"));
 				final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space) + Game.getHeight() / 4, wd);
+				wwb.id = Game.weapons.getJSONObject(i).getInt("ID");
+				wwb.addClickEvent(new ClickEvent()
+				{
+					@Override
+					public void trigger()
+					{
+						for (Component c : components)
+						{
+							if (c instanceof WeaponryWeaponButton) ((WeaponryWeaponButton) c).selected = false;
+						}
+						if (!build) Game.activeWeapon = wd;
+						
+						wwb.selected = true;
+					}
+				});
 				
 				if (!build)
 				{
 					if (Game.activeWeapon != null && Game.activeWeapon.equals(wd)) wwb.selected = true;
-					wwb.addClickEvent(new ClickEvent()
-					{
-						@Override
-						public void trigger()
-						{
-							for (Component c : components)
-							{
-								if (c instanceof WeaponryWeaponButton) ((WeaponryWeaponButton) c).selected = false;
-							}
-							Game.activeWeapon = wd;
-							
-							wwb.selected = true;
-						}
-					});
 				}
-				
-				// TODO: Editing weapons
 				
 				components.add(wwb);
 			}
@@ -132,5 +145,41 @@ public class WeaponryLayer extends MPLayer
 			}
 		});
 		if (this.build) components.add(build);
+		
+		sell = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Löschen");
+		sell.enabled = false;
+		sell.addClickEvent(new ClickEvent()
+		{
+			
+			@Override
+			public void trigger()
+			{
+				Game.currentGame.addLayer(new Confirm("Bist du sicher, dass du diese Waffe unwiderruflich löschen willst?", new ClickEvent()
+				{
+					@Override
+					public void trigger()
+					{
+						int id = -1;
+						for (Component c : components)
+						{
+							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) id = ((WeaponryWeaponButton) c).id;
+						}
+						if (id == -1) return;
+						
+						try
+						{
+							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Game.passwordMD5 + "&removeweapon=" + id));
+							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
+							init();
+						}
+						catch (MalformedURLException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}, null));
+			}
+		});
+		if (this.build) components.add(sell);
 	}
 }

@@ -13,6 +13,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -27,6 +28,7 @@ public class PurchaseWeaponLayer extends MPLayer
 		modal = true;
 		this.data = data;
 		
+		CFG.p(data.toString());
 		costs = data.getPrice();
 	}
 	
