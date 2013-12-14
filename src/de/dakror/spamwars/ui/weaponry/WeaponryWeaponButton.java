@@ -19,7 +19,7 @@ public class WeaponryWeaponButton extends ClickableComponent
 	public static final int WIDTH = 450;
 	public static final int HEIGHT = 300;
 	
-	WeaponData data;
+	public WeaponData data;
 	BufferedImage image;
 	public int id;
 	

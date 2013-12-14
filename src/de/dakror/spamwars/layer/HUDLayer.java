@@ -223,11 +223,6 @@ public class HUDLayer extends MPLayer
 		
 		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = true;
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !(Game.currentGame.getActiveLayer() instanceof GameStartLayer)) Game.currentGame.addLayer(new PauseLayer());
-		if (e.getKeyCode() == KeyEvent.VK_R && Game.player.getWeapon().canReload() && !reload)
-		{
-			reload = true;
-			reloadStarted = 0;
-		}
 	}
 	
 	@Override
@@ -244,6 +239,11 @@ public class HUDLayer extends MPLayer
 		super.mousePressed(e);
 		
 		if (new Rectangle(5, 5, 70, 70).contains(e.getPoint()) && !(Game.currentGame.getActiveLayer() instanceof GameStartLayer)) Game.currentGame.addLayer(new PauseLayer());
+		if (e.getButton() == MouseEvent.BUTTON3 && Game.player.getWeapon().canReload() && !reload)
+		{
+			reload = true;
+			reloadStarted = 0;
+		}
 	}
 	
 	@Override

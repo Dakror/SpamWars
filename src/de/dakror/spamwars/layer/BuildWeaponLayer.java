@@ -12,6 +12,7 @@ import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.game.weapon.DataPart;
 import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.game.weapon.Part.Category;
 import de.dakror.spamwars.game.weapon.WeaponData;
@@ -38,11 +39,13 @@ public class BuildWeaponLayer extends MPLayer
 	
 	public static Rectangle buildPlate;
 	
-	WeaponData cacheData;
+	WeaponData cacheData, exisData;
 	
-	public BuildWeaponLayer()
+	public BuildWeaponLayer(WeaponData data)
 	{
 		modal = true;
+		
+		exisData = data;
 		
 		int m = 200;
 		buildPlate = new Rectangle(m * 3 / 2, m, Game.getWidth() - m * 5 / 2, Game.getHeight() - m * 2);
@@ -235,7 +238,7 @@ public class BuildWeaponLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.addLayer(new PurchaseWeaponLayer(getWeaponData()));
+				Game.currentGame.addLayer(new PurchaseWeaponLayer(exisData, getWeaponData()));
 			}
 		});
 		build.enabled = false;
@@ -311,8 +314,31 @@ public class BuildWeaponLayer extends MPLayer
 						}
 					});
 				}
+				
+				loadExistingWeapon();
 			}
 		}.start();
+	}
+	
+	public void loadExistingWeapon()
+	{
+		if (exisData == null) return;
+		
+		double width = 0, height = 0;
+		
+		for (DataPart dp : exisData.getParts())
+		{
+			if (dp.x + dp.part.tex.width > width) width = dp.x + dp.part.tex.width;
+			if (dp.y + dp.part.tex.height > height) height = dp.y + dp.part.tex.height;
+		}
+		
+		for (DataPart dp : exisData.getParts())
+		{
+			WeaponryPart p = new WeaponryPart((int) (dp.x + (buildPlate.width - width) / 2) + buildPlate.x, (int) (dp.y + (buildPlate.height - height) / 2) + buildPlate.y, dp.part);
+			components.add(p);
+		}
+		
+		categories.deselectAll();
 	}
 	
 	public void removeGroups()

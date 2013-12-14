@@ -24,7 +24,7 @@ public class WeaponryLayer extends MPLayer
 {
 	int goingto = 0;
 	boolean build;
-	TextButton sell;
+	TextButton delete, edit;
 	
 	public WeaponryLayer(boolean build)
 	{
@@ -54,7 +54,8 @@ public class WeaponryLayer extends MPLayer
 			for (Component c : components)
 				if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) sel = true;
 			
-			sell.enabled = sel;
+			delete.enabled = sel;
+			edit.enabled = sel;
 		}
 		
 		if (Game.currentFrame.alpha == 1 && enabled)
@@ -66,7 +67,18 @@ public class WeaponryLayer extends MPLayer
 				public void run()
 				{
 					if (goingto == 1) Game.currentGame.removeLayer(WeaponryLayer.this);
-					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer());
+					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer(null));
+					else if (goingto == 3 && edit.enabled)
+					{
+						for (Component c : components)
+						{
+							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected)
+							{
+								Game.currentGame.addLayer(new BuildWeaponLayer(((WeaponryWeaponButton) c).data));
+								break;
+							}
+						}
+					}
 					
 					goingto = 0;
 				}
@@ -146,9 +158,22 @@ public class WeaponryLayer extends MPLayer
 		});
 		if (this.build) components.add(build);
 		
-		sell = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Löschen");
-		sell.enabled = false;
-		sell.addClickEvent(new ClickEvent()
+		edit = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Ändern");
+		edit.enabled = false;
+		edit.addClickEvent(new ClickEvent()
+		{
+			@Override
+			public void trigger()
+			{
+				goingto = 3;
+				Game.currentFrame.fadeTo(1, 0.05f);
+			}
+		});
+		if (this.build) components.add(edit);
+		
+		delete = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Löschen");
+		delete.enabled = false;
+		delete.addClickEvent(new ClickEvent()
 		{
 			
 			@Override
@@ -180,6 +205,6 @@ public class WeaponryLayer extends MPLayer
 				}, null));
 			}
 		});
-		if (this.build) components.add(sell);
+		if (this.build) components.add(delete);
 	}
 }
