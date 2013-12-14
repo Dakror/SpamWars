@@ -42,7 +42,7 @@ public class WeaponData
 		int price = 0;
 		
 		for (DataPart p : parts)
-			price += p.part.getPrice();
+			price += p.part.price;
 		
 		if (automatic) price += 500;
 		

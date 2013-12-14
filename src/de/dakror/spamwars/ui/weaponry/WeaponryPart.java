@@ -24,10 +24,10 @@ public class WeaponryPart extends ClickableComponent
 	
 	public WeaponryPart(int x, int y, Part part)
 	{
-		super(x, y, part.getIcon().width, part.getIcon().height);
+		super(x, y, part.tex.width, part.tex.height);
 		
 		this.part = part;
-		icon = Game.getImage("weapon/explode.png").getSubimage(part.getIcon().x, part.getIcon().y, part.getIcon().width, part.getIcon().height);
+		icon = Game.getImage("weapon/explode.png").getSubimage(part.tex.x, part.tex.y, part.tex.width, part.tex.height);
 	}
 	
 	@Override

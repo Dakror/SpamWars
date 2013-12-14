@@ -18,12 +18,12 @@ public class DataPart
 	@Override
 	public String toString()
 	{
-		return part.ordinal() + ":" + x + ":" + y;
+		return part.id + ":" + x + ":" + y;
 	}
 	
 	public static DataPart load(String s)
 	{
 		String[] parts = s.split(":");
-		return new DataPart(Part.values()[Integer.parseInt(parts[0])], Double.parseDouble(parts[1]), Double.parseDouble(parts[2]));
+		return new DataPart(Part.parts.get(Integer.parseInt(parts[0])), Double.parseDouble(parts[1]), Double.parseDouble(parts[2]));
 	}
 }

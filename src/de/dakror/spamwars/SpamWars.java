@@ -11,6 +11,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.reporter.Reporter;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
+import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.layer.LoginLayer;
 import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.User;
@@ -67,6 +68,7 @@ public class SpamWars
 		}
 		
 		CFG.loadSettings();
+		Part.init();
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");

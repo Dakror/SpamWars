@@ -118,18 +118,18 @@ public class BuildWeaponLayer extends MPLayer
 			{
 				if (!c.enabled)
 				{
-					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = true;
+					categories.getButton(((WeaponryPart) c).part.category.ordinal()).enabled = true;
 					components.remove(c);
 					
 					cacheData = getWeaponData();
 				}
 				else
 				{
-					categories.getButton(((WeaponryPart) c).part.getCategory().ordinal()).enabled = false;
+					categories.getButton(((WeaponryPart) c).part.category.ordinal()).enabled = false;
 					hasParts = true;
-					if (((WeaponryPart) c).part.getCategory() == Category.BARREL) hasBarrel = true;
-					if (((WeaponryPart) c).part.getCategory() == Category.HANDLE) hasHandle = true;
-					if (((WeaponryPart) c).part.getCategory() == Category.TRIGGER) hasTrigger = true;
+					if (((WeaponryPart) c).part.category == Category.BARREL) hasBarrel = true;
+					if (((WeaponryPart) c).part.category == Category.HANDLE) hasHandle = true;
+					if (((WeaponryPart) c).part.category == Category.TRIGGER) hasTrigger = true;
 				}
 			}
 		}
@@ -256,9 +256,9 @@ public class BuildWeaponLayer extends MPLayer
 					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
 				}
 				
-				for (final Part part : Part.values())
+				for (final Part part : Part.parts)
 				{
-					final WeaponryButton b = new WeaponryButton(part.getIcon());
+					final WeaponryButton b = new WeaponryButton(part.tex);
 					b.setPart(part);
 					b.loseSelectionOnRMB = true;
 					b.addClickEvent(new ClickEvent()
@@ -266,11 +266,11 @@ public class BuildWeaponLayer extends MPLayer
 						@Override
 						public void trigger()
 						{
-							selectedPart = new WeaponryPart(Game.currentGame.mouse.x - part.getIcon().width / 2, Game.currentGame.mouse.y - part.getIcon().height / 2, part);
+							selectedPart = new WeaponryPart(Game.currentGame.mouse.x - part.tex.width / 2, Game.currentGame.mouse.y - part.tex.height / 2, part);
 							selectedButton = b;
 						}
 					});
-					groups[part.getCategory().ordinal()].addButton(b);
+					groups[part.category.ordinal()].addButton(b);
 				}
 				
 				for (int i = 0; i < categories.length(); i++)

@@ -56,7 +56,7 @@ public class WeaponryButton extends ClickableComponent
 			Color c = g.getColor();
 			g.setColor(Color.decode("#c48813"));
 			
-			Helper.drawRightAlignedString((part.getPrice() == 0) ? "Frei" : part.getPrice() + "$", x + width - 10, y + height - 10, g, 15);
+			Helper.drawRightAlignedString((part.price == 0) ? "Frei" : part.price + "$", x + width - 10, y + height - 10, g, 15);
 			
 			g.setColor(c);
 		}
@@ -94,23 +94,32 @@ public class WeaponryButton extends ClickableComponent
 	{
 		if (part == null) return;
 		
-		int size = 190, height = 115;
+		int size = 190, height = 170;
 		Helper.drawShadow(x, y, size, height, g);
 		Helper.drawOutline(x, y, size, height, false, g);
 		
 		Color c = g.getColor();
 		g.setColor(Color.black);
-		Helper.drawProgressBar(x + 15, y + 15, size - 30, part.getSpeed() / (float) Part.highest_speed, "ff3232", g);
+		Helper.drawProgressBar(x + 15, y + 15, size - 30, part.speed / (float) Part.highest_speed, "7a36a3", g);
 		Helper.drawHorizontallyCenteredString("Verzögerung", x, size, y + 31, g, 15);
 		
-		Helper.drawProgressBar(x + 15, y + 35, size - 30, part.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
+		Helper.drawProgressBar(x + 15, y + 35, size - 30, part.magazine / (float) Part.highest_magazine, "ffc744", g);
 		Helper.drawHorizontallyCenteredString("Munition", x, size, y + 51, g, 15);
 		
-		Helper.drawProgressBar(x + 15, y + 55, size - 30, part.getAngle() / Part.highest_angle, "7dd33c", g);
+		Helper.drawProgressBar(x + 15, y + 55, size - 30, part.angle / (float) Part.highest_angle, "009ab8", g);
 		Helper.drawHorizontallyCenteredString("Winkel", x, size, y + 71, g, 15);
 		
-		Helper.drawProgressBar(x + 15, y + 75, size - 30, part.getReload() / (float) Part.highest_reload, "2a86e7", g);
+		Helper.drawProgressBar(x + 15, y + 75, size - 30, part.reload / (float) Part.highest_reload, "a55212", g);
 		Helper.drawHorizontallyCenteredString("Nachladen", x, size, y + 91, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 95, size - 30, part.projectileSpeed / (float) Part.highest_projectileSpeed, "2a86e7", g);
+		Helper.drawHorizontallyCenteredString("Schnelligkeit", x, size, y + 111, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 115, size - 30, part.range / (float) Part.highest_range, "7dd33c", g);
+		Helper.drawHorizontallyCenteredString("Reichweite", x, size, y + 131, g, 15);
+		
+		Helper.drawProgressBar(x + 15, y + 135, size - 30, part.damage / (float) Part.highest_damage, "ff3232", g);
+		Helper.drawHorizontallyCenteredString("Schaden", x, size, y + 151, g, 15);
 		g.setColor(c);
 	}
 	
