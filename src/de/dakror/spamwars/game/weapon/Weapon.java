@@ -22,12 +22,6 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class Weapon implements Drawable
 {
-	public enum FireMode
-	{
-		SINGLE,
-		AUTO
-	}
-	
 	public static final float scale = 0.25f;
 	protected WeaponData data;
 	protected BufferedImage image;
@@ -37,8 +31,6 @@ public class Weapon implements Drawable
 	public float rot, rot2; // in degrees
 	public boolean left, reloading;
 	boolean overangle;
-	
-	public FireMode fireMode;
 	
 	int lastShot;
 	
@@ -152,7 +144,7 @@ public class Weapon implements Drawable
 			shoot();
 			lastShot = tick;
 			
-			if (fireMode == FireMode.SINGLE) target = null;
+			if (!data.isAutomatic()) target = null;
 		}
 		
 	}

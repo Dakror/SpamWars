@@ -16,7 +16,6 @@ import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.weapon.Action;
 import de.dakror.spamwars.game.weapon.Weapon;
-import de.dakror.spamwars.game.weapon.Weapon.FireMode;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
@@ -173,7 +172,7 @@ public class Player extends Entity
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || weapon.fireMode != FireMode.AUTO) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || !weapon.getData().isAutomatic()) return;
 		
 		handleMouse(e, true);
 	}
