@@ -16,8 +16,7 @@ public class WeaponData
 {
 	ArrayList<DataPart> parts;
 	
-	int speed, magazine, reload;
-	float angle;
+	int speed, magazine, reload, angle, projectileSpeed, range, damage;
 	
 	boolean automatic;
 	
@@ -101,8 +100,7 @@ public class WeaponData
 	
 	public void calculateStats()
 	{
-		int speed = 0, magazine = 0, reload = 0;
-		float angle = 0;
+		int speed = 0, magazine = 0, reload = 0, angle = 0, projectileSpeed = 0, range = 0, damage = 0;
 		
 		for (DataPart p : parts)
 		{
@@ -110,6 +108,9 @@ public class WeaponData
 			magazine += p.part.magazine;
 			reload += p.part.reload;
 			angle += p.part.angle;
+			projectileSpeed += p.part.projectileSpeed;
+			range += p.part.range;
+			damage += p.part.damage;
 		}
 		
 		float c = parts.size();
@@ -118,6 +119,9 @@ public class WeaponData
 		this.magazine = Math.round(magazine / c);
 		this.reload = Math.round(reload / c);
 		this.angle = Math.round(angle / c);
+		this.projectileSpeed = Math.round(projectileSpeed / c);
+		this.range = Math.round(range / c);
+		this.damage = Math.round(damage / c);
 	}
 	
 	public DataPart getOrigin()
@@ -190,9 +194,24 @@ public class WeaponData
 		return reload;
 	}
 	
-	public float getAngle()
+	public int getAngle()
 	{
 		return angle;
+	}
+	
+	public int getProjectileSpeed()
+	{
+		return projectileSpeed;
+	}
+	
+	public int getRange()
+	{
+		return range;
+	}
+	
+	public int getDamage()
+	{
+		return damage;
 	}
 	
 	public boolean isAutomatic()

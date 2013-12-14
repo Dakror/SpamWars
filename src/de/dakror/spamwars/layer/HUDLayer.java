@@ -72,7 +72,7 @@ public class HUDLayer extends MPLayer
 				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
 				Helper.drawShadow(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, g);
 				Helper.drawOutline(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, false, g);
-				Helper.drawProgressBar(Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().reloadSpeed, "2a86e7", g);
+				Helper.drawProgressBar(Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().getData().getReload(), "2a86e7", g);
 				g.setColor(Color.black);
 				Helper.drawHorizontallyCenteredString("Nachladen", Game.getWidth(), Game.getHeight() / 3 * 2 + 16, g, 20);
 				g.setComposite(c);
@@ -146,7 +146,7 @@ public class HUDLayer extends MPLayer
 		{
 			if (reloadStarted == 0) reloadStarted = tick;
 			
-			if (tick - reloadStarted >= Game.player.getWeapon().reloadSpeed)
+			if (tick - reloadStarted >= Game.player.getWeapon().getData().getReload())
 			{
 				Game.player.getWeapon().reload();
 				reload = false;

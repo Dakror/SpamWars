@@ -3,7 +3,9 @@ package de.dakror.spamwars.layer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
@@ -30,6 +32,8 @@ public class BuildWeaponLayer extends MPLayer
 	WeaponryPart selectedPart;
 	WeaponryButton selectedButton;
 	
+	BufferedImage stats;
+	
 	TextButton auto;
 	
 	public static Rectangle buildPlate;
@@ -41,7 +45,7 @@ public class BuildWeaponLayer extends MPLayer
 		modal = true;
 		
 		int m = 200;
-		buildPlate = new Rectangle(m * 3 / 2, m, Game.getWidth() - m * 2, Game.getHeight() - m * 2);
+		buildPlate = new Rectangle(m * 3 / 2, m, Game.getWidth() - m * 5 / 2, Game.getHeight() - m * 2);
 	}
 	
 	@Override
@@ -53,28 +57,9 @@ public class BuildWeaponLayer extends MPLayer
 		Helper.drawShadow(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, g);
 		Helper.drawOutline(buildPlate.x, buildPlate.y, buildPlate.width, buildPlate.height, false, g);
 		
-		int x = Game.getWidth() / 2 - TextButton.WIDTH - 15, height = 55, y = Game.getHeight() - TextButton.HEIGHT * 3 / 2 - height, width = TextButton.WIDTH * 2 + 30;
-		Helper.drawShadow(x - 5, y, width + 10, height, g);
-		Helper.drawOutline(x - 5, y, width + 10, height, false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
 		
-		Color c = g.getColor();
-		g.setColor(Color.black);
-		
-		Helper.drawProgressBar(x + 5, y + 8, TextButton.WIDTH + 10, cacheData.getSpeed() / (float) Part.highest_speed, "ff3232", g);
-		Helper.drawHorizontallyCenteredString("Verzögerung", x, TextButton.WIDTH + 10, y + 24, g, 15);
-		
-		Helper.drawProgressBar(x + TextButton.WIDTH + 15, y + 8, TextButton.WIDTH + 10, cacheData.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
-		Helper.drawHorizontallyCenteredString("Munition", x + TextButton.WIDTH + 15, TextButton.WIDTH + 10, y + 24, g, 15);
-		
-		Helper.drawProgressBar(x + 5, y + 25, TextButton.WIDTH + 10, cacheData.getAngle() / Part.highest_angle, "7dd33c", g);
-		Helper.drawHorizontallyCenteredString("Winkel", x, TextButton.WIDTH + 10, y + 41, g, 15);
-		
-		Helper.drawProgressBar(x + TextButton.WIDTH + 15, y + 25, TextButton.WIDTH + 10, cacheData.getReload() / (float) Part.highest_reload, "2a86e7", g);
-		Helper.drawHorizontallyCenteredString("Nachladen", x + TextButton.WIDTH + 15, TextButton.WIDTH + 10, y + 41, g, 15);
-		
-		g.setColor(c);
-		
-		Helper.drawContainer(x, y + height, width, TextButton.HEIGHT * 2, false, false, g);
+		g.drawImage(stats, buildPlate.x + buildPlate.width, buildPlate.y, Game.w);
 		
 		drawComponents(g);
 		
@@ -190,6 +175,44 @@ public class BuildWeaponLayer extends MPLayer
 		cacheData = getWeaponData();
 	}
 	
+	public void renderWeaponStats(WeaponData cacheData)
+	{
+		int width = 190, height = 170;
+		stats = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D) stats.getGraphics();
+		
+		Helper.drawShadow(0, 0, width, height, g);
+		Helper.drawOutline(0, 0, width, height, false, g);
+		
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setFont(Game.w.getFont());
+		g.setColor(Color.black);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 15, width - 30, cacheData.getSpeed() / (float) Part.highest_speed, "7a36a3", g);
+		Helper.drawHorizontallyCenteredString("Verzögerung", 0, width, 0 + 31, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 35, width - 30, cacheData.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
+		Helper.drawHorizontallyCenteredString("Munition", 0, width, 0 + 51, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 55, width - 30, cacheData.getAngle() / (float) Part.highest_angle, "009ab8", g);
+		Helper.drawHorizontallyCenteredString("Winkel", 0, width, 0 + 71, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 75, width - 30, cacheData.getReload() / (float) Part.highest_reload, "a55212", g);
+		Helper.drawHorizontallyCenteredString("Nachladen", 0, width, 0 + 91, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 95, width - 30, cacheData.getProjectileSpeed() / (float) Part.highest_projectileSpeed, "2a86e7", g);
+		Helper.drawHorizontallyCenteredString("Schnelligkeit", 0, width, 0 + 111, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 115, width - 30, cacheData.getRange() / (float) Part.highest_range, "7dd33c", g);
+		Helper.drawHorizontallyCenteredString("Reichweite", 0, width, 0 + 131, g, 15);
+		
+		Helper.drawProgressBar(0 + 15, 0 + 135, width - 30, cacheData.getDamage() / (float) Part.highest_damage, "ff3232", g);
+		Helper.drawHorizontallyCenteredString("Schaden", 0, width, 0 + 151, g, 15);
+	}
+	
 	@Override
 	public void init()
 	{
@@ -218,7 +241,7 @@ public class BuildWeaponLayer extends MPLayer
 		build.enabled = false;
 		components.add(build);
 		
-		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 3 / 2 - 55 - TextButton.HEIGHT, "Manuell");
+		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Manuell");
 		auto.setToggleMode(true);
 		auto.addClickEvent(new ClickEvent()
 		{
@@ -316,6 +339,8 @@ public class BuildWeaponLayer extends MPLayer
 		if (auto != null) data.setAutomatic(auto.isSelected());
 		
 		data.calculateStats();
+		
+		renderWeaponStats(data);
 		
 		return data;
 	}

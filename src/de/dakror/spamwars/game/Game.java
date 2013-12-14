@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -18,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import de.dakror.gamesetup.GameFrame;
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
 import de.dakror.gamesetup.util.Helper;
@@ -104,19 +101,6 @@ public class Game extends GameFrame implements WindowFocusListener
 		w.setBackground(Color.decode("#D0F4F7"));
 		
 		client = new Client();
-		
-		w.addComponentListener(new ComponentAdapter()
-		{
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				for (Layer l : layers)
-				{
-					l.components.clear();
-					l.init();
-				}
-			}
-		});
 	}
 	
 	@Override

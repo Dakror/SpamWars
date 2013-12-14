@@ -12,7 +12,6 @@ import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
-import de.dakror.spamwars.game.projectile.ProjectileType;
 import de.dakror.spamwars.game.world.Tile;
 import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
@@ -34,7 +33,6 @@ public class Weapon implements Drawable
 	protected BufferedImage image;
 	
 	protected Point exit, grab;
-	protected float maxAngle;
 	
 	public float rot, rot2; // in degrees
 	public boolean left, reloading;
@@ -44,27 +42,24 @@ public class Weapon implements Drawable
 	
 	int lastShot;
 	
-	public int speed, magazine, capacity, capacityMax, ammo, reloadSpeed;
+	public int capacity, magazine, capacityMax, ammo;
 	
 	private float x, y;
 	
 	Vector target;
 	public boolean enabled;
 	
-	public Weapon(WeaponData data, FireMode fireMode, int speed, float maxAngle, int magazine, int capacity, int reloadSpeed)
+	public Weapon(WeaponData data)
 	{
 		this.data = data;
+		this.data.calculateStats();
 		image = data.getImage();
 		
-		this.fireMode = fireMode;
-		this.reloadSpeed = reloadSpeed;
-		this.magazine = magazine;
-		this.capacity = capacityMax = capacity;
-		ammo = magazine;
+		magazine = data.getMagazine();
+		capacity = capacityMax = magazine * 5;
+		ammo = data.getMagazine();
 		enabled = false;
 		
-		this.maxAngle = maxAngle;
-		this.speed = speed;
 		grab = data.getGrab();
 		exit = data.getExit();
 		rot = 0;
@@ -137,12 +132,7 @@ public class Weapon implements Drawable
 		
 		ammo--;
 		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
-		Game.world.addProjectile(getPojectile(pos.clone(), target), true);
-	}
-	
-	public Projectile getPojectile(Vector pos, Vector target)
-	{
-		return new Projectile(pos, target, Game.user.getUsername(), ProjectileType.DEFAUL_LEAD);
+		Game.world.addProjectile(new Projectile(pos.clone(), target, Game.user.getUsername(), data.getProjectileSpeed(), data.getRange(), data.getDamage()), true);
 	}
 	
 	@Override
@@ -157,7 +147,7 @@ public class Weapon implements Drawable
 		
 		if (!enabled) return;
 		
-		if (target != null && (tick - lastShot) >= speed)
+		if (target != null && (tick - lastShot) >= data.getSpeed())
 		{
 			shoot();
 			lastShot = tick;
@@ -183,28 +173,28 @@ public class Weapon implements Drawable
 		
 		if (left)
 		{
-			if (180 - rotDeg > maxAngle && rotDeg >= 0)
+			if (180 - rotDeg > data.getAngle() && rotDeg >= 0)
 			{
-				rot = Math.toRadians(180 - maxAngle);
+				rot = Math.toRadians(180 - data.getAngle());
 				overangle = true;
 			}
-			else if (180 + rotDeg > maxAngle && rotDeg <= 0)
+			else if (180 + rotDeg > data.getAngle() && rotDeg <= 0)
 			{
-				rot = Math.toRadians(180 + maxAngle);
+				rot = Math.toRadians(180 + data.getAngle());
 				overangle = true;
 			}
 			else overangle = false;
 		}
 		else
 		{
-			if (rotDeg < -maxAngle)
+			if (rotDeg < -data.getAngle())
 			{
-				rot = Math.toRadians(-maxAngle);
+				rot = Math.toRadians(-data.getAngle());
 				overangle = true;
 			}
-			else if (rotDeg > maxAngle)
+			else if (rotDeg > data.getAngle())
 			{
-				rot = Math.toRadians(maxAngle);
+				rot = Math.toRadians(data.getAngle());
 				overangle = true;
 			}
 			else overangle = false;

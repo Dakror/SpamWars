@@ -25,28 +25,32 @@ import de.dakror.spamwars.util.Assistant;
 public class Projectile implements Drawable
 {
 	private Vector pos, target;
-	ProjectileType type;
+	Rectangle tex;
+	int damage, range, speed;
 	String username;
 	
 	private boolean dead;
 	
 	private float rot;
 	
-	public Projectile(Vector pos, Vector target, String username, ProjectileType type)
+	public Projectile(Vector pos, Vector target, String username, int speed, int range, int damage)
 	{
-		this.type = type;
+		tex = new Rectangle(275, 89, 20, 10);
+		this.speed = speed;
+		this.range = range;
+		this.damage = damage;
 		this.pos = pos;
 		this.username = username;
 		this.target = target;
 		
 		Vector dif = target.clone().sub(pos);
-		dif.setLength(type.getRange());
+		dif.setLength(range);
 		this.target = pos.clone().add(dif);
 	}
 	
 	public Projectile(JSONObject o) throws JSONException
 	{
-		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), ProjectileType.values()[o.getInt("t")]);
+		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), o.getInt("s"), o.getInt("r"), o.getInt("dm"));
 	}
 	
 	public JSONObject serialize()
@@ -58,7 +62,9 @@ public class Projectile implements Drawable
 			o.put("y", pos.y);
 			o.put("tx", target.x);
 			o.put("ty", target.y);
-			o.put("t", type.ordinal());
+			o.put("r", range);
+			o.put("s", speed);
+			o.put("dm", damage);
 			o.put("d", dead);
 			o.put("u", username);
 		}
@@ -79,10 +85,9 @@ public class Projectile implements Drawable
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
 		at.translate(-Game.w.getInsets().left, -Game.w.getInsets().top);
-		at.rotate(rot, pos.x + type.getTex().width / 2, pos.y + type.getTex().height / 2);
+		at.rotate(rot, pos.x + tex.width / 2, pos.y + tex.height / 2);
 		g.setTransform(at);
-		
-		Helper.drawImage(Game.getImage("weapon/projectiles.png"), (int) pos.x, (int) pos.y, type.getTex().width, type.getTex().height, type.getTex().x, type.getTex().y, type.getTex().width, type.getTex().height, g);
+		Helper.drawImage(Game.getImage("weapon/projectiles.png"), (int) pos.x, (int) pos.y, tex.width, tex.height, tex.x, tex.y, tex.width, tex.height, g);
 		
 		g.setTransform(old);
 	}
@@ -93,7 +98,7 @@ public class Projectile implements Drawable
 		if (dead) return;
 		
 		Vector dif = target.clone().sub(pos);
-		if (dif.getLength() > type.getSpeed()) dif.setLength(type.getSpeed());
+		if (dif.getLength() > speed) dif.setLength(speed);
 		
 		rot = (float) Math.toRadians(dif.getAngleOnXAxis());
 		
@@ -134,7 +139,7 @@ public class Projectile implements Drawable
 		{
 			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line))
 			{
-				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(type.getDamage(), this);
+				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(damage, this);
 				dead = true;
 				return;
 			}
@@ -148,11 +153,6 @@ public class Projectile implements Drawable
 	public String getUsername()
 	{
 		return username;
-	}
-	
-	public ProjectileType getType()
-	{
-		return type;
 	}
 	
 	public boolean isDead()

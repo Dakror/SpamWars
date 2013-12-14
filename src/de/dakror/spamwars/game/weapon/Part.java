@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import de.dakror.gamesetup.util.CSVReader;
-import de.dakror.spamwars.game.weapon.Weapon.FireMode;
 
 /**
  * @author Dakror
@@ -39,29 +38,11 @@ public class Part
 		}
 	}
 	
-	// PISTOL_SILVER_HANDLE(593, 1250, 64, 88, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.HANDLE),
-	// PISTOL_SILVER_BARREL(621, 1187, 205, 51, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
-	// PISTOL_SILVER_TRIGGER(671, 1254, 51, 31, 0, 10, 9, 50, 35, FireMode.SINGLE, Category.TRIGGER),
-	//
-	// PISTOL_BLACK_HANDLE(193, 1253, 56, 80, 50, 10, 9, 50, 35, FireMode.SINGLE, Category.HANDLE),
-	// PISTOL_BLACK_HANDLE_ALT(202, 1538, 87, 102, 100, 10, 9, 60, 35, FireMode.SINGLE, Category.HANDLE),
-	// PISTOL_BLACK_BARREL(212, 1190, 205, 48, 50, 20, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
-	// PISTOL_BLACK_BARREL_ALT(272, 1474, 205, 48, 75, 20, 9, 50, 35, FireMode.SINGLE, Category.BARREL),
-	// PISTOL_BLACK_TRIGGER(262, 1254, 51, 31, 50, 10, 9, 50, 35, FireMode.SINGLE, Category.TRIGGER),
-	// PISTOL_BLACK_TRIGGER_ALT(305, 1539, 95, 38, 80, 10, 9, 50, 25, FireMode.SINGLE, Category.TRIGGER),
-	// PISTOL_BLACK_SILENCER_SMALL(432, 1192, 110, 33, 150, 15, 9, 50, 20, FireMode.SINGLE, Category.ACCESSORY),
-	// PISTOL_BLACK_SILENCER_BIG(493, 1476, 173, 33, 250, 25, 9, 50, 10, FireMode.SINGLE, Category.ACCESSORY),
-	// PISTOL_BLACK_SCOPE(291, 1370, 173, 94, 300, 40, 9, 90, 10, FireMode.SINGLE, Category.SCOPE),
-	//
-	// MINIGUN_BARREL(1378, 1006, 456, 83, 5000, 3, 100, 1, 1000, FireMode.AUTO, Category.BARREL),
-	// MINIGUN_HANDLE(1038, 1093, 264, 141, 500, 3, 100, 1, 1000, FireMode.AUTO, Category.HANDLE),
-	// MINIGUN_BARRELGRIP(1381, 1101, 230, 37, 75, 3, 100, 1, 1000, FireMode.AUTO, Category.BARRELGRIP),
-	// MINIGUN_SUBBARREL(1385, 1146, 328, 29, 125, 3, 100, 1, 1000, FireMode.AUTO, Category.SUBBARREL),
-	// MINIGUN_TRIGGER(1385, 1190, 104, 53, 65, 3, 100, 1, 1000, FireMode.AUTO, Category.TRIGGER),
-	// MINIGUN_HAMMER(1244, 908, 77, 97, 110, 3, 100, 1, 1000, FireMode.AUTO, Category.HAMMER),
-	// MINIGUN_HAMMER_HOLDER(1248, 1014, 116, 31, 20, 3, 100, 1, 1000, FireMode.AUTO, Category.ACCESSORY),
-	//
-	// ASSAULT_RIFLE_GRAY_SHOULDER(95, 2074, 237, 115, 500, 3, 30, 30, 150, FireMode.AUTO, Category.SHOULDER),
+	public enum FireMode
+	{
+		SINGLE,
+		AUTO
+	}
 	
 	public static ArrayList<Part> parts = new ArrayList<>();
 	
