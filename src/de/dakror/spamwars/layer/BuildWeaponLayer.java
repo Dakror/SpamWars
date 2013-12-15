@@ -6,6 +6,9 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
@@ -41,11 +44,14 @@ public class BuildWeaponLayer extends MPLayer
 	
 	WeaponData cacheData, exisData;
 	
-	public BuildWeaponLayer(WeaponData data)
+	int id;
+	
+	public BuildWeaponLayer(WeaponData data, int id)
 	{
 		modal = true;
 		
 		exisData = data;
+		this.id = id;
 		
 		int m = 200;
 		buildPlate = new Rectangle(m * 3 / 2, m, Game.getWidth() - m * 5 / 2, Game.getHeight() - m * 2);
@@ -238,7 +244,7 @@ public class BuildWeaponLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.addLayer(new PurchaseWeaponLayer(exisData, getWeaponData()));
+				Game.currentGame.addLayer(new PurchaseWeaponLayer(exisData, id, getWeaponData()));
 			}
 		});
 		build.enabled = false;
@@ -282,7 +288,18 @@ public class BuildWeaponLayer extends MPLayer
 					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
 				}
 				
-				for (final Part part : Part.parts)
+				@SuppressWarnings("unchecked")
+				ArrayList<Part> parts = (ArrayList<Part>) Part.parts.clone();
+				Collections.sort(parts, new Comparator<Part>()
+				{
+					@Override
+					public int compare(Part o1, Part o2)
+					{
+						return o1.price - o2.price;
+					}
+				});
+				
+				for (final Part part : parts)
 				{
 					final WeaponryButton b = new WeaponryButton(part.tex);
 					b.setPart(part);

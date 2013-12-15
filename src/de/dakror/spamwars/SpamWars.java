@@ -50,7 +50,7 @@ public class SpamWars
 				Game.ip = InetAddress.getLocalHost();
 				CFG.p(Game.ip);
 				Game.user = new User("Player" + (int) (Math.random() * 10000), Game.ip, 0);
-				Game.pullMoney();
+				Game.money = 999999;
 			}
 			catch (UnknownHostException e)
 			{

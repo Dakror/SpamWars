@@ -22,7 +22,6 @@ public class Part
 		ACCESSORY(1253, 462, 149, 91),
 		HAMMER(1244, 908, 77, 98),
 		DRUM(245, 422, 76, 52),
-		BACKGROUND(248, 283, 74, 64),
 		
 		;
 		private Rectangle icon;
@@ -99,9 +98,6 @@ public class Part
 					part.damage = Integer.parseInt(cell);
 					break;
 				case 13:
-					part.mode = FireMode.valueOf(cell);
-					break;
-				case 14:
 					part.category = Category.valueOf(cell);
 					break;
 			}
@@ -129,13 +125,11 @@ public class Part
 	public Rectangle tex;
 	public Category category;
 	public int id, price, speed, magazine, angle, reload, projectileSpeed, range, damage;
-	public FireMode mode;
 	
 	public Part()
 	{
 		tex = new Rectangle();
 		category = null;
-		mode = null;
 		price = speed = magazine = reload = projectileSpeed = range = damage = 0;
 		angle = 0;
 	}

@@ -2,8 +2,9 @@ package de.dakror.spamwars.layer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.json.JSONObject;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Alert;
@@ -13,6 +14,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -21,11 +23,13 @@ public class PurchaseWeaponLayer extends MPLayer
 {
 	WeaponData data;
 	int costs;
+	int id;
 	
-	public PurchaseWeaponLayer(WeaponData exisData, WeaponData data)
+	public PurchaseWeaponLayer(WeaponData exisData, int id, WeaponData data)
 	{
 		modal = true;
 		this.data = data;
+		this.id = id;
 		
 		costs = data.getPrice();
 		if (exisData != null) costs -= exisData.getPrice();
@@ -63,7 +67,6 @@ public class PurchaseWeaponLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		
 		TextButton cnc = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (Game.money >= costs ? 1 : 0.5f)), Game.getHeight() / 2 + 30, "Abbruch");
 		cnc.addClickEvent(new ClickEvent()
 		{
@@ -84,9 +87,19 @@ public class PurchaseWeaponLayer extends MPLayer
 				try
 				{
 					boolean success = false;
-					if (Game.subMoney(costs))
+					if (!CFG.INTERNET)
 					{
-						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Game.passwordMD5 + "&addweapon=" + data.getSortedData()));
+						JSONObject o = new JSONObject();
+						o.put("ID", (int) (Math.random() * 1000));
+						o.put("USERID", (int) (Math.random() * 1000));
+						o.put("WEAPONDATA", data.getSortedData().toString());
+						
+						Game.weapons.put(o);
+						success = true;
+					}
+					else if (Game.subMoney(costs))
+					{
+						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Game.passwordMD5 + "&addweapon=" + data.getSortedData() + "&setweapon=" + id));
 						success = response.contains("true");
 					}
 					
@@ -106,7 +119,7 @@ public class PurchaseWeaponLayer extends MPLayer
 						}
 					}));
 				}
-				catch (MalformedURLException e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}

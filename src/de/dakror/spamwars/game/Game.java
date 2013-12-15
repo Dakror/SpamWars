@@ -13,7 +13,6 @@ import java.net.InetAddress;
 import java.net.URL;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
@@ -42,9 +41,9 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static User user;
 	public static String passwordMD5;
 	public static Player player;
-	public static JSONArray weapons;
+	public static JSONArray weapons = new JSONArray();
 	public static WeaponData activeWeapon;
-	public static int money;
+	public static int money = 0;
 	
 	public Game()
 	{
@@ -173,11 +172,8 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullMoney()
 	{
-		if (!CFG.INTERNET)
-		{
-			money = 1000;
-			return;
-		}
+		if (!CFG.INTERNET) return;
+		
 		try
 		{
 			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5)));
@@ -190,18 +186,8 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullWeapons()
 	{
-		if (!CFG.INTERNET)
-		{
-			try
-			{
-				weapons = new JSONArray("[{'ID':'22','USERID':'38','WEAPONDATA':'3:232.0:0.0;0:493.0:49.0;2:552.0:62.0;4:0.0:16.0;true'}]");
-			}
-			catch (JSONException e)
-			{
-				e.printStackTrace();
-			}
-			return;
-		}
+		if (!CFG.INTERNET) return;
+		
 		try
 		{
 			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + passwordMD5)));

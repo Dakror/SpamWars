@@ -67,14 +67,14 @@ public class WeaponryLayer extends MPLayer
 				public void run()
 				{
 					if (goingto == 1) Game.currentGame.removeLayer(WeaponryLayer.this);
-					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer(null));
+					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer(null, 0));
 					else if (goingto == 3 && edit.enabled)
 					{
 						for (Component c : components)
 						{
 							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected)
 							{
-								Game.currentGame.addLayer(new BuildWeaponLayer(((WeaponryWeaponButton) c).data));
+								Game.currentGame.addLayer(new BuildWeaponLayer(((WeaponryWeaponButton) c).data, ((WeaponryWeaponButton) c).id));
 								break;
 							}
 						}
@@ -95,7 +95,6 @@ public class WeaponryLayer extends MPLayer
 	{
 		components.clear();
 		Game.pullWeapons();
-		
 		int mw = Game.getWidth() - 200;
 		int space = 20;
 		int inRow = Math.round(mw / (float) (WeaponryWeaponButton.WIDTH + space));
