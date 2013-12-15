@@ -18,7 +18,7 @@ public class CFG
 	public static final File DIR = new File(System.getProperty("user.home") + "/.dakror/SpamWars");
 	
 	// -- UniVersion -- //
-	public static final int VERSION = 2013121514;
+	public static final int VERSION = 2013121516;
 	public static final int PHASE = 3;
 	
 	public static boolean INTERNET;

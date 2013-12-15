@@ -252,6 +252,12 @@ public class BuildWeaponLayer extends MPLayer
 		
 		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Manuell");
 		auto.setToggleMode(true);
+		if (exisData != null)
+		{
+			auto.setSelected(exisData.isAutomatic());
+			if (exisData.isAutomatic()) auto.setText("Automatik");
+		}
+		
 		auto.addClickEvent(new ClickEvent()
 		{
 			@Override
