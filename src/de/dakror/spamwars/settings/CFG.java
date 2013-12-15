@@ -18,7 +18,7 @@ public class CFG
 	
 	// -- UniVersion -- //
 	public static final int VERSION = 2013121512;
-	public static final int PHASE = 1;
+	public static final int PHASE = 3;
 	
 	public static boolean INTERNET;
 	
