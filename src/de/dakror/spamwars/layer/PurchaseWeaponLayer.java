@@ -32,7 +32,7 @@ public class PurchaseWeaponLayer extends MPLayer
 		this.id = id;
 		
 		costs = data.getPrice();
-		if (exisData != null) costs -= exisData.getPrice();
+		if (exisData != null) costs -= Math.round(exisData.getPrice() * 0.4f);
 	}
 	
 	@Override
