@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
 
+import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
 
 /**
@@ -17,7 +18,7 @@ public class CFG
 	public static final File DIR = new File(System.getProperty("user.home") + "/.dakror/SpamWars");
 	
 	// -- UniVersion -- //
-	public static final int VERSION = 2013121512;
+	public static final int VERSION = 2013121513;
 	public static final int PHASE = 3;
 	
 	public static boolean INTERNET;
@@ -27,6 +28,8 @@ public class CFG
 	public static final void init()
 	{
 		DIR.mkdirs();
+		GameFrame.screenshotDir = new File(DIR, "screenshots");
+		
 		
 		File maps = new File(DIR, "maps");
 		maps.mkdir();

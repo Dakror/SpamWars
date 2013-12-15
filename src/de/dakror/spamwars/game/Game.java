@@ -45,6 +45,8 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static WeaponData activeWeapon;
 	public static int money = 0;
 	
+	boolean debug = false;
+	
 	public Game()
 	{
 		super();
@@ -65,10 +67,13 @@ public class Game extends GameFrame implements WindowFocusListener
 			Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
 		}
 		
-		g.setColor(Color.green);
-		g.setFont(new Font("Arial", Font.PLAIN, 18));
-		Helper.drawString(getFPS() + " FPS", 0, 18, g, 18);
-		Helper.drawString(getUPS() + " UPS", 100, 18, g, 18);
+		if (debug && !screenshot)
+		{
+			g.setColor(Color.green);
+			g.setFont(new Font("Arial", Font.PLAIN, 18));
+			Helper.drawString(getFPS() + " FPS", 0, 18, g, 18);
+			Helper.drawString(getUPS() + " UPS", 100, 18, g, 18);
+		}
 	}
 	
 	@Override
@@ -92,6 +97,7 @@ public class Game extends GameFrame implements WindowFocusListener
 			Spinner.h = 33;
 			InputField.h = 8;
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
+			w.setIconImage(getImage("icon/spamwars64.png"));
 		}
 		catch (Exception e)
 		{
@@ -113,6 +119,8 @@ public class Game extends GameFrame implements WindowFocusListener
 	public void keyReleased(KeyEvent e)
 	{
 		super.keyReleased(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_F11) debug = !debug;
 		
 		if (world != null && !getActiveLayer().isModal()) world.keyReleased(e);
 	}
