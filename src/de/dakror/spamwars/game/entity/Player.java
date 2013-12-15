@@ -138,7 +138,7 @@ public class Player extends Entity
 	{
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
-		handleMouse(e, true);
+		if (e.getButton() == MouseEvent.BUTTON1) handleMouse(e, true);
 	}
 	
 	public void handleMouse(MouseEvent e, boolean target)
@@ -174,7 +174,7 @@ public class Player extends Entity
 	{
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || !weapon.getData().isAutomatic()) return;
 		
-		handleMouse(e, true);
+		if (e.getModifiers() == MouseEvent.BUTTON1_MASK) handleMouse(e, true);
 	}
 	
 	@Override
