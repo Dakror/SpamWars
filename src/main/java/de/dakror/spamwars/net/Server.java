@@ -210,6 +210,8 @@ public class Server extends Thread
 					catch (Exception e)
 					{}
 				}
+				
+				boolean taken = false;
 				for (User p : clients)
 				{
 					if (p.getUsername().equals(packet.getUsername()))
@@ -218,12 +220,15 @@ public class Server extends Thread
 						{
 							sendPacket(new Packet02Reject(Cause.USERNAMETAKEN, false), user);
 							CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): username taken");
+							taken = true;
 							break;
 						}
 						catch (Exception e)
 						{}
 					}
 				}
+				if (taken) break;
+				
 				CFG.p("[SERVER]: " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + ") has connected.");
 				user.setPort(port);
 				clients.add(user);
@@ -423,6 +428,7 @@ public class Server extends Thread
 	
 	public void sendPacket(Packet p, User u) throws IOException
 	{
+		p.forServer = false;
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, u.getIP(), u.getPort());
 		

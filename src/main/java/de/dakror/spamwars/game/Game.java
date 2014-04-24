@@ -104,7 +104,6 @@ public class Game extends GameFrame implements WindowFocusListener
 			e.printStackTrace();
 		}
 		w.setBackground(Color.decode("#D0F4F7"));
-		
 		client = new Client();
 	}
 	

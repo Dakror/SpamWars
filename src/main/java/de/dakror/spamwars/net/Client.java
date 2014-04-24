@@ -101,6 +101,7 @@ public class Client extends Thread
 		{
 			try
 			{
+				CFG.p("REDIRECT");
 				sendDataToServer(data);
 			}
 			catch (IOException e)
@@ -384,7 +385,7 @@ public class Client extends Thread
 	
 	public void sendPacketToServer(Packet p) throws IOException
 	{
-		sendPacket(p, Game.server.ip, Server.PORT);
+		sendPacket(p, serverIP, Server.PORT);
 	}
 	
 	public void sendPacketToCentral(Packet p) throws IOException
