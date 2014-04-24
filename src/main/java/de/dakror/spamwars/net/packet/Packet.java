@@ -29,7 +29,6 @@ public abstract class Packet
 		ALIVE,
 		GAMES,
 		JOINGAME,
-		ENDGAME,
 		
 		;
 		public int getID()

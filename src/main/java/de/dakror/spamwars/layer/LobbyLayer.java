@@ -21,6 +21,7 @@ import de.dakror.spamwars.net.packet.Packet03Attribute;
 import de.dakror.spamwars.net.packet.Packet04PlayerList;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
+import de.dakror.spamwars.net.packet.Packet13HostGame;
 
 /**
  * @author Dakror
@@ -103,11 +104,18 @@ public class LobbyLayer extends MPLayer
 	@Override
 	public void init()
 	{
-		
 		final boolean host = !Game.client.isConnected() || Game.server != null;
 		if (host && Game.server == null)
 		{
 			Game.server = new Server(); // host
+			try
+			{
+				Game.client.sendPacketToCentral(new Packet13HostGame(true));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		
 		if (host) ready.add(Game.user.getUsername());
@@ -223,7 +231,17 @@ public class LobbyLayer extends MPLayer
 			public void trigger()
 			{
 				Game.client.disconnect();
-				
+				if (host)
+				{
+					try
+					{
+						Game.client.sendPacketToCentral(new Packet13HostGame(false));
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
 				Game.currentGame.removeLayer(LobbyLayer.this);
 			}
 		});

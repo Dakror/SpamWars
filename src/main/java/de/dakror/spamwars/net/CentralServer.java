@@ -1,6 +1,7 @@
 package de.dakror.spamwars.net;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,6 +18,7 @@ import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
+import de.dakror.spamwars.net.packet.Packet13HostGame;
 import de.dakror.spamwars.net.packet.Packet14Login;
 
 /**
@@ -24,8 +26,14 @@ import de.dakror.spamwars.net.packet.Packet14Login;
  */
 public class CentralServer
 {
-	static class AFKManager extends Thread
+	public static class AFKManager extends Thread
 	{
+		public AFKManager()
+		{
+			setName("AFKManager");
+			start();
+		}
+		
 		@Override
 		public void run()
 		{
@@ -52,7 +60,7 @@ public class CentralServer
 		}
 	}
 	
-	public static final int PORT = 19950;
+	public static final int PORT = 19951;
 	static DatagramSocket socket;
 	static CopyOnWriteArrayList<User> hosts;
 	static CopyOnWriteArrayList<User> users;
@@ -64,7 +72,13 @@ public class CentralServer
 		try
 		{
 			socket = new DatagramSocket(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
-			out("Server started");
+			new AFKManager();
+			out("CentralServer started");
+		}
+		catch (BindException e)
+		{
+			out("There is a CentralServer running on this machine already!");
+			System.exit(0);
 		}
 		catch (Exception e)
 		{
@@ -103,15 +117,27 @@ public class CentralServer
 		
 		if (user == null && type != PacketTypes.LOGIN)
 		{
-			out("Revoked unauthorized request: " + address.getHostName() + ":" + port);
+			out("Revoked unauthorized request: " + address.getHostAddress() + ":" + port);
 			return;
 		}
 		
 		switch (type)
 		{
+			case DISCONNECT:
+			{
+				Packet01Disconnect p = new Packet01Disconnect(data);
+				if (p.getUsername().equals(user.getUsername()))
+				{
+					out("User disconnected: " + p.getUsername());
+					users.remove(user);
+					hosts.remove(user);
+				}
+				break;
+			}
 			case ALIVE:
 			{
 				user.lastInteraction = System.currentTimeMillis();
+				break;
 			}
 			case LOGIN:
 			{
@@ -121,8 +147,10 @@ public class CentralServer
 					String s = Helper.getURLContent(new URL("http://dakror.de/mp-api/login_noip.php?username=" + p.getUsername() + "&password=" + p.getPwdMd5()));
 					if (s.contains("true"))
 					{
-						out("User logged in: " + p.getUsername());
-						users.add(new User(p.getUsername(), address, port));
+						out("User logged in: " + p.getUsername() + " from " + address.getHostAddress() + ":" + port);
+						User u = new User(p.getUsername(), address, port);
+						users.add(u);
+						sendPacket(p, u);
 					}
 					else
 					{
@@ -134,28 +162,45 @@ public class CentralServer
 				{
 					e.printStackTrace();
 				}
+				break;
 			}
 			case HOSTGAME:
 			{
-				for (User u : hosts)
+				Packet13HostGame p = new Packet13HostGame(data);
+				if (p.isStart())
 				{
-					if (u.getIP().equals(address) && u.getPort() == port)
+					for (User u : hosts)
 					{
-						try
+						if (u.getIP().equals(address) && u.getPort() == port)
 						{
-							sendPacket(new Packet02Reject(Cause.ALREADYHOSTING, false), user);
-							out("Refused to host multiple games: " + u.getUsername());
-							return;
+							try
+							{
+								sendPacket(new Packet02Reject(Cause.ALREADYHOSTING, false), user);
+								out("Refused to host multiple games: " + u.getUsername());
+								return;
+							}
+							catch (IOException e)
+							{
+								e.printStackTrace();
+							}
 						}
-						catch (IOException e)
+					}
+					
+					out("New game hosted: " + user.getUsername());
+					hosts.add(user);
+				}
+				else
+				{
+					for (User u : hosts)
+					{
+						if (u.getIP().equals(address) && u.getPort() == port)
 						{
-							e.printStackTrace();
+							out("Ended game from: " + u.getUsername());
+							hosts.remove(u);
+							return;
 						}
 					}
 				}
-				
-				out("New game hosted: " + user.getUsername());
-				hosts.add(user);
 				break;
 			}
 			default:

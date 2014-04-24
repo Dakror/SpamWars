@@ -42,9 +42,9 @@ public class SpamWars
 		Part.init();
 		
 		new Game();
-		
-		Game.user = new User("test", null, 0);
+		Launch.username = "test";
 		Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
+		Game.user = new User(Launch.username, null, 0);
 		
 		Game.currentFrame.init("Spam Wars");
 		try

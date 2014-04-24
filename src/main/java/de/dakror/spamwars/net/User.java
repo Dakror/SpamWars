@@ -26,6 +26,7 @@ public class User
 		this.username = username;
 		
 		K = D = 0;
+		lastInteraction = System.currentTimeMillis();
 	}
 	
 	public User(JSONObject o)

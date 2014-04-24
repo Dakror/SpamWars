@@ -36,6 +36,7 @@ import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
+import de.dakror.spamwars.net.packet.Packet14Login;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -101,7 +102,6 @@ public class Client extends Thread
 		{
 			try
 			{
-				CFG.p("REDIRECT");
 				sendDataToServer(data);
 			}
 			catch (IOException e)
@@ -341,6 +341,11 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
+			case LOGIN:
+			{
+				packet = new Packet14Login(data);
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -365,8 +370,6 @@ public class Client extends Thread
 	
 	public void sendPacket(Packet p, InetAddress ip, int port) throws IOException
 	{
-		if (serverIP == null) return;
-		
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		socket.send(packet);
@@ -380,12 +383,14 @@ public class Client extends Thread
 	
 	public void sendDataToServer(byte[] data) throws IOException
 	{
+		if (serverIP == null) return;
+		
 		sendData(data, Game.server.ip, Server.PORT);
 	}
 	
 	public void sendPacketToServer(Packet p) throws IOException
 	{
-		sendPacket(p, serverIP, Server.PORT);
+		sendDataToServer(p.getData());
 	}
 	
 	public void sendPacketToCentral(Packet p) throws IOException

@@ -11,7 +11,6 @@ public class Packet15Alive extends Packet
 		super(15, forServer);
 	}
 	
-	
 	@Override
 	protected byte[] getPacketData()
 	{

@@ -1,5 +1,6 @@
 package de.dakror.spamwars.net.packet;
 
+
 /**
  * @author Dakror
  */
@@ -19,6 +20,7 @@ public class Packet14Login extends Packet
 		super(14);
 		load(data);
 		String[] parts = readData(data).split(":");
+		
 		username = parts[0];
 		pwdMd5 = parts[1];
 	}
