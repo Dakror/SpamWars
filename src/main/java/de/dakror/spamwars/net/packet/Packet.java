@@ -25,6 +25,9 @@ public abstract class Packet
 		STOMP,
 		
 		HOSTGAME,
+		LOGIN,
+		ALIVE,
+		GAMES,
 		JOINGAME,
 		ENDGAME,
 		
@@ -41,6 +44,7 @@ public abstract class Packet
 	public Packet(int packetID)
 	{
 		this.packetID = (byte) packetID;
+		forServer = false;
 	}
 	
 	public Packet(int packetID, boolean forServer)

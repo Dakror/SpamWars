@@ -155,7 +155,7 @@ public class Client extends Thread
 					}
 					try
 					{
-						sendPacket(new Packet04PlayerList());
+						sendPacketToServer(new Packet04PlayerList());
 					}
 					catch (IOException e)
 					{
@@ -382,6 +382,16 @@ public class Client extends Thread
 		sendData(data, Game.server.ip, Server.PORT);
 	}
 	
+	public void sendPacketToServer(Packet p) throws IOException
+	{
+		sendPacket(p, Game.server.ip, Server.PORT);
+	}
+	
+	public void sendPacketToCentral(Packet p) throws IOException
+	{
+		sendPacket(p, Game.centralServer, CentralServer.PORT);
+	}
+	
 	public void connectToServer(InetAddress ip)
 	{
 		if (connected)
@@ -393,7 +403,7 @@ public class Client extends Thread
 		serverIP = ip;
 		try
 		{
-			sendPacket(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp));
+			sendPacketToServer(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp, true));
 		}
 		catch (IOException e)
 		{
@@ -411,7 +421,7 @@ public class Client extends Thread
 		if (!connected) return;
 		try
 		{
-			sendPacket(new Packet01Disconnect(Game.user.getUsername(), Cause.USER_DISCONNECT));
+			sendPacketToServer(new Packet01Disconnect(Game.user.getUsername(), Cause.USER_DISCONNECT, true));
 		}
 		catch (IOException e)
 		{

@@ -7,11 +7,11 @@ public class Packet02Reject extends Packet
 {
 	public static enum Cause
 	{
-		OUTDATEDCLIENT("Dein Client läuft auf einer älteren Version als der Server."),
-		OUTDATEDSERVER("Der Server läuft auf einer alteren Version als dein Client."),
 		USERNAMETAKEN("Dieser Benutzername ist auf diesem Server bereits vergeben."),
 		GAMERUNNING("Das Spiel auf diesem Server hat bereits begonnen."),
 		FULL("Der Server hat die maximale Anzahl an Spielern bereits erreicht."),
+		ALREADYHOSTING("Du hostest bereist ein Spiel."),
+		INVALIDLOGIN("Login inkorrekt!"),
 		
 		;
 		private String description;

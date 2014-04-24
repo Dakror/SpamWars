@@ -15,6 +15,7 @@ public class User
 	private InetAddress ip;
 	private int port;
 	private String username;
+	public long lastInteraction;
 	
 	public int K, D;
 	

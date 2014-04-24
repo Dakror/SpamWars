@@ -188,29 +188,7 @@ public class Server extends Thread
 			{
 				Packet00Connect packet = new Packet00Connect(data);
 				User user = new User(packet.getUsername(), address, port);
-				if (packet.getVersion() < CFG.VERSION)
-				{
-					try
-					{
-						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated client");
-						sendPacket(new Packet02Reject(Cause.OUTDATEDCLIENT, false), user);
-						return;
-					}
-					catch (Exception e)
-					{}
-				}
-				else if (packet.getVersion() > CFG.VERSION)
-				{
-					try
-					{
-						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
-						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER, false), user);
-						break;
-					}
-					catch (Exception e)
-					{}
-				}
-				else if (clients.size() == MAX_PLAYERS)
+				if (clients.size() == MAX_PLAYERS)
 				{
 					try
 					{

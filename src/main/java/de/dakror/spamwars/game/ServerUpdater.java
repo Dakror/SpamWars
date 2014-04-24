@@ -41,7 +41,7 @@ public class ServerUpdater extends Thread
 				time2 = System.currentTimeMillis();
 				try
 				{
-					Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown));
+					Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown, false));
 				}
 				catch (Exception e)
 				{
@@ -61,7 +61,7 @@ public class ServerUpdater extends Thread
 					countdown--;
 					try
 					{
-						Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown));
+						Game.server.sendPacketToAllClients(new Packet03Attribute("countdown", countdown, false));
 					}
 					catch (Exception e)
 					{

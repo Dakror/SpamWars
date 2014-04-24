@@ -373,7 +373,7 @@ public class World extends EventListener implements Drawable
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet08Projectile(p));
+				Game.client.sendPacketToServer(new Packet08Projectile(p, true));
 			}
 			catch (IOException e)
 			{
@@ -388,7 +388,7 @@ public class World extends EventListener implements Drawable
 		
 		try
 		{
-			if (send) Game.client.sendPacket(new Packet07Animation(a));
+			if (send) Game.client.sendPacketToServer(new Packet07Animation(a, true));
 		}
 		catch (IOException e)
 		{
