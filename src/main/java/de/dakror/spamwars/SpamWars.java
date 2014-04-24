@@ -28,6 +28,7 @@ public class SpamWars
 		{
 			e.printStackTrace();
 		}
+		Launch.init(args);
 		CFG.INTERNET = Helper.isInternetReachable();
 		
 		CFG.init();
@@ -42,8 +43,6 @@ public class SpamWars
 		Part.init();
 		
 		new Game();
-		Launch.username = "test";
-		Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
 		Game.user = new User(Launch.username, null, 0);
 		
 		Game.currentFrame.init("Spam Wars");
@@ -51,7 +50,6 @@ public class SpamWars
 		{
 			DakrorBin.init(Game.w, "SpamWars");
 			Game.currentFrame.setFullscreen();
-			// Game.currentFrame.w.setSize(1280, 720);
 		}
 		catch (IllegalStateException e)
 		{

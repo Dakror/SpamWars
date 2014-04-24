@@ -37,6 +37,7 @@ import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
 import de.dakror.spamwars.net.packet.Packet14Login;
+import de.dakror.spamwars.net.packet.Packet16JoinGame;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -50,6 +51,7 @@ public class Client extends Thread
 	boolean connected;
 	
 	InetAddress serverIP;
+	int serverHostPort;
 	
 	public Packet04PlayerList playerList;
 	public Packet11GameInfo gameInfo;
@@ -85,7 +87,7 @@ public class Client extends Thread
 			try
 			{
 				socket.receive(packet);
-				parsePacket(data);
+				parsePacket(data, packet.getAddress(), packet.getPort());
 			}
 			catch (IOException e)
 			{
@@ -94,20 +96,13 @@ public class Client extends Thread
 		}
 	}
 	
-	public void parsePacket(byte[] data)
+	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
 		
-		if (Packet.isForServer(data)) // redirecting
+		if (Packet.isForServer(data) && Game.server != null) // redirecting
 		{
-			try
-			{
-				sendDataToServer(data);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			Game.server.parsePacket(data, address, port);
 			return;
 		}
 		
@@ -346,6 +341,11 @@ public class Client extends Thread
 				packet = new Packet14Login(data);
 				break;
 			}
+			case JOINGAME:
+			{
+				packet = new Packet16JoinGame(data);
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -385,7 +385,7 @@ public class Client extends Thread
 	{
 		if (serverIP == null) return;
 		
-		sendData(data, Game.server.ip, Server.PORT);
+		sendData(data, serverIP, Game.server != null ? Server.PORT : serverHostPort);
 	}
 	
 	public void sendPacketToServer(Packet p) throws IOException
@@ -398,7 +398,7 @@ public class Client extends Thread
 		sendPacket(p, Game.centralServer, CentralServer.PORT);
 	}
 	
-	public void connectToServer(InetAddress ip)
+	public void connectToServer(InetAddress ip, int hostPort)
 	{
 		if (connected)
 		{
@@ -407,6 +407,7 @@ public class Client extends Thread
 		}
 		
 		serverIP = ip;
+		serverHostPort = hostPort;
 		try
 		{
 			sendPacketToServer(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp, true));

@@ -222,7 +222,7 @@ public class LobbyLayer extends MPLayer
 		if (!host) start.setToggleMode(true);
 		components.add(start);
 		
-		if (!Game.client.isConnected()) Game.client.connectToServer(Game.server.ip);
+		if (!Game.client.isConnected()) Game.client.connectToServer(Game.server.ip, 0);
 		
 		TextButton disco = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() / 4 * 3 + TextButton.HEIGHT, "Trennen");
 		disco.addClickEvent(new ClickEvent()

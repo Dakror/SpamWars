@@ -27,7 +27,6 @@ public abstract class Packet
 		HOSTGAME,
 		LOGIN,
 		ALIVE,
-		GAMES,
 		JOINGAME,
 		
 		;

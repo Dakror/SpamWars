@@ -20,6 +20,7 @@ import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet13HostGame;
 import de.dakror.spamwars.net.packet.Packet14Login;
+import de.dakror.spamwars.net.packet.Packet16JoinGame;
 
 /**
  * @author Dakror
@@ -199,6 +200,27 @@ public class CentralServer
 							hosts.remove(u);
 							return;
 						}
+					}
+				}
+				break;
+			}
+			case JOINGAME:
+			{
+				Packet16JoinGame p = new Packet16JoinGame(data);
+				for (User u : hosts)
+				{
+					if (u.getUsername().equals(p.getUsername()))
+					{
+						try
+						{
+							sendPacket(new Packet16JoinGame(u.getIP(), u.getPort()), user);
+							out("User " + user.getUsername() + " joins game from " + u.getUsername());
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+						break;
 					}
 				}
 				break;

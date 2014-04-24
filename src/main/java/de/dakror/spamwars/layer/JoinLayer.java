@@ -1,10 +1,6 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
-import java.net.InetAddress;
-import java.net.URL;
-
-import org.json.JSONObject;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Alert;
@@ -14,8 +10,10 @@ import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.net.packet.Packet16JoinGame;
 
 /**
  * @author Dakror
@@ -42,21 +40,14 @@ public class JoinLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
-		try
-		{
-			Thread.sleep(1);
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+		if (p.getType() == PacketTypes.JOINGAME) Game.client.connectToServer(((Packet16JoinGame) p).getHostIp(), ((Packet16JoinGame) p).getHostPort());
 		
-		if (p instanceof Packet00Connect && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))
+		if (p.getType() == PacketTypes.CONNECT && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))
 		{
 			Game.currentGame.removeLayer(JoinLayer.this);
 			Game.currentFrame.fadeTo(1, 0.05f);
 		}
-		else if (p instanceof Packet02Reject)
+		else if (p.getType() == PacketTypes.REJECT)
 		{
 			Game.currentGame.addLayer(new Alert(((Packet02Reject) p).getCause().getDescription(), null));
 		}
@@ -92,10 +83,7 @@ public class JoinLayer extends MPLayer
 				{
 					try
 					{
-						JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
-						if (data.length() == 0) Game.currentGame.addLayer(new Alert("Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", null));
-						
-						Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
+						Game.client.sendPacketToCentral(new Packet16JoinGame(usr.getText()));
 					}
 					catch (Exception e1)
 					{}

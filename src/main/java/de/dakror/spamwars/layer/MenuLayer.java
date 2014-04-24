@@ -133,6 +133,7 @@ public class MenuLayer extends MPLayer
 				try
 				{
 					Game.client.sendPacketToCentral(new Packet01Disconnect(Launch.username, Cause.USER_DISCONNECT, false));
+					Game.client.disconnect();
 				}
 				catch (IOException e)
 				{

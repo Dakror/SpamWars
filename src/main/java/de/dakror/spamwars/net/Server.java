@@ -230,7 +230,6 @@ public class Server extends Thread
 				if (taken) break;
 				
 				CFG.p("[SERVER]: " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + ") has connected.");
-				user.setPort(port);
 				clients.add(user);
 				try
 				{
