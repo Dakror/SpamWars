@@ -11,9 +11,9 @@ public class Packet12Stomp extends Packet
 	String stomped;
 	float damage;
 	
-	public Packet12Stomp(String username, String stomped, float damage)
+	public Packet12Stomp(String username, String stomped, float damage, boolean forServer)
 	{
-		super(12);
+		super(12, forServer);
 		this.username = username;
 		this.stomped = stomped;
 		this.damage = damage;
@@ -22,6 +22,7 @@ public class Packet12Stomp extends Packet
 	public Packet12Stomp(byte[] data)
 	{
 		super(12);
+		load(data);
 		String[] parts = readData(data).split(":");
 		
 		username = parts[0];

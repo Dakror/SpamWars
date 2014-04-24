@@ -12,15 +12,16 @@ public class Packet08Projectile extends Packet
 {
 	Projectile p;
 	
-	public Packet08Projectile(Projectile p)
+	public Packet08Projectile(Projectile p, boolean forServer)
 	{
-		super(8);
+		super(8, forServer);
 		this.p = p;
 	}
 	
 	public Packet08Projectile(byte[] data)
 	{
 		super(8);
+		load(data);
 		
 		try
 		{

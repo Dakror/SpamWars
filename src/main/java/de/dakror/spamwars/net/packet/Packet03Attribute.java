@@ -11,9 +11,9 @@ public class Packet03Attribute extends Packet
 	/**
 	 * Key format: class_field_type
 	 */
-	public Packet03Attribute(String key, Object value)
+	public Packet03Attribute(String key, Object value, boolean forServer)
 	{
-		super(3);
+		super(3, forServer);
 		this.key = key;
 		this.value = value.toString();
 	}
@@ -21,6 +21,7 @@ public class Packet03Attribute extends Packet
 	public Packet03Attribute(byte[] data)
 	{
 		super(3);
+		load(data);
 		String[] s = readData(data).split("#~#");
 		key = s[0];
 		value = s[1];

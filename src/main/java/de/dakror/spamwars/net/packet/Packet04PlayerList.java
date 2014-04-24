@@ -16,10 +16,11 @@ public class Packet04PlayerList extends Packet
 	public Packet04PlayerList(byte[] data)
 	{
 		super(4);
-		
+		load(data);
 		
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.get(); // skip id
+		bb.get(); // skip forServer
 		int c = bb.get();
 		
 		users = new User[c];
@@ -35,9 +36,9 @@ public class Packet04PlayerList extends Packet
 		}
 	}
 	
-	public Packet04PlayerList(User[] users)
+	public Packet04PlayerList(User[] users, boolean forServer)
 	{
-		super(4);
+		super(4, forServer);
 		this.users = users;
 	}
 	

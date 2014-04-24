@@ -13,15 +13,16 @@ public class Packet07Animation extends Packet
 {
 	Animation animation;
 	
-	public Packet07Animation(Animation anim)
+	public Packet07Animation(Animation anim, boolean forServer)
 	{
-		super(7);
+		super(7, forServer);
 		animation = anim;
 	}
 	
 	public Packet07Animation(byte[] data)
 	{
 		super(7);
+		load(data);
 		
 		try
 		{

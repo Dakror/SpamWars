@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.net.InetAddress;
 import java.net.URL;
 
 import org.json.JSONArray;
@@ -32,6 +33,7 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class Game extends GameFrame implements WindowFocusListener
 {
+	public static InetAddress centralServer;
 	public static World world;
 	public static Game currentGame;
 	public static Client client;
@@ -92,6 +94,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		});
 		try
 		{
+			centralServer = InetAddress.getByName("h2284175.stratoserver.net");
 			Spinner.h = 33;
 			InputField.h = 8;
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));

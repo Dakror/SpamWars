@@ -28,9 +28,9 @@ public class Packet11GameInfo extends Packet
 	int minutes;
 	GameMode mode;
 	
-	public Packet11GameInfo(int minutes, GameMode mode)
+	public Packet11GameInfo(int minutes, GameMode mode, boolean forServer)
 	{
-		super(11);
+		super(11, forServer);
 		this.minutes = minutes;
 		this.mode = mode;
 	}
@@ -38,6 +38,7 @@ public class Packet11GameInfo extends Packet
 	public Packet11GameInfo(byte[] data)
 	{
 		super(11);
+		load(data);
 		String[] parts = readData(data).split(":");
 		
 		minutes = Integer.parseInt(parts[0]);

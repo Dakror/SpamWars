@@ -29,15 +29,16 @@ public class Packet02Reject extends Packet
 	
 	private Cause cause;
 	
-	public Packet02Reject(Cause cause)
+	public Packet02Reject(Cause cause, boolean forServer)
 	{
-		super(2);
+		super(2, forServer);
 		this.cause = cause;
 	}
 	
 	public Packet02Reject(byte[] data)
 	{
 		super(2);
+		load(data);
 		cause = Cause.values()[Integer.parseInt(readData(data))];
 	}
 	

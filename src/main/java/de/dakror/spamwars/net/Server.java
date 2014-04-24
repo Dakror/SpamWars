@@ -121,7 +121,7 @@ public class Server extends Thread
 			for (Vector v : world.spawns)
 				spots.put(v, 0);
 			
-			sendPacketToAllClients(new Packet11GameInfo(minutes, mode));
+			sendPacketToAllClients(new Packet11GameInfo(minutes, mode, false));
 			
 			for (User u : clients)
 			{
@@ -141,7 +141,7 @@ public class Server extends Thread
 				spots.put(vals.get(0), spots.get(vals.get(0)) + 1);
 				
 				world.addEntity(new Player(x, y, u));
-				sendPacket(new Packet03Attribute("pos", x + "," + y), u);
+				sendPacket(new Packet03Attribute("pos", x + "," + y, false), u);
 			}
 			
 			sendWorld(null);
@@ -160,13 +160,13 @@ public class Server extends Thread
 			{
 				for (int j = 0; j < Math.ceil((world.height / Tile.SIZE) / (float) Packet05Chunk.SIZE); j++)
 				{
-					if (user == null) sendPacketToAllClients(new Packet05Chunk(world, new Point(i, j)));
-					else sendPacket(new Packet05Chunk(world, new Point(i, j)), user);
+					if (user == null) sendPacketToAllClients(new Packet05Chunk(world, new Point(i, j), false));
+					else sendPacket(new Packet05Chunk(world, new Point(i, j), false), user);
 				}
 			}
 			
-			if (user == null) sendPacketToAllClients(new Packet03Attribute("worldsize", world.width + "_" + world.height));
-			else sendPacket(new Packet03Attribute("worldsize", world.width + "_" + world.height), user);
+			if (user == null) sendPacketToAllClients(new Packet03Attribute("worldsize", world.width + "_" + world.height, false));
+			else sendPacket(new Packet03Attribute("worldsize", world.width + "_" + world.height, false), user);
 		}
 		catch (Exception e)
 		{
@@ -193,7 +193,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated client");
-						sendPacket(new Packet02Reject(Cause.OUTDATEDCLIENT), user);
+						sendPacket(new Packet02Reject(Cause.OUTDATEDCLIENT, false), user);
 						return;
 					}
 					catch (Exception e)
@@ -204,7 +204,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
-						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER), user);
+						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER, false), user);
 						break;
 					}
 					catch (Exception e)
@@ -215,7 +215,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game full");
-						sendPacket(new Packet02Reject(Cause.FULL), user);
+						sendPacket(new Packet02Reject(Cause.FULL, false), user);
 						break;
 					}
 					catch (Exception e)
@@ -226,7 +226,7 @@ public class Server extends Thread
 					try
 					{
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): game started");
-						sendPacket(new Packet02Reject(Cause.GAMERUNNING), user);
+						sendPacket(new Packet02Reject(Cause.GAMERUNNING, false), user);
 						break;
 					}
 					catch (Exception e)
@@ -238,7 +238,7 @@ public class Server extends Thread
 					{
 						try
 						{
-							sendPacket(new Packet02Reject(Cause.USERNAMETAKEN), user);
+							sendPacket(new Packet02Reject(Cause.USERNAMETAKEN, false), user);
 							CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): username taken");
 							break;
 						}
@@ -251,9 +251,9 @@ public class Server extends Thread
 				clients.add(user);
 				try
 				{
-					sendPacket(new Packet03Attribute("user", user.serialize()), user);
+					sendPacket(new Packet03Attribute("user", user.serialize(), false), user);
 					sendPacketToAllClients(packet);
-					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {})));
+					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {}), false));
 				}
 				catch (Exception e)
 				{}
@@ -301,7 +301,7 @@ public class Server extends Thread
 				User user = new User(null, address, port);
 				try
 				{
-					sendPacket(new Packet04PlayerList(clients.toArray(new User[] {})), user);
+					sendPacket(new Packet04PlayerList(clients.toArray(new User[] {}), false), user);
 				}
 				catch (IOException e)
 				{
@@ -389,7 +389,7 @@ public class Server extends Thread
 				try
 				{
 					sendPacketToAllClients(p);
-					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {})));
+					sendPacketToAllClients(new Packet04PlayerList(clients.toArray(new User[] {}), false));
 				}
 				catch (Exception e)
 				{
@@ -464,7 +464,7 @@ public class Server extends Thread
 	{
 		try
 		{
-			sendPacketToAllClients(new Packet01Disconnect("##", de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.SERVER_CLOSED));
+			sendPacketToAllClients(new Packet01Disconnect("##", de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.SERVER_CLOSED, false));
 		}
 		catch (Exception e)
 		{

@@ -15,9 +15,9 @@ public class Packet05Chunk extends Packet
 	Point chunk;
 	byte[] data;
 	
-	public Packet05Chunk(World world, Point chunk)
+	public Packet05Chunk(World world, Point chunk, boolean forServer)
 	{
-		super(5);
+		super(5, forServer);
 		
 		data = world.getData(chunk.x, chunk.y, SIZE);
 		this.chunk = chunk;
@@ -26,9 +26,11 @@ public class Packet05Chunk extends Packet
 	public Packet05Chunk(byte[] data)
 	{
 		super(5);
+		load(data);
 		
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.get(); // skip id
+		bb.get(); // skip forServer
 		
 		chunk = new Point(bb.get(), bb.get());
 		int length = bb.getInt();

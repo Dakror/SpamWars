@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
@@ -95,6 +96,19 @@ public class Client extends Thread
 	public void parsePacket(byte[] data)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
+		
+		if (Packet.isForServer(data)) // redirecting
+		{
+			try
+			{
+				sendDataToServer(data);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			return;
+		}
 		
 		Packet packet = null;
 		
@@ -348,13 +362,24 @@ public class Client extends Thread
 		Game.currentGame.setLayer(new MenuLayer());
 	}
 	
-	public void sendPacket(Packet p) throws IOException
+	public void sendPacket(Packet p, InetAddress ip, int port) throws IOException
 	{
 		if (serverIP == null) return;
 		
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
+		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 		socket.send(packet);
+	}
+	
+	public void sendData(byte[] data, InetAddress ip, int port) throws IOException
+	{
+		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+		socket.send(packet);
+	}
+	
+	public void sendDataToServer(byte[] data) throws IOException
+	{
+		sendData(data, Game.server.ip, Server.PORT);
 	}
 	
 	public void connectToServer(InetAddress ip)
@@ -368,7 +393,7 @@ public class Client extends Thread
 		serverIP = ip;
 		try
 		{
-			sendPacket(new Packet00Connect(Game.user.getUsername(), CFG.VERSION));
+			sendPacket(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp));
 		}
 		catch (IOException e)
 		{

@@ -24,6 +24,10 @@ public abstract class Packet
 		GAMEINFO,
 		STOMP,
 		
+		HOSTGAME,
+		JOINGAME,
+		ENDGAME,
+		
 		;
 		public int getID()
 		{
@@ -32,10 +36,22 @@ public abstract class Packet
 	}
 	
 	public byte packetID;
+	public boolean forServer;
 	
 	public Packet(int packetID)
 	{
 		this.packetID = (byte) packetID;
+	}
+	
+	public Packet(int packetID, boolean forServer)
+	{
+		this.packetID = (byte) packetID;
+		this.forServer = forServer;
+	}
+	
+	public void load(byte[] data)
+	{
+		forServer = isForServer(data);
 	}
 	
 	protected abstract byte[] getPacketData();
@@ -44,22 +60,28 @@ public abstract class Packet
 	{
 		byte[] strData = getPacketData();
 		
-		byte[] data = new byte[strData.length + 1];
+		byte[] data = new byte[strData.length + 2];
 		data[0] = packetID;
+		data[1] = (byte) (forServer ? 127 : -128);
 		
-		System.arraycopy(strData, 0, data, 1, strData.length);
+		System.arraycopy(strData, 0, data, 2, strData.length);
 		
 		return data;
 	}
 	
 	public static String readData(byte[] data)
 	{
-		return new String(Arrays.copyOfRange(data, 1, data.length)).trim();
+		return new String(Arrays.copyOfRange(data, 2, data.length)).trim();
 	}
 	
 	public PacketTypes getType()
 	{
 		return Packet.lookupPacket(packetID);
+	}
+	
+	public static boolean isForServer(byte[] data)
+	{
+		return data[1] == (byte) 127;
 	}
 	
 	public static PacketTypes lookupPacket(int id)

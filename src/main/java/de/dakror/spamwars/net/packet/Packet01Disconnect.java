@@ -30,14 +30,15 @@ public class Packet01Disconnect extends Packet
 	public Packet01Disconnect(byte[] data)
 	{
 		super(1);
+		load(data);
 		String[] s = readData(data).split(":");
 		username = s[0];
 		cause = Cause.values()[Integer.parseInt(s[1])];
 	}
 	
-	public Packet01Disconnect(String username, Cause cause)
+	public Packet01Disconnect(String username, Cause cause, boolean forServer)
 	{
-		super(1);
+		super(1, forServer);
 		this.username = username;
 		this.cause = cause;
 	}

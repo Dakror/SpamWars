@@ -10,9 +10,9 @@ public class Packet09Kill extends Packet
 	String killer, dead;
 	WeaponType weapon;
 	
-	public Packet09Kill(String killer, String dead, WeaponType weapon)
+	public Packet09Kill(String killer, String dead, WeaponType weapon, boolean forServer)
 	{
-		super(9);
+		super(9, forServer);
 		
 		this.killer = killer;
 		this.dead = dead;
@@ -22,6 +22,7 @@ public class Packet09Kill extends Packet
 	public Packet09Kill(byte[] data)
 	{
 		super(9);
+		load(data);
 		
 		String[] parts = readData(data).split(":");
 		killer = parts[0];

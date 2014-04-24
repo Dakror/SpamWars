@@ -20,9 +20,9 @@ public class Packet06PlayerData extends Packet
 	WeaponData data;
 	String username;
 	
-	public Packet06PlayerData(Player p)
+	public Packet06PlayerData(Player p, boolean forServer)
 	{
-		super(6);
+		super(6, forServer);
 		position = p.getPos();
 		left = p.lookingLeft;
 		style = p.getStyle();
@@ -38,8 +38,9 @@ public class Packet06PlayerData extends Packet
 	public Packet06PlayerData(byte[] data)
 	{
 		super(6);
+		load(data);
 		
-		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
+		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 2, data.length));
 		position = new Vector(bb.getFloat(), bb.getFloat());
 		left = bb.get() == (byte) -127;
 		style = bb.get();
