@@ -155,7 +155,7 @@ public class CentralServer
 					}
 					else
 					{
-						out("Invalid login: " + address.getHostName() + ":" + port);
+						out("Invalid login: " + address.getHostAddress() + ":" + port);
 						sendPacket(new Packet02Reject(Cause.INVALIDLOGIN, false), user);
 					}
 				}
