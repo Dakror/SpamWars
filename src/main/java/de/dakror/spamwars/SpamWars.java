@@ -4,11 +4,13 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import de.dakror.dakrorbin.DakrorBin;
+import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
 import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.layer.MenuLayer;
+import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -40,6 +42,10 @@ public class SpamWars
 		Part.init();
 		
 		new Game();
+		
+		Game.user = new User("test", null, 0);
+		Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
+		
 		Game.currentFrame.init("Spam Wars");
 		try
 		{
@@ -52,7 +58,6 @@ public class SpamWars
 			System.exit(0);
 		}
 		Game.currentGame.addLayer(new MenuLayer());
-		if (Game.user == null) Game.currentGame.addLayer(new MenuLayer());
 		
 		Game.currentFrame.updater = new UpdateThread();
 		

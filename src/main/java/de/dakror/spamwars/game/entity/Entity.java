@@ -305,8 +305,8 @@ public abstract class Entity extends EventListener implements Drawable
 		{
 			try
 			{
-				if (server) Game.server.sendPacketToAllClients(new Packet10EntityStatus(getPos(), enabled));
-				else Game.client.sendPacket(new Packet10EntityStatus(getPos(), enabled));
+				if (server) Game.server.sendPacketToAllClients(new Packet10EntityStatus(getPos(), enabled, false));
+				else Game.client.sendPacketToServer(new Packet10EntityStatus(getPos(), enabled, true));
 			}
 			catch (Exception e)
 			{

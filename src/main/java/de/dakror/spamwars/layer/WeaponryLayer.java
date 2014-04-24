@@ -6,6 +6,7 @@ import java.net.URL;
 
 import org.json.JSONException;
 
+import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.layer.Confirm;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -192,7 +193,7 @@ public class WeaponryLayer extends MPLayer
 						
 						try
 						{
-							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Game.passwordMD5 + "&removeweapon=" + id));
+							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&removeweapon=" + id));
 							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
 							init();
 						}

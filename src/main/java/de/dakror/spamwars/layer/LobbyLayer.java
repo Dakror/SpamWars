@@ -202,7 +202,7 @@ public class LobbyLayer extends MPLayer
 				{
 					try
 					{
-						Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
+						Game.client.sendPacketToServer(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected()), true));
 					}
 					catch (IOException e)
 					{
@@ -231,7 +231,7 @@ public class LobbyLayer extends MPLayer
 		
 		try
 		{
-			Game.client.sendPacket(new Packet04PlayerList());
+			Game.client.sendPacketToServer(new Packet04PlayerList());
 		}
 		catch (IOException e)
 		{
@@ -245,7 +245,7 @@ public class LobbyLayer extends MPLayer
 	{
 		try
 		{
-			Game.server.sendPacketToAllClientsExceptOne(new Packet11GameInfo(time.value, GameMode.values()[mode.value]), Game.user);
+			Game.server.sendPacketToAllClientsExceptOne(new Packet11GameInfo(time.value, GameMode.values()[mode.value], false), Game.user);
 		}
 		catch (Exception e)
 		{
@@ -261,7 +261,7 @@ public class LobbyLayer extends MPLayer
 			sendInfo();
 			try
 			{
-				Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), "true"));
+				Game.client.sendPacketToServer(new Packet03Attribute("ready_" + Game.user.getUsername(), "true", true));
 			}
 			catch (IOException e)
 			{
@@ -272,7 +272,7 @@ public class LobbyLayer extends MPLayer
 		{
 			try
 			{
-				if (start != null) Game.client.sendPacket(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected())));
+				if (start != null) Game.client.sendPacketToServer(new Packet03Attribute("ready_" + Game.user.getUsername(), Boolean.toString(start.isSelected()), true));
 			}
 			catch (IOException e)
 			{
@@ -294,7 +294,7 @@ public class LobbyLayer extends MPLayer
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet04PlayerList());
+				Game.client.sendPacketToServer(new Packet04PlayerList());
 			}
 			catch (IOException e)
 			{

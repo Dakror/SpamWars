@@ -7,13 +7,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
+import de.dakror.spamwars.net.packet.Packet01Disconnect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet14Login;
@@ -23,15 +24,43 @@ import de.dakror.spamwars.net.packet.Packet14Login;
  */
 public class CentralServer
 {
+	static class AFKManager extends Thread
+	{
+		@Override
+		public void run()
+		{
+			while (true)
+			{
+				for (User u : users)
+				{
+					if (System.currentTimeMillis() - u.lastInteraction > 2000)
+					{
+						try
+						{
+							sendPacket(new Packet01Disconnect(u.getUsername(), de.dakror.spamwars.net.packet.Packet01Disconnect.Cause.KICK, false), u);
+							out("User timed out: " + u.getUsername());
+							users.remove(u);
+							hosts.remove(u);
+						}
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	public static final int PORT = 19950;
 	static DatagramSocket socket;
-	static ArrayList<User> hosts;
-	static ArrayList<User> users;
+	static CopyOnWriteArrayList<User> hosts;
+	static CopyOnWriteArrayList<User> users;
 	
 	public static void main(String[] args)
 	{
-		hosts = new ArrayList<>();
-		users = new ArrayList<>();
+		hosts = new CopyOnWriteArrayList<>();
+		users = new CopyOnWriteArrayList<>();
 		try
 		{
 			socket = new DatagramSocket(new InetSocketAddress(InetAddress.getLocalHost(), PORT));
@@ -80,6 +109,10 @@ public class CentralServer
 		
 		switch (type)
 		{
+			case ALIVE:
+			{
+				user.lastInteraction = System.currentTimeMillis();
+			}
 			case LOGIN:
 			{
 				Packet14Login p = new Packet14Login(data);
@@ -94,7 +127,7 @@ public class CentralServer
 					else
 					{
 						out("Invalid login: " + address.getHostName() + ":" + port);
-						sendPacket(new Packet02Reject(Cause.INVALIDLOGIN, false), address, port);
+						sendPacket(new Packet02Reject(Cause.INVALIDLOGIN, false), user);
 					}
 				}
 				catch (Exception e)
@@ -110,7 +143,7 @@ public class CentralServer
 					{
 						try
 						{
-							sendPacket(new Packet02Reject(Cause.ALREADYHOSTING, false), address, port);
+							sendPacket(new Packet02Reject(Cause.ALREADYHOSTING, false), user);
 							out("Refused to host multiple games: " + u.getUsername());
 							return;
 						}
@@ -130,10 +163,10 @@ public class CentralServer
 		}
 	}
 	
-	public static void sendPacket(Packet p, InetAddress ip, int port) throws IOException
+	public static void sendPacket(Packet p, User user) throws IOException
 	{
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+		DatagramPacket packet = new DatagramPacket(data, data.length, user.getIP(), user.getPort());
 		
 		socket.send(packet);
 	}

@@ -304,7 +304,7 @@ public class Player extends Entity
 		
 		try
 		{
-			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacket(new Packet06PlayerData(this));
+			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacketToServer(new Packet06PlayerData(this, true));
 		}
 		catch (IOException e)
 		{
@@ -368,7 +368,7 @@ public class Player extends Entity
 			{
 				try
 				{
-					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), WeaponType.WEAPON));
+					Game.client.sendPacketToServer(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), WeaponType.WEAPON, true));
 				}
 				catch (IOException e)
 				{
@@ -379,7 +379,7 @@ public class Player extends Entity
 			{
 				try
 				{
-					Game.client.sendPacket(new Packet09Kill(((Action) source).username, Game.user.getUsername(), ((Action) source).type));
+					Game.client.sendPacketToServer(new Packet09Kill(((Action) source).username, Game.user.getUsername(), ((Action) source).type, true));
 				}
 				catch (IOException e)
 				{
@@ -409,7 +409,7 @@ public class Player extends Entity
 					weapon.refill(AmmoBox.AMMO);
 					try
 					{
-						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this, false));
 					}
 					catch (Exception e1)
 					{
@@ -422,7 +422,7 @@ public class Player extends Entity
 					life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
 					try
 					{
-						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this, false));
 					}
 					catch (Exception e1)
 					{
@@ -456,7 +456,7 @@ public class Player extends Entity
 		{
 			try
 			{
-				Game.client.sendPacket(new Packet12Stomp(Game.user.getUsername(), ((Player) e).getUser().getUsername(), velocity.y * 2));
+				Game.client.sendPacketToServer(new Packet12Stomp(Game.user.getUsername(), ((Player) e).getUser().getUsername(), velocity.y * 2, true));
 			}
 			catch (IOException e1)
 			{

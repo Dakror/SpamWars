@@ -44,7 +44,7 @@ public class Packet04PlayerList extends Packet
 	
 	public Packet04PlayerList()
 	{
-		super(4);
+		super(4, true);
 	}
 	
 	public User[] getUsers()

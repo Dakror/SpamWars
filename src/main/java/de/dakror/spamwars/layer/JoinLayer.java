@@ -3,7 +3,6 @@ package de.dakror.spamwars.layer;
 import java.awt.Graphics2D;
 import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import org.json.JSONObject;
 
@@ -17,7 +16,6 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -30,7 +28,7 @@ public class JoinLayer extends MPLayer
 		drawModality(g);
 		
 		Helper.drawContainer(GameFrame.getWidth() / 2 - 310, Game.getHeight() / 2 - 125, 620, 250, true, false, g);
-		Helper.drawHorizontallyCenteredString("Beitreten" + (!CFG.INTERNET ? " (LAN-IP)" : ""), Game.getWidth(), Game.getHeight() / 2 - 75, g, 40);
+		Helper.drawHorizontallyCenteredString("Beitreten", Game.getWidth(), Game.getHeight() / 2 - 75, g, 40);
 		
 		drawComponents(g);
 	}
@@ -69,7 +67,7 @@ public class JoinLayer extends MPLayer
 	public void init()
 	{
 		final InputField usr = new InputField(Game.getWidth() / 2 - 290, Game.getHeight() / 2 - 50, 580, 30);
-		usr.setHint(CFG.INTERNET ? "Benutzername" : "IP-Adresse");
+		usr.setHint("Benutzername");
 		usr.setMaxlength(50);
 		components.add(usr);
 		
@@ -92,29 +90,15 @@ public class JoinLayer extends MPLayer
 			{
 				if (usr.getText().length() > 0)
 				{
-					if (CFG.INTERNET)
+					try
 					{
-						try
-						{
-							JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
-							if (data.length() == 0) Game.currentGame.addLayer(new Alert("Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", null));
-							
-							Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
-						}
-						catch (Exception e1)
-						{}
+						JSONObject data = new JSONObject(Helper.getURLContent(new URL("http://dakror.de/mp-api/players?name=" + usr.getText())));
+						if (data.length() == 0) Game.currentGame.addLayer(new Alert("Der Spieler, dessen Spiel du beitreten willst, konnte nicht gefunden werden.", null));
+						
+						Game.client.connectToServer(InetAddress.getByName(data.getString("IP")));
 					}
-					else
-					{
-						try
-						{
-							Game.client.connectToServer(InetAddress.getByName(usr.getText()));
-						}
-						catch (UnknownHostException e1)
-						{
-							Game.currentGame.addLayer(new Alert("Die eingegebene IP-Adresse ist nicht gültig.", null));
-						}
-					}
+					catch (Exception e1)
+					{}
 				}
 			}
 		});

@@ -1,6 +1,5 @@
 package de.dakror.spamwars.layer;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 import de.dakror.dakrorbin.DakrorBin;
@@ -8,7 +7,6 @@ import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
-import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.ui.MenuButton;
 
 /**
@@ -25,14 +23,6 @@ public class MenuLayer extends MPLayer
 	{
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/title.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
-		
-		if (!CFG.INTERNET && Game.user.getIP() != null)
-		{
-			Font old = g.getFont();
-			g.setFont(new Font("", Font.PLAIN, 20));
-			Helper.drawHorizontallyCenteredString("Offline-Modus: " + Game.user.getUsername() + " (" + Game.user.getIP().getHostAddress() + ")", Game.getWidth(), 20, g, 20);
-			g.setFont(old);
-		}
 		
 		Helper.drawString("Version " + DakrorBin.buildDate, 10, Game.getHeight() - 10, g, 18);
 		

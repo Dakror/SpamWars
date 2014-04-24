@@ -9,6 +9,7 @@ public class Packet01Disconnect extends Packet
 	{
 		SERVER_CLOSED("Der Server wurde geschlossen."),
 		USER_DISCONNECT("Spiel beendet."),
+		KICK("Du wurdest gekickt."),
 		
 		;
 		private String description;

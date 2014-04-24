@@ -14,6 +14,7 @@ import java.net.URL;
 
 import org.json.JSONArray;
 
+import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
@@ -26,7 +27,6 @@ import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -39,7 +39,6 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static Client client;
 	public static Server server;
 	public static User user;
-	public static String passwordMD5;
 	public static Player player;
 	public static JSONArray weapons = new JSONArray();
 	public static WeaponData activeWeapon;
@@ -181,11 +180,9 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullMoney()
 	{
-		if (!CFG.INTERNET) return;
-		
 		try
 		{
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5)));
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -195,11 +192,9 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullWeapons()
 	{
-		if (!CFG.INTERNET) return;
-		
 		try
 		{
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + passwordMD5)));
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -211,7 +206,7 @@ public class Game extends GameFrame implements WindowFocusListener
 	{
 		try
 		{
-			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5 + "&sub=" + money));
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5 + "&sub=" + money));
 			if (!response.contains("false"))
 			{
 				Game.money = Integer.parseInt(response);
