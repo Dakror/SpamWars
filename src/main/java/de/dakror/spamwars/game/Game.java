@@ -93,7 +93,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		});
 		try
 		{
-			centralServer = InetAddress.getLocalHost();// InetAddress.getByName("h2284175.stratoserver.net");
+			centralServer = InetAddress.getByName("h2284175.stratoserver.net");
 			Spinner.h = 33;
 			InputField.h = 8;
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
