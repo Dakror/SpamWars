@@ -28,7 +28,9 @@ public class SpamWars
 		{
 			e.printStackTrace();
 		}
-		Launch.init(args);
+		// Launch.init(args);
+		Launch.username = "test";
+		Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
 		CFG.INTERNET = Helper.isInternetReachable();
 		
 		CFG.init();
