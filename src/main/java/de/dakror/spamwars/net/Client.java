@@ -99,7 +99,7 @@ public class Client extends Thread
 	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
-		CFG.p("rec", type, new String(data), address.getHostAddress() + ":" + port);
+		CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
 		
 		if (Packet.isForServer(data) && Game.server != null) // redirecting
 		{
