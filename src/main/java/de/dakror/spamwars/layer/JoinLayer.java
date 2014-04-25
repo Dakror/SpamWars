@@ -40,6 +40,10 @@ public class JoinLayer extends MPLayer
 	@Override
 	public void onPacketReceived(Packet p)
 	{
+		if (p.getType() == PacketTypes.REJECT)
+		{
+			Game.currentGame.addLayer(new Alert(((Packet02Reject) p).getCause().getDescription(), null));
+		}
 		if (p.getType() == PacketTypes.JOINGAME) Game.client.connectToServer(((Packet16JoinGame) p).getHostIp(), ((Packet16JoinGame) p).getHostPort());
 		
 		if (p.getType() == PacketTypes.CONNECT && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))

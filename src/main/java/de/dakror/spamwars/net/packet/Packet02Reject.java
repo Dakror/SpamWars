@@ -11,6 +11,7 @@ public class Packet02Reject extends Packet
 		GAMERUNNING("Das Spiel auf diesem Server hat bereits begonnen."),
 		FULL("Der Server hat die maximale Anzahl an Spielern bereits erreicht."),
 		ALREADYHOSTING("Du hostest bereist ein Spiel."),
+		NOTHOSTING("Das Spiel, welchem du beitreten willst, konnte nicht gefunden werden."),
 		INVALIDLOGIN("Login inkorrekt!"),
 		
 		;

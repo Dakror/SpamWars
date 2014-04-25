@@ -206,22 +206,25 @@ public class CentralServer
 			}
 			case JOINGAME:
 			{
-				Packet16JoinGame p = new Packet16JoinGame(data);
-				for (User u : hosts)
+				try
 				{
-					if (u.getUsername().equals(p.getUsername()))
+					Packet16JoinGame p = new Packet16JoinGame(data);
+					for (User u : hosts)
 					{
-						try
+						if (u.getUsername().equals(p.getUsername()))
 						{
+							
 							sendPacket(new Packet16JoinGame(u.getIP(), u.getPort()), user);
 							out("User " + user.getUsername() + " joins game from " + u.getUsername());
+							return;
 						}
-						catch (IOException e)
-						{
-							e.printStackTrace();
-						}
-						break;
 					}
+					
+					sendPacket(new Packet02Reject(Cause.NOTHOSTING, false), user);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
 				}
 				break;
 			}
