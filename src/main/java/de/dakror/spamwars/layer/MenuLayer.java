@@ -25,7 +25,8 @@ public class MenuLayer extends MPLayer
 {
 	boolean gotoweapon;
 	public static boolean waiting = true;
-	static LobbyLayer ll;
+	
+	// static LobbyLayer ll;
 	
 	@Override
 	public void draw(Graphics2D g)
