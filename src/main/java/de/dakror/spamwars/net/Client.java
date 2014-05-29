@@ -36,6 +36,8 @@ import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
+import de.dakror.spamwars.net.packet.Packet14Login;
+import de.dakror.spamwars.net.packet.Packet16JoinGame;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -336,6 +338,16 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
+			case LOGIN:
+			{
+				packet = new Packet14Login(data);
+				break;
+			}
+			case JOINGAME:
+			{
+				packet = new Packet16JoinGame(data);
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -381,6 +393,11 @@ public class Client extends Thread
 	public void sendPacketToServer(Packet p) throws IOException
 	{
 		sendDataToServer(p.getData());
+	}
+	
+	public void sendPacketToCentral(Packet p) throws IOException
+	{
+		sendPacket(p, Game.centralServer, CentralServer.PORT);
 	}
 	
 	public void connectToServer(InetAddress ip, int hostPort)

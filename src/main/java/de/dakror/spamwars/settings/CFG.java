@@ -17,8 +17,6 @@ public class CFG
 {
 	public static final File DIR = new File(System.getProperty("user.home") + "/.dakror/SpamWars");
 	
-	public static String APP_KEY = "74ff4592-e388-4ccb-a";
-	
 	public static boolean INTERNET;
 	
 	static long time = 0;
