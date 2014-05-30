@@ -123,7 +123,7 @@ public class Client extends Thread
 		}
 		
 		PacketTypes type = Packet.lookupPacket(data[0]);
-		CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
+		// CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
 		
 		if (Packet.isForServer(data) && Game.server != null) // redirecting
 		{
