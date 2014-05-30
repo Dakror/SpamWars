@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -99,7 +100,7 @@ public class Client extends Thread
 	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
-		CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
+		// CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
 		
 		if (Packet.isForServer(data) && Game.server != null) // redirecting
 		{
@@ -387,7 +388,19 @@ public class Client extends Thread
 	{
 		if (serverIP == null) return;
 		
-		sendData(data, serverIP, Game.server != null ? Server.PORT : serverHostPort);
+		if (Game.server != null) sendData(data, serverIP, Server.PORT);
+		else
+		{
+			byte[] addr = serverIP.getAddress();
+			
+			ByteBuffer bb = ByteBuffer.allocate(data.length + addr.length + 10);
+			bb.put("FF".getBytes());
+			bb.putInt(addr.length);
+			bb.put(addr);
+			bb.putInt(serverHostPort);
+			bb.put(data);
+			sendData(bb.array(), Game.centralServer, CentralServer.PORT);
+		}
 	}
 	
 	public void sendPacketToServer(Packet p) throws IOException
