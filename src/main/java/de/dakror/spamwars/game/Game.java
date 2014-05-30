@@ -44,8 +44,8 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
-		Game.currentGame.addLayer(new MenuLayer());
-		Game.currentGame.addLayer(new ConnectingLayer());
+		addLayer(new MenuLayer());
+		addLayer(new ConnectingLayer());
 		
 		byte b = WarpClient.initialize(CFG.APP_KEY, "", CFG.SERVER_IP);
 		if (b != 0)
