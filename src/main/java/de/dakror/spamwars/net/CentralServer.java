@@ -22,7 +22,6 @@ import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet13HostGame;
 import de.dakror.spamwars.net.packet.Packet14Login;
 import de.dakror.spamwars.net.packet.Packet16JoinGame;
-import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -107,7 +106,7 @@ public class CentralServer
 	
 	public static void parsePacket(byte[] data, InetAddress address, int port)
 	{
-		if (!new String(data).contains("ping")) CFG.p("rec", new String(data));
+		// if (!new String(data).contains("ping")) CFG.p("rec", new String(data));
 		if (new String(data, 0, 2).equals("FF"))
 		{
 			ByteBuffer bb = ByteBuffer.wrap(data);
