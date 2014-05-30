@@ -2,7 +2,7 @@ package de.dakror.spamwars.net;
 
 import com.shephertz.app42.gaming.multiplayer.client.events.ConnectEvent;
 
-import de.dakror.spamwars.layer.MenuLayer;
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.util.ClientBase;
 
@@ -15,6 +15,13 @@ public class Client extends ClientBase
 	public void onConnectDone(ConnectEvent e)
 	{
 		CFG.p("Connected to Central Server.");
-		MenuLayer.waiting = false;
+		Game.currentGame.removeLayer(Game.currentGame.getActiveLayer()); // ConnectingLayer
+	}
+	
+	@Override
+	public void onDisconnectDone(ConnectEvent e)
+	{
+		CFG.p("Disconnected from Central Server.");
+		System.exit(0);
 	}
 }

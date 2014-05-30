@@ -16,6 +16,9 @@ import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.spamwars.game.weapon.WeaponData;
+import de.dakror.spamwars.layer.ConnectingLayer;
+import de.dakror.spamwars.layer.MenuLayer;
 import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.settings.CFG;
 
@@ -30,6 +33,7 @@ public class Game extends GameFrame
 	
 	public static int money = 0;
 	public static JSONArray weapons = new JSONArray();
+	public static WeaponData activeWeapon;
 	
 	public Game()
 	{
@@ -40,6 +44,9 @@ public class Game extends GameFrame
 	@Override
 	public void initGame()
 	{
+		Game.currentGame.addLayer(new MenuLayer());
+		Game.currentGame.addLayer(new ConnectingLayer());
+		
 		byte b = WarpClient.initialize(CFG.APP_KEY, "", CFG.SERVER_IP);
 		if (b != 0)
 		{
