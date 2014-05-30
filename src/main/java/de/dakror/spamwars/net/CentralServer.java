@@ -7,6 +7,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -105,6 +106,23 @@ public class CentralServer
 	
 	public static void parsePacket(byte[] data, InetAddress address, int port)
 	{
+		if (new String(data, 0, 2).equals("FF"))
+		{
+			ByteBuffer bb = ByteBuffer.wrap(data);
+			bb.get();
+			bb.get(); // skip marker
+			byte[] addr = new byte[bb.getInt()];
+			bb.get(addr);
+			try
+			{
+				socket.send(new DatagramPacket(data, 10 + addr.length, data.length - 10 - addr.length, InetAddress.getByAddress(addr), bb.getInt()));
+				return;
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 		PacketTypes type = Packet.lookupPacket(data[0]);
 		User user = null;
 		for (User u : users)
