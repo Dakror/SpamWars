@@ -9,19 +9,19 @@ import org.json.JSONException;
 import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.layer.Confirm;
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
+import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.ui.weaponry.WeaponryWeaponButton;
 
 /**
  * @author Dakror
  */
-public class WeaponryLayer extends Layer
+public class WeaponryLayer extends MPLayer
 {
 	int goingto = 0;
 	boolean build;
@@ -59,7 +59,7 @@ public class WeaponryLayer extends Layer
 			edit.enabled = sel;
 		}
 		
-		if (Game.currentFrame.alpha == 1 && enabled && goingto > 0)
+		if (Game.currentFrame.alpha == 1 && enabled)
 		{
 			Game.currentFrame.fadeTo(0, 0.05f);
 			new Thread()
@@ -88,56 +88,52 @@ public class WeaponryLayer extends Layer
 	}
 	
 	@Override
+	public void onPacketReceived(Packet p)
+	{}
+	
+	@Override
 	public void init()
 	{
 		components.clear();
+		Game.pullWeapons();
+		int mw = Game.getWidth() - 200;
+		int space = 20;
+		int inRow = Math.round(mw / (float) (WeaponryWeaponButton.WIDTH + space));
 		
-		new Thread()
+		for (int i = 0; i < Game.weapons.length(); i++)
 		{
-			@Override
-			public void run()
+			try
 			{
-				Game.pullWeapons();
-				int mw = Game.getWidth() - 200;
-				int space = 20;
-				int inRow = Math.round(mw / (float) (WeaponryWeaponButton.WIDTH + space));
-				
-				for (int i = 0; i < Game.weapons.length(); i++)
+				final WeaponData wd = WeaponData.load(Game.weapons.getJSONObject(i).getString("WEAPONDATA"));
+				final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space) + Game.getHeight() / 4, wd);
+				wwb.id = Game.weapons.getJSONObject(i).getInt("ID");
+				wwb.addClickEvent(new ClickEvent()
 				{
-					try
+					@Override
+					public void trigger()
 					{
-						final WeaponData wd = WeaponData.load(Game.weapons.getJSONObject(i).getString("WEAPONDATA"));
-						final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space) + Game.getHeight() / 4, wd);
-						wwb.id = Game.weapons.getJSONObject(i).getInt("ID");
-						wwb.addClickEvent(new ClickEvent()
+						for (Component c : components)
 						{
-							@Override
-							public void trigger()
-							{
-								for (Component c : components)
-								{
-									if (c instanceof WeaponryWeaponButton) ((WeaponryWeaponButton) c).selected = false;
-								}
-								if (!build) Game.activeWeapon = wd;
-								
-								wwb.selected = true;
-							}
-						});
-						
-						if (!build)
-						{
-							if (Game.activeWeapon != null && Game.activeWeapon.equals(wd)) wwb.selected = true;
+							if (c instanceof WeaponryWeaponButton) ((WeaponryWeaponButton) c).selected = false;
 						}
+						if (!build) Game.activeWeapon = wd;
 						
-						components.add(wwb);
+						wwb.selected = true;
 					}
-					catch (JSONException e)
-					{
-						e.printStackTrace();
-					}
+				});
+				
+				if (!build)
+				{
+					if (Game.activeWeapon != null && Game.activeWeapon.equals(wd)) wwb.selected = true;
 				}
+				
+				components.add(wwb);
 			}
-		}.start();
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		
 		TextButton back = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (!build ? 0.5f : 1)), Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
 		back.addClickEvent(new ClickEvent()
@@ -197,7 +193,7 @@ public class WeaponryLayer extends Layer
 						
 						try
 						{
-							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5 + "&removeweapon=" + id));
+							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&removeweapon=" + id));
 							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
 							init();
 						}

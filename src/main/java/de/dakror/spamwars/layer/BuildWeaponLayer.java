@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.Component;
 import de.dakror.gamesetup.ui.button.TextButton;
@@ -20,6 +19,7 @@ import de.dakror.spamwars.game.weapon.DataPart;
 import de.dakror.spamwars.game.weapon.Part;
 import de.dakror.spamwars.game.weapon.Part.Category;
 import de.dakror.spamwars.game.weapon.WeaponData;
+import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.ui.weaponry.WeaponryButton;
 import de.dakror.spamwars.ui.weaponry.WeaponryGroup;
 import de.dakror.spamwars.ui.weaponry.WeaponryPart;
@@ -28,7 +28,7 @@ import de.dakror.spamwars.util.Assistant;
 /**
  * @author Dakror
  */
-public class BuildWeaponLayer extends Layer
+public class BuildWeaponLayer extends MPLayer
 {
 	WeaponryGroup categories;
 	WeaponryGroup[] groups;
@@ -145,6 +145,10 @@ public class BuildWeaponLayer extends Layer
 			}.start();
 		}
 	}
+	
+	@Override
+	public void onPacketReceived(Packet p)
+	{}
 	
 	@Override
 	public void mousePressed(MouseEvent e)

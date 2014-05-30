@@ -6,7 +6,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Vector;
@@ -14,6 +13,7 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.anim.Animation;
 import de.dakror.spamwars.game.projectile.Projectile;
 import de.dakror.spamwars.game.world.Tile;
+import de.dakror.spamwars.layer.HUDLayer;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.settings.CFG;
 
@@ -124,13 +124,13 @@ public class Weapon implements Drawable
 		
 		ammo--;
 		Game.world.addAnimation(new Animation("muzzle", pos.clone().sub(new Vector(16 + (left ? 10 : 0), 16 + (left ? 10 : 0))), 1, rot3, 48, 23), true);
-		Game.world.addProjectile(new Projectile(pos.clone(), target, Launch.username, data.getProjectileSpeed(), data.getRange(), data.getDamage()), true);
+		Game.world.addProjectile(new Projectile(pos.clone(), target, Game.user.getUsername(), data.getProjectileSpeed(), data.getRange(), data.getDamage()), true);
 	}
 	
 	@Override
 	public void update(int tick)
 	{
-		if (Game.networker.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
 		{
 			capacity = 0;
 			magazine = 1;

@@ -3,18 +3,18 @@ package de.dakror.spamwars.layer;
 import java.awt.Graphics2D;
 
 import de.dakror.gamesetup.GameFrame;
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.Checkbox;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
  */
-public class SettingsLayer extends Layer
+public class SettingsLayer extends MPLayer
 {
 	public SettingsLayer()
 	{
@@ -39,6 +39,10 @@ public class SettingsLayer extends Layer
 	{
 		updateComponents(tick);
 	}
+	
+	@Override
+	public void onPacketReceived(Packet p)
+	{}
 	
 	@Override
 	public void init()

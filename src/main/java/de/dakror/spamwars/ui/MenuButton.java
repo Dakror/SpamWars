@@ -19,7 +19,7 @@ public class MenuButton extends ClickableComponent
 	int y1;
 	Dimension size;
 	float alpha;
-	float speed = 0.045f;
+	float speed = 0.015f;
 	float min = 0.6f;
 	
 	public MenuButton(String image, int y)

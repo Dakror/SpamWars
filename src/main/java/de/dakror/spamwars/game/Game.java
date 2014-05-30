@@ -3,14 +3,16 @@ package de.dakror.spamwars.game;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.net.InetAddress;
 import java.net.URL;
 
-import javax.swing.JOptionPane;
-
 import org.json.JSONArray;
-
-import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 
 import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
@@ -20,25 +22,27 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.game.world.World;
-import de.dakror.spamwars.layer.ConnectingLayer;
-import de.dakror.spamwars.layer.MenuLayer;
-import de.dakror.spamwars.net.Networker;
-import de.dakror.spamwars.settings.CFG;
+import de.dakror.spamwars.layer.GameStartLayer;
+import de.dakror.spamwars.layer.HUDLayer;
+import de.dakror.spamwars.net.Client;
+import de.dakror.spamwars.net.Server;
+import de.dakror.spamwars.net.User;
 
 /**
  * @author Dakror
  */
-public class Game extends GameFrame
+public class Game extends GameFrame implements WindowFocusListener
 {
-	public static Game currentGame;
-	public static Networker networker;
-	public static WarpClient warp;
+	public static InetAddress centralServer;
 	public static World world;
+	public static Game currentGame;
+	public static Client client;
+	public static Server server;
+	public static User user;
 	public static Player player;
-	
-	public static int money = 0;
 	public static JSONArray weapons = new JSONArray();
 	public static WeaponData activeWeapon;
+	public static int money = 0;
 	
 	boolean debug = false;
 	
@@ -49,67 +53,18 @@ public class Game extends GameFrame
 	}
 	
 	@Override
-	public void initGame()
-	{
-		addLayer(new MenuLayer());
-		addLayer(new ConnectingLayer());
-		
-		byte b = WarpClient.initialize(CFG.APP_KEY, "", CFG.SERVER_IP);
-		if (b != 0)
-		{
-			JOptionPane.showMessageDialog(w, "Server konnte nicht erreicht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		}
-		
-		try
-		{
-			warp = WarpClient.getInstance();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		networker = new Networker();
-		warp.addChatRequestListener(networker);
-		warp.addConnectionRequestListener(networker);
-		warp.addLobbyRequestListener(networker);
-		warp.addNotificationListener(networker);
-		warp.addRoomRequestListener(networker);
-		warp.addUpdateRequestListener(networker);
-		warp.addZoneRequestListener(networker);
-		
-		warp.initUDP();
-		
-		warp.connectWithUserName(Launch.username);
-		
-		pullMoney();
-		pullWeapons();
-		
-		Spinner.h = 33;
-		InputField.h = 8;
-		try
-		{
-			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		w.setIconImage(getImage("icon/spamwars64.png"));
-		w.setBackground(Color.decode("#D0F4F7"));
-	}
-	
-	@Override
 	public void draw(Graphics2D g)
 	{
+		if (world != null) world.draw(g);
+		
 		drawLayers(g);
 		
-		// if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer))
-		// {
-		Helper.drawContainer(getWidth() - 200, getHeight() - 60, 200, 60, false, false, g);
-		g.setColor(Color.darkGray);
-		Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
-		// }
+		if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer) && user != null)
+		{
+			Helper.drawContainer(getWidth() - 200, getHeight() - 60, 200, 60, false, false, g);
+			g.setColor(Color.darkGray);
+			Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
+		}
 		
 		if (debug && !screenshot)
 		{
@@ -121,18 +76,112 @@ public class Game extends GameFrame
 	}
 	
 	@Override
+	public void initGame()
+	{
+		w.addWindowFocusListener(this);
+		w.setFocusTraversalKeysEnabled(false);
+		w.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				if (client != null)
+				{
+					client.disconnect();
+				}
+			}
+		});
+		try
+		{
+			centralServer = InetAddress.getByName("h2284175.stratoserver.net");
+			Spinner.h = 33;
+			InputField.h = 8;
+			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
+			w.setIconImage(getImage("icon/spamwars64.png"));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		w.setBackground(Color.decode("#D0F4F7"));
+		client = new Client();
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e)
+	{
+		super.keyPressed(e);
+		if (world != null && !getActiveLayer().isModal()) world.keyPressed(e);
+	}
+	
+	@Override
 	public void keyReleased(KeyEvent e)
 	{
 		super.keyReleased(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_F11) debug = !debug;
+		
+		if (world != null && !getActiveLayer().isModal()) world.keyReleased(e);
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e)
+	{
+		super.mouseMoved(e);
+		if (world != null && !getActiveLayer().isModal()) world.mouseMoved(e);
+	}
+	
+	@Override
+	public void mousePressed(MouseEvent e)
+	{
+		super.mousePressed(e);
+		if (world != null && !getActiveLayer().isModal())
+		{
+			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
+			world.mousePressed(e);
+		}
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e)
+	{
+		super.mouseReleased(e);
+		if (world != null && !getActiveLayer().isModal())
+		{
+			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
+			world.mouseReleased(e);
+		}
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e)
+	{
+		super.mouseDragged(e);
+		if (world != null && !getActiveLayer().isModal())
+		{
+			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
+			world.mouseDragged(e);
+		}
+	}
+	
+	@Override
+	public void windowGainedFocus(WindowEvent e)
+	{}
+	
+	@Override
+	public void windowLostFocus(WindowEvent e)
+	{
+		if (player != null)
+		{
+			player.stop();
+		}
 	}
 	
 	public static void pullMoney()
 	{
 		try
 		{
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Launch.username + "&password=" + Launch.pwdMd5)).trim());
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -144,7 +193,7 @@ public class Game extends GameFrame
 	{
 		try
 		{
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5)).trim());
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -156,10 +205,10 @@ public class Game extends GameFrame
 	{
 		try
 		{
-			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Launch.username + "&password=" + Launch.pwdMd5 + "&sub=" + money));
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5 + "&sub=" + money));
 			if (!response.contains("false"))
 			{
-				money = Integer.parseInt(response);
+				Game.money = Integer.parseInt(response);
 				return true;
 			}
 		}

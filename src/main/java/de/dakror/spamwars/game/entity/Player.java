@@ -7,8 +7,8 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
@@ -19,6 +19,7 @@ import de.dakror.spamwars.game.weapon.Weapon;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.game.weapon.WeaponType;
 import de.dakror.spamwars.game.world.Tile;
+import de.dakror.spamwars.layer.RespawnLayer;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.net.packet.Packet06PlayerData;
 import de.dakror.spamwars.net.packet.Packet09Kill;
@@ -62,7 +63,7 @@ public class Player extends Entity
 		
 		life = maxlife = 100;
 		
-		if (user.getUsername().equals(Launch.username)) setWeapon(Game.activeWeapon);
+		if (user.getUsername().equals(Game.user.getUsername())) setWeapon(Game.activeWeapon);
 	}
 	
 	@Override
@@ -78,7 +79,7 @@ public class Player extends Entity
 		g.setColor(Color.darkGray);
 		Helper.drawHorizontallyCenteredString(user.getUsername(), (int) mx, width, (int) my - 5, g, 20);
 		
-		if (!user.getUsername().equals(Launch.username)) Helper.drawProgressBar((int) mx, (int) (my + height - 5), width, life / (float) maxlife, "ff3232", g);
+		if (!user.getUsername().equals(Game.user.getUsername())) Helper.drawProgressBar((int) mx, (int) (my + height - 5), width, life / (float) maxlife, "ff3232", g);
 		g.setColor(o);
 		
 		AffineTransform old = g.getTransform();
@@ -116,7 +117,7 @@ public class Player extends Entity
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		handleMouse(e, false);
 	}
@@ -135,7 +136,7 @@ public class Player extends Entity
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		if (e.getButton() == MouseEvent.BUTTON1) handleMouse(e, true);
 	}
@@ -171,7 +172,7 @@ public class Player extends Entity
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0 || !weapon.getData().isAutomatic()) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || !weapon.getData().isAutomatic()) return;
 		
 		if (e.getModifiers() == MouseEvent.BUTTON1_MASK) handleMouse(e, true);
 	}
@@ -179,7 +180,7 @@ public class Player extends Entity
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		weapon.target(null);
 	}
@@ -187,7 +188,7 @@ public class Player extends Entity
 	@Override
 	public void keyPressed(KeyEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		switch (e.getKeyCode())
 		{
@@ -218,7 +219,7 @@ public class Player extends Entity
 	@Override
 	public void keyReleased(KeyEvent e)
 	{
-		if (!user.getUsername().equals(Launch.username) || life <= 0) return;
+		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		switch (e.getKeyCode())
 		{
@@ -252,7 +253,7 @@ public class Player extends Entity
 		
 		int speed = airborne ? 3 : 4;
 		
-		if (user.getUsername().equals(Launch.username))
+		if (user.getUsername().equals(Game.user.getUsername()))
 		{
 			if (left) getVelocity().x = -speed;
 			if (right) getVelocity().x = speed;
@@ -301,7 +302,14 @@ public class Player extends Entity
 		if (lookingLeft) hand = new Point(0, 60);
 		else hand = new Point(65, 60);
 		
-		if (user.getUsername().equals(Launch.username) && tick % 2 == 0) Game.networker.sendPacket(new Packet06PlayerData(this, true));
+		try
+		{
+			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacketToServer(new Packet06PlayerData(this, true));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public int getStyle()
@@ -352,17 +360,31 @@ public class Player extends Entity
 	{
 		life -= damage;
 		
-		if (Game.networker.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER && source instanceof Projectile) life = 0;
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER && source instanceof Projectile) life = 0;
 		
 		if (life <= 0 && x > -10000000)
 		{
 			if (source instanceof Projectile)
 			{
-				Game.networker.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Launch.username, WeaponType.WEAPON, true));
+				try
+				{
+					Game.client.sendPacketToServer(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), WeaponType.WEAPON, true));
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 			else if (source instanceof Action)
 			{
-				Game.networker.sendPacket(new Packet09Kill(((Action) source).username, Launch.username, ((Action) source).type, true));
+				try
+				{
+					Game.client.sendPacketToServer(new Packet09Kill(((Action) source).username, Game.user.getUsername(), ((Action) source).type, true));
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 			
 			Game.world.addAnimation(new Animation("expl/11", getPos().clone().sub(new Vector((192 - width) / 2, (192 - height) / 2)), 2, 192, 24), true);
@@ -387,7 +409,7 @@ public class Player extends Entity
 					weapon.refill(AmmoBox.AMMO);
 					try
 					{
-						Game.networker.sendPacket(new Packet06PlayerData(this, false));
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this, false));
 					}
 					catch (Exception e1)
 					{
@@ -400,7 +422,7 @@ public class Player extends Entity
 					life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
 					try
 					{
-						Game.networker.sendPacket(new Packet06PlayerData(this, false));
+						Game.server.sendPacketToAllClients(new Packet06PlayerData(this, false));
 					}
 					catch (Exception e1)
 					{
@@ -424,7 +446,7 @@ public class Player extends Entity
 	{
 		float maxFall = 20;
 		float dmgFactor = 0.25f;
-		if (velocity.y > maxFall) dealDamage((float) Math.pow((velocity.y - maxFall), 2) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Launch.username));
+		if (velocity.y > maxFall) dealDamage((float) Math.pow((velocity.y - maxFall), 2) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
 	}
 	
 	@Override
@@ -432,7 +454,14 @@ public class Player extends Entity
 	{
 		if (e instanceof Player && velocity.y > 5)
 		{
-			Game.networker.sendPacket(new Packet12Stomp(Launch.username, ((Player) e).getUser().getUsername(), velocity.y * 2, true));
+			try
+			{
+				Game.client.sendPacketToServer(new Packet12Stomp(Game.user.getUsername(), ((Player) e).getUser().getUsername(), velocity.y * 2, true));
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+			}
 		}
 	}
 }

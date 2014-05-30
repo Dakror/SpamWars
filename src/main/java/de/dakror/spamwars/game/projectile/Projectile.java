@@ -10,7 +10,6 @@ import java.awt.geom.Line2D;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
@@ -140,7 +139,7 @@ public class Projectile implements Drawable
 		{
 			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line))
 			{
-				if (((Player) e).getUser().getUsername().equals(Launch.username)) Game.player.dealDamage(damage, this);
+				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(damage, this);
 				dead = true;
 				return;
 			}

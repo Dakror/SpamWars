@@ -5,7 +5,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Drawable;
 import de.dakror.gamesetup.util.EventListener;
 import de.dakror.gamesetup.util.Vector;
@@ -205,7 +204,7 @@ public abstract class Entity extends EventListener implements Drawable
 			Rectangle bump = getBump(velocity.x, velocity.y);
 			for (Entity e : Game.world.entities)
 			{
-				if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Launch.username))
+				if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
 				{
 					if (!e.getBump(0, 0).contains(bump.x, bump.y) && (e.getBump(0, 0).contains(bump.x, bump.y + bump.height) || e.getBump(0, 0).contains(x + bump.width, y + bump.height)))
 					{
@@ -306,8 +305,8 @@ public abstract class Entity extends EventListener implements Drawable
 		{
 			try
 			{
-				if (server) Game.networker.sendPacket(new Packet10EntityStatus(getPos(), enabled, false));
-				else Game.networker.sendPacket(new Packet10EntityStatus(getPos(), enabled, true));
+				if (server) Game.server.sendPacketToAllClients(new Packet10EntityStatus(getPos(), enabled, false));
+				else Game.client.sendPacketToServer(new Packet10EntityStatus(getPos(), enabled, true));
 			}
 			catch (Exception e)
 			{

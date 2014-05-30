@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -368,14 +369,31 @@ public class World extends EventListener implements Drawable
 	{
 		projectiles.add(p);
 		
-		if (send) Game.networker.sendPacket(new Packet08Projectile(p, true));
+		if (send)
+		{
+			try
+			{
+				Game.client.sendPacketToServer(new Packet08Projectile(p, true));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void addAnimation(Animation a, boolean send)
 	{
 		animations.add(a);
 		
-		if (send) Game.networker.sendPacket(new Packet07Animation(a, true));
+		try
+		{
+			if (send) Game.client.sendPacketToServer(new Packet07Animation(a, true));
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override

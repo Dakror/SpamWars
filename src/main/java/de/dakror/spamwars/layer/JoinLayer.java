@@ -13,6 +13,7 @@ import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet.PacketTypes;
 import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.net.packet.Packet16JoinGame;
 
 /**
  * @author Dakror

@@ -7,17 +7,17 @@ import java.net.URL;
 import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Alert;
-import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
+import de.dakror.spamwars.net.packet.Packet;
 
 /**
  * @author Dakror
  */
-public class PurchaseWeaponLayer extends Layer
+public class PurchaseWeaponLayer extends MPLayer
 {
 	WeaponData data;
 	int costs;
@@ -59,6 +59,10 @@ public class PurchaseWeaponLayer extends Layer
 	}
 	
 	@Override
+	public void onPacketReceived(Packet p)
+	{}
+	
+	@Override
 	public void init()
 	{
 		TextButton cnc = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (Game.money >= costs ? 1 : 0.5f)), Game.getHeight() / 2 + 30, "Abbruch");
@@ -83,7 +87,7 @@ public class PurchaseWeaponLayer extends Layer
 					boolean success = false;
 					if (Game.subMoney(costs))
 					{
-						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5 + "&addweapon=" + data.getSortedData() + "&setweapon=" + id));
+						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&addweapon=" + data.getSortedData() + "&setweapon=" + id));
 						success = response.contains("true");
 					}
 					
