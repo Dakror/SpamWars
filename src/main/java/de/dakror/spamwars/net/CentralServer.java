@@ -22,6 +22,7 @@ import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet13HostGame;
 import de.dakror.spamwars.net.packet.Packet14Login;
 import de.dakror.spamwars.net.packet.Packet16JoinGame;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -106,6 +107,7 @@ public class CentralServer
 	
 	public static void parsePacket(byte[] data, InetAddress address, int port)
 	{
+		if (!new String(data).contains("ping")) CFG.p("rec", new String(data));
 		if (new String(data, 0, 2).equals("FF"))
 		{
 			ByteBuffer bb = ByteBuffer.wrap(data);
@@ -115,7 +117,15 @@ public class CentralServer
 			bb.get(addr);
 			try
 			{
-				socket.send(new DatagramPacket(data, 10 + addr.length, data.length - 10 - addr.length, InetAddress.getByAddress(addr), bb.getInt()));
+				byte[] addr2 = address.getAddress();
+				ByteBuffer bb2 = ByteBuffer.allocate(data.length + addr2.length + 10);
+				bb2.put("AA".getBytes());
+				bb2.putInt(addr2.length);
+				bb2.put(addr2);
+				bb2.putInt(port);
+				bb2.put(data, 10 + addr.length, data.length - 10 - addr.length);
+				
+				socket.send(new DatagramPacket(bb2.array(), data.length + addr2.length + 10, InetAddress.getByAddress(addr), bb.getInt()));
 				return;
 			}
 			catch (Exception e)

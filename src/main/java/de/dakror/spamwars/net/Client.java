@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -99,8 +100,30 @@ public class Client extends Thread
 	
 	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
+		if (new String(data, 0, 2).equals("AA"))
+		{
+			ByteBuffer bb = ByteBuffer.wrap(data);
+			bb.get();
+			bb.get(); // skip marker
+			byte[] addr = new byte[bb.getInt()];
+			bb.get(addr);
+			try
+			{
+				address = InetAddress.getByAddress(addr);
+			}
+			catch (UnknownHostException e)
+			{
+				e.printStackTrace();
+			}
+			port = bb.getInt();
+			
+			byte[] d = new byte[data.length - 10 - addr.length];
+			bb.get(d);
+			data = d;
+		}
+		
 		PacketTypes type = Packet.lookupPacket(data[0]);
-		// CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
+		CFG.p("rec", type, new String(data).trim(), address.getHostAddress() + ":" + port);
 		
 		if (Packet.isForServer(data) && Game.server != null) // redirecting
 		{
