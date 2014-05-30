@@ -102,7 +102,7 @@ public class Game extends GameFrame
 	{
 		try
 		{
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Launch.username + "&password=" + Launch.pwdMd5)));
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Launch.username + "&password=" + Launch.pwdMd5)).trim());
 		}
 		catch (Exception e)
 		{
@@ -114,7 +114,7 @@ public class Game extends GameFrame
 	{
 		try
 		{
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5)));
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5)).trim());
 		}
 		catch (Exception e)
 		{

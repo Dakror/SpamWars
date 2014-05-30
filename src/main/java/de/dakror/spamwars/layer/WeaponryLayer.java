@@ -49,15 +49,15 @@ public class WeaponryLayer extends Layer
 	{
 		updateComponents(tick);
 		
-		// if (build)
-		// {
-		// boolean sel = false;
-		// for (Component c : components)
-		// if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) sel = true;
-		//
-		// delete.enabled = sel;
-		// edit.enabled = sel;
-		// }
+		if (build)
+		{
+			boolean sel = false;
+			for (Component c : components)
+				if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) sel = true;
+			
+			delete.enabled = sel;
+			edit.enabled = sel;
+		}
 		
 		if (Game.currentFrame.alpha == 1 && enabled && goingto > 0)
 		{
