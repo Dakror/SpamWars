@@ -139,7 +139,7 @@ public class WeaponryLayer extends Layer
 			}
 		}.start();
 		
-		TextButton back = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (!build ? 0.5f : 1)), Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
+		TextButton back = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (!build ? 0.5f : 1)), Game.getHeight() - TextButton.HEIGHT - 10, "ZurÃ¼ck");
 		back.addClickEvent(new ClickEvent()
 		{
 			@Override
@@ -162,7 +162,7 @@ public class WeaponryLayer extends Layer
 		});
 		if (this.build) components.add(build);
 		
-		edit = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Ändern");
+		edit = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Ã„ndern");
 		edit.enabled = false;
 		edit.addClickEvent(new ClickEvent()
 		{
@@ -175,7 +175,7 @@ public class WeaponryLayer extends Layer
 		});
 		if (this.build) components.add(edit);
 		
-		delete = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Löschen");
+		delete = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "LÃ¶schen");
 		delete.enabled = false;
 		delete.addClickEvent(new ClickEvent()
 		{
@@ -183,7 +183,7 @@ public class WeaponryLayer extends Layer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.addLayer(new Confirm("Bist du sicher, dass du diese Waffe unwiderruflich löschen willst?", new ClickEvent()
+				Game.currentGame.addLayer(new Confirm("Bist du sicher, dass du diese Waffe unwiderruflich lÃ¶schen willst?", new ClickEvent()
 				{
 					@Override
 					public void trigger()
@@ -198,7 +198,7 @@ public class WeaponryLayer extends Layer
 						try
 						{
 							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Launch.username + "&password=" + Launch.pwdMd5 + "&removeweapon=" + id));
-							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
+							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelÃ¶scht.", null));
 							init();
 						}
 						catch (MalformedURLException e)

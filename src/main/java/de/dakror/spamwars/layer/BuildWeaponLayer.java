@@ -197,7 +197,7 @@ public class BuildWeaponLayer extends Layer
 		g.setColor(Color.black);
 		
 		Helper.drawProgressBar(0 + 15, 0 + 15, width - 30, cacheData.getSpeed() / (float) Part.highest_speed, "7a36a3", g);
-		Helper.drawHorizontallyCenteredString("Verzögerung", 0, width, 0 + 31, g, 15);
+		Helper.drawHorizontallyCenteredString("VerzÃ¶gerung", 0, width, 0 + 31, g, 15);
 		
 		Helper.drawProgressBar(0 + 15, 0 + 35, width - 30, cacheData.getMagazine() / (float) Part.highest_magazine, "ffc744", g);
 		Helper.drawHorizontallyCenteredString("Munition", 0, width, 0 + 51, g, 15);
@@ -223,7 +223,7 @@ public class BuildWeaponLayer extends Layer
 	{
 		cacheData = getWeaponData();
 		
-		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
+		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "ZurÃ¼ck");
 		back.addClickEvent(new ClickEvent()
 		{
 			@Override
