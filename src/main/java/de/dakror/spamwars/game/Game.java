@@ -3,6 +3,7 @@ package de.dakror.spamwars.game;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -16,10 +17,12 @@ import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.spamwars.game.entity.Player;
 import de.dakror.spamwars.game.weapon.WeaponData;
+import de.dakror.spamwars.game.world.World;
 import de.dakror.spamwars.layer.ConnectingLayer;
 import de.dakror.spamwars.layer.MenuLayer;
-import de.dakror.spamwars.net.Client;
+import de.dakror.spamwars.net.Networker;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -28,12 +31,16 @@ import de.dakror.spamwars.settings.CFG;
 public class Game extends GameFrame
 {
 	public static Game currentGame;
-	public static Client client;
+	public static Networker networker;
 	public static WarpClient warp;
+	public static World world;
+	public static Player player;
 	
 	public static int money = 0;
 	public static JSONArray weapons = new JSONArray();
 	public static WeaponData activeWeapon;
+	
+	boolean debug = false;
 	
 	public Game()
 	{
@@ -62,14 +69,14 @@ public class Game extends GameFrame
 		{
 			e.printStackTrace();
 		}
-		client = new Client();
-		warp.addChatRequestListener(client);
-		warp.addConnectionRequestListener(client);
-		warp.addLobbyRequestListener(client);
-		warp.addNotificationListener(client);
-		warp.addRoomRequestListener(client);
-		warp.addUpdateRequestListener(client);
-		warp.addZoneRequestListener(client);
+		networker = new Networker();
+		warp.addChatRequestListener(networker);
+		warp.addConnectionRequestListener(networker);
+		warp.addLobbyRequestListener(networker);
+		warp.addNotificationListener(networker);
+		warp.addRoomRequestListener(networker);
+		warp.addUpdateRequestListener(networker);
+		warp.addZoneRequestListener(networker);
 		
 		warp.initUDP();
 		
@@ -96,6 +103,29 @@ public class Game extends GameFrame
 	public void draw(Graphics2D g)
 	{
 		drawLayers(g);
+		
+		// if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer))
+		// {
+		Helper.drawContainer(getWidth() - 200, getHeight() - 60, 200, 60, false, false, g);
+		g.setColor(Color.darkGray);
+		Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
+		// }
+		
+		if (debug && !screenshot)
+		{
+			g.setColor(Color.green);
+			g.setFont(new Font("Arial", Font.PLAIN, 18));
+			Helper.drawString(getFPS() + " FPS", 0, 18, g, 18);
+			Helper.drawString(getUPS() + " UPS", 100, 18, g, 18);
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e)
+	{
+		super.keyReleased(e);
+		
+		if (e.getKeyCode() == KeyEvent.VK_F11) debug = !debug;
 	}
 	
 	public static void pullMoney()
