@@ -29,10 +29,18 @@ public class SpamWars
 			e.printStackTrace();
 		}
 		
-		if (args.length > 0 && args[0].equals("test"))
+		if (args.length > 0)
 		{
-			Launch.username = "test";
-			Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
+			if (args[0].equals("test"))
+			{
+				Launch.username = "test";
+				Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
+			}
+			else if (args[0].equals("test2"))
+			{
+				Launch.username = "test2";
+				Launch.pwdMd5 = "81b073de9370ea873f548e31b8adc081";
+			}
 		}
 		else Launch.init(args);
 		CFG.INTERNET = Helper.isInternetReachable();
