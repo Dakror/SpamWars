@@ -22,6 +22,7 @@ import de.dakror.spamwars.net.packet.Packet02Reject.Cause;
 import de.dakror.spamwars.net.packet.Packet13HostGame;
 import de.dakror.spamwars.net.packet.Packet14Login;
 import de.dakror.spamwars.net.packet.Packet16JoinGame;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -67,8 +68,11 @@ public class CentralServer
 	static CopyOnWriteArrayList<User> hosts;
 	static CopyOnWriteArrayList<User> users;
 	
+	static boolean debug;
+	
 	public static void main(String[] args)
 	{
+		if (args.length == 1 && args[0].equals("-d")) debug = true;
 		hosts = new CopyOnWriteArrayList<>();
 		users = new CopyOnWriteArrayList<>();
 		try
@@ -109,6 +113,7 @@ public class CentralServer
 		// if (!new String(data).contains("ping")) CFG.p("rec", new String(data));
 		if (new String(data, 0, 2).equals("FF"))
 		{
+			if (debug) CFG.p(new String(data));
 			ByteBuffer bb = ByteBuffer.wrap(data);
 			bb.get();
 			bb.get(); // skip marker
