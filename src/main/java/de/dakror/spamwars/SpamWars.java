@@ -28,7 +28,13 @@ public class SpamWars
 		{
 			e.printStackTrace();
 		}
-		Launch.init(args);
+		
+		if (args.length > 0 && args[0].equals("test"))
+		{
+			Launch.username = "test";
+			Launch.pwdMd5 = "81dc9bdb52d04dc20036dbd8313ed055";
+		}
+		else Launch.init(args);
 		CFG.INTERNET = Helper.isInternetReachable();
 		
 		CFG.init();
