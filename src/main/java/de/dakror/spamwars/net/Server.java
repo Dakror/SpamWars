@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
@@ -429,9 +431,25 @@ public class Server extends Thread
 	{
 		p.forServer = false;
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, u.getIP(), u.getPort());
 		
-		socket.send(packet);
+		if (u.getIP().getHostAddress().startsWith("192.168"))
+		{
+			DatagramPacket packet = new DatagramPacket(p.getData(), p.getData().length, u.getIP(), u.getPort());
+			socket.send(packet);
+		}
+		else
+		{
+			byte[] addr = u.getIP().getAddress();
+			ByteBuffer bb = ByteBuffer.allocate(data.length + addr.length + 10);
+			bb.put("FF".getBytes());
+			bb.putInt(addr.length);
+			bb.put(addr);
+			bb.putInt(u.getPort());
+			bb.put(data);
+			
+			DatagramPacket packet = new DatagramPacket(bb.array(), bb.array().length, Game.centralServer, CentralServer.PORT);
+			socket.send(packet);
+		}
 	}
 	
 	public void resetScoreboard()
