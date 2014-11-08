@@ -1,6 +1,7 @@
 package de.dakror.spamwars;
 
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import de.dakror.dakrorbin.Launch;
@@ -17,7 +18,7 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class SpamWars
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws SocketException
 	{
 		CFG.INTERNET = Helper.isInternetReachable();
 		

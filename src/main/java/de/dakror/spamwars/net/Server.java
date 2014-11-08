@@ -472,7 +472,7 @@ public class Server extends Thread
 		DatagramPacket packet = new DatagramPacket(data, data.length, u.getIP(), u.getPort());
 		
 		socket.send(packet);
-		CFG.p("SERVER > " + p.getType().name() + " < " + u.getIP().getHostAddress() + ":" + u.getPort());
+		CFG.p("SERVER > " + p.getType().name() + " > " + u.getIP().getHostAddress() + ":" + u.getPort());
 	}
 	
 	public void resetScoreboard()

@@ -17,7 +17,7 @@ import de.dakror.spamwars.ui.MenuButton;
  */
 public class MenuLayer extends MPLayer
 {
-	boolean gotoweapon;
+	int goingto;
 	
 	static LobbyLayer ll;
 	
@@ -52,13 +52,11 @@ public class MenuLayer extends MPLayer
 				@Override
 				public void run()
 				{
-					if (gotoweapon)
-					{
-						Game.currentFrame.addLayer(new WeaponryLayer(true));
-						
-						gotoweapon = false;
-					}
-					else Game.currentFrame.addLayer(ll);
+					if (goingto == 1) Game.currentFrame.addLayer(ll);
+					if (goingto == 2) Game.currentFrame.addLayer(new JoinLayer());
+					if (goingto == 3) Game.currentFrame.addLayer(new WeaponryLayer(true));
+					
+					goingto = 0;
 				}
 			}.start();
 		}
@@ -84,6 +82,7 @@ public class MenuLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
+				goingto = 1;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
@@ -94,7 +93,8 @@ public class MenuLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				Game.currentGame.addLayer(new JoinLayer());
+				goingto = 2;
+				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		components.add(joingame);
@@ -104,7 +104,7 @@ public class MenuLayer extends MPLayer
 			@Override
 			public void trigger()
 			{
-				gotoweapon = true;
+				goingto = 3;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});

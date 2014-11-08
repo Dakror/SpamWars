@@ -4,12 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +35,9 @@ import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
+import de.dakror.spamwars.net.packet.Packet13Server;
 import de.dakror.spamwars.settings.CFG;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -64,6 +62,7 @@ public class Client extends Thread
 		try
 		{
 			socket = new DatagramSocket();
+			socket.setBroadcast(true);
 			setName("Client-Thread");
 			setPriority(MAX_PRIORITY);
 			connected = false;
@@ -331,6 +330,13 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
+			case SERVER:
+			{
+				Packet13Server p = new Packet13Server(data);
+				
+				packet = p;
+				break;
+			}
 			default:
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
@@ -356,7 +362,6 @@ public class Client extends Thread
 	public void sendPacket(Packet p) throws IOException
 	{
 		if (serverIP == null) return;
-		
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
 		socket.send(packet);
@@ -368,23 +373,10 @@ public class Client extends Thread
 	public void broadCast(Packet p) throws IOException
 	{
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), Server.PORT);
+		DatagramPacket packet = new DatagramPacket(data, data.length, Assistant.getBroadcastAddress(), Server.PORT);
 		
-		List<NetworkInterface> nis = Collections.list(NetworkInterface.getNetworkInterfaces());
-		for (NetworkInterface ni : nis)
-		{
-			CFG.p("Network Inteface: " + ni.getDisplayName());
-			for (InterfaceAddress ia : ni.getInterfaceAddresses())
-				CFG.p("  IntefaceAddress: adress=" + (ia.getAddress() == null ? "null" : ia.getAddress().getHostAddress()) + ", broadcast=" + (ia.getBroadcast() == null ? "null" : ia.getBroadcast().getHostAddress()));
-		}
-		
-		socket.setBroadcast(true);
 		socket.send(packet);
-		
 		CFG.p("CLIENT > " + p.getType().name() + " > BROADCAST");
-		
-		
-		socket.setBroadcast(false);
 	}
 	
 	public void connectToServer(InetAddress ip)
@@ -428,5 +420,4 @@ public class Client extends Thread
 	{
 		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
-	
 }
