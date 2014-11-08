@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -365,6 +369,14 @@ public class Client extends Thread
 	{
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), Server.PORT);
+		
+		List<NetworkInterface> nis = Collections.list(NetworkInterface.getNetworkInterfaces());
+		for (NetworkInterface ni : nis)
+		{
+			CFG.p("Network Inteface: " + ni.getDisplayName());
+			for (InterfaceAddress ia : ni.getInterfaceAddresses())
+				CFG.p("  IntefaceAddress: adress=" + (ia.getAddress() == null ? "null" : ia.getAddress().getHostAddress()) + ", broadcast=" + (ia.getBroadcast() == null ? "null" : ia.getBroadcast().getHostAddress()));
+		}
 		
 		socket.setBroadcast(true);
 		socket.send(packet);
