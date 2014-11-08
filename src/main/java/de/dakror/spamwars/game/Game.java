@@ -13,9 +13,8 @@ import java.net.InetAddress;
 import java.net.URL;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
@@ -41,7 +40,6 @@ public class Game extends GameFrame implements WindowFocusListener
 	public static Server server;
 	public static InetAddress ip;
 	public static User user;
-	public static String passwordMD5;
 	public static Player player;
 	public static JSONArray weapons = new JSONArray();
 	public static WeaponData activeWeapon;
@@ -186,7 +184,8 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		try
 		{
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5)));
+			CFG.p("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5);
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -196,29 +195,11 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullWeapons()
 	{
-		
-		// TODO: debug
-		weapons = new JSONArray();
-		JSONObject o = new JSONObject();
-		try
-		{
-			o.put("ID", (int) (Math.random() * 1000));
-			o.put("USERID", (int) (Math.random() * 1000));
-			o.put("WEAPONDATA", "13:232.0:0.0;25:0.0:18.0;7:232.0:62.0;2:183.0:67.0;true");
-		}
-		catch (JSONException e1)
-		{
-			e1.printStackTrace();
-		}
-		weapons.put(o);
-		
-		
-		
 		if (!CFG.INTERNET) return;
 		
 		try
 		{
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + passwordMD5)));
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)));
 		}
 		catch (Exception e)
 		{
@@ -232,7 +213,7 @@ public class Game extends GameFrame implements WindowFocusListener
 		
 		try
 		{
-			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5 + "&sub=" + money));
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5 + "&sub=" + money));
 			if (!response.contains("false"))
 			{
 				Game.money = Integer.parseInt(response);

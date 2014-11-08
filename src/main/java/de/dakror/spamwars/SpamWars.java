@@ -23,7 +23,9 @@ public class SpamWars
 	{
 		CFG.INTERNET = Helper.isInternetReachable();
 		
-		Launch.init(args);
+		// Launch.init(args);
+		Launch.username = "Dakror";
+		Launch.pwdMd5 = "94ff26c949ee6cfe131e551d802565a9";
 		CFG.init();
 		CFG.loadSettings();
 		Part.init();
@@ -41,6 +43,10 @@ public class SpamWars
 		{
 			Game.user = new User("Player" + (int) (Math.random() * 10000), Game.ip, 0);
 			Game.money = 999999;
+		}
+		else
+		{
+			Game.user = new User(Launch.username, Game.ip, 0);
 		}
 		
 		new Game();

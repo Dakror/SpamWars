@@ -6,7 +6,6 @@ import java.net.InetAddress;
 
 import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.ui.ClickEvent;
-import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.net.packet.Packet;
@@ -36,9 +35,7 @@ public class MenuLayer extends MPLayer
 			g.setFont(old);
 		}
 		
-		Helper.drawString("Spam Wars " + DakrorBin.buildDate, 10, Game.getHeight() - 10, g, 18);
-		
-		if (CFG.INTERNET) Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 3 / 2, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2, false, false, g);
+		Helper.drawString(DakrorBin.buildDate, 10, Game.getHeight() - 10, g, 18);
 		
 		drawComponents(g);
 	}
@@ -78,6 +75,7 @@ public class MenuLayer extends MPLayer
 	{
 		ll = new LobbyLayer();
 		Game.pullWeapons();
+		Game.pullMoney();
 		
 		MenuButton start = new MenuButton("startGame", 0);
 		start.addClickEvent(new ClickEvent()
