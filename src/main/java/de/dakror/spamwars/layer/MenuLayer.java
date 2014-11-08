@@ -75,6 +75,7 @@ public class MenuLayer extends MPLayer
 	public void init()
 	{
 		ll = new LobbyLayer();
+		Game.pullWeapons();
 		
 		MenuButton start = new MenuButton("startGame", 0);
 		start.addClickEvent(new ClickEvent()
@@ -127,18 +128,6 @@ public class MenuLayer extends MPLayer
 			}
 		});
 		components.add(end);
-		
-		TextButton logout = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT, "Abmelden");
-		logout.addClickEvent(new ClickEvent()
-		{
-			@Override
-			public void trigger()
-			{
-				CFG.deleteLogin();
-				Game.currentGame.addLayer(new LoginLayer());
-			}
-		});
-		if (CFG.INTERNET) components.add(logout);
 	}
 	
 	@Override

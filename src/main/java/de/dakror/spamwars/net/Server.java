@@ -72,13 +72,13 @@ public class Server extends Thread
 			setPriority(MAX_PRIORITY);
 			CFG.p("[SERVER]: Starting server at " + socket.getLocalAddress().getHostAddress() + ":" + socket.getLocalPort());
 			lobby = true;
+			
 			start();
 		}
 		catch (SocketException e)
 		{
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Override
@@ -108,6 +108,7 @@ public class Server extends Thread
 	public void startGame()
 	{
 		lobby = false;
+		
 		world = new World(Helper.getFileContent(map));
 		world.render(mode);
 		world.render.flush();

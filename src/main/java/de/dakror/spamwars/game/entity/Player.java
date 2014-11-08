@@ -277,8 +277,12 @@ public class Player extends Entity
 			int mx = (Game.getWidth() - width) / 2;
 			int my = (Game.getHeight() - height) / 2;
 			
+			float oldWorldX = Game.world.x;
+			float oldWorldY = Game.world.y;
+			
 			if (life > 0)
 			{
+				
 				Game.world.x = mx - x;
 				Game.world.y = my - y;
 				
@@ -294,6 +298,12 @@ public class Player extends Entity
 			{
 				left = right = up = down = false;
 				weapon.target(null);
+			}
+			
+			if (weapon.getTarget() != null)
+			{
+				weapon.getTarget().x -= Game.world.x - oldWorldX;
+				weapon.getTarget().y -= Game.world.y - oldWorldY;
 			}
 		}
 		

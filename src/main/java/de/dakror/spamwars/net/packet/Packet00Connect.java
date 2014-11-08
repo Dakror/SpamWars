@@ -1,6 +1,8 @@
 package de.dakror.spamwars.net.packet;
 
 /**
+ * Is being used as connect request and client-side discovery broadcast
+ * 
  * @author Dakror
  */
 public class Packet00Connect extends Packet

@@ -13,6 +13,8 @@ import java.net.InetAddress;
 import java.net.URL;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
@@ -194,6 +196,24 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static void pullWeapons()
 	{
+		
+		// TODO: debug
+		weapons = new JSONArray();
+		JSONObject o = new JSONObject();
+		try
+		{
+			o.put("ID", (int) (Math.random() * 1000));
+			o.put("USERID", (int) (Math.random() * 1000));
+			o.put("WEAPONDATA", "13:232.0:0.0;25:0.0:18.0;7:232.0:62.0;2:183.0:67.0;true");
+		}
+		catch (JSONException e1)
+		{
+			e1.printStackTrace();
+		}
+		weapons.put(o);
+		
+		
+		
 		if (!CFG.INTERNET) return;
 		
 		try
@@ -208,6 +228,8 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	public static boolean subMoney(int money)
 	{
+		if (!CFG.INTERNET) return true;
+		
 		try
 		{
 			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + passwordMD5 + "&sub=" + money));

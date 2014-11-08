@@ -257,4 +257,9 @@ public class Weapon implements Drawable
 	{
 		return data;
 	}
+	
+	public Vector getTarget()
+	{
+		return target;
+	}
 }
