@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.util.Helper;
@@ -64,13 +65,13 @@ public class RespawnLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
 		for (Layer l : Game.currentGame.layers)
 		{
 			if (l instanceof HUDLayer)
 			{
-				((HUDLayer) l).onPacketReceived(p);
+				((HUDLayer) l).onPacketReceived(p, ip, port);
 				break;
 			}
 		}

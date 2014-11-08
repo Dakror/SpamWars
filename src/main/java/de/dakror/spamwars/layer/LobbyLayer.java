@@ -3,6 +3,7 @@ package de.dakror.spamwars.layer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JFileChooser;
@@ -254,7 +255,7 @@ public class LobbyLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
 		if (p instanceof Packet00Connect && Game.server != null)
 		{

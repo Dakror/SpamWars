@@ -1,9 +1,11 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import org.json.JSONObject;
 
@@ -14,9 +16,11 @@ import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.TextButton;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
+import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
+import de.dakror.spamwars.net.packet.Packet13Server;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -24,6 +28,10 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class JoinLayer extends MPLayer
 {
+	Packet00Connect discoveryPacket;
+	
+	HashMap<InetAddress, Packet13Server> servers = new HashMap<>();
+	
 	@Override
 	public void draw(Graphics2D g)
 	{
@@ -39,10 +47,22 @@ public class JoinLayer extends MPLayer
 	public void update(int tick)
 	{
 		updateComponents(tick);
+		
+		if (tick % 60 == 0)
+		{
+			try
+			{
+				Game.client.broadCast(discoveryPacket);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
 		try
 		{
@@ -62,12 +82,19 @@ public class JoinLayer extends MPLayer
 		{
 			Game.currentGame.addLayer(new Alert(((Packet02Reject) p).getCause().getDescription(), null));
 		}
-		else MenuLayer.ll.onPacketReceived(p);
+		else if (p instanceof Packet13Server)
+		{
+			servers.put(ip, (Packet13Server) p); // if existing, updates value
+			CFG.p("received server response from " + ip.getHostName() + ":" + port + ": " + ((Packet13Server) p).getHostName() + ", " + ((Packet13Server) p).getPlayers() + " / " + Server.MAX_PLAYERS);
+		}
+		else MenuLayer.ll.onPacketReceived(p, ip, port);
 	}
 	
 	@Override
 	public void init()
 	{
+		discoveryPacket = new Packet00Connect(Game.user.getUsername(), CFG.VERSION);
+		
 		final InputField usr = new InputField(Game.getWidth() / 2 - 290, Game.getHeight() / 2 - 50, 580, 30);
 		usr.setHint(CFG.INTERNET ? "Benutzername" : "IP-Adresse");
 		usr.setMaxlength(50);

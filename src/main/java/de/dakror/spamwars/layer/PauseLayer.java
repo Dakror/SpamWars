@@ -2,6 +2,7 @@ package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -44,13 +45,13 @@ public class PauseLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
 		for (Layer l : Game.currentGame.layers)
 		{
 			if (l instanceof HUDLayer)
 			{
-				((HUDLayer) l).onPacketReceived(p);
+				((HUDLayer) l).onPacketReceived(p, ip, port);
 				break;
 			}
 		}

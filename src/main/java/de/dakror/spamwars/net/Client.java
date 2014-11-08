@@ -83,7 +83,7 @@ public class Client extends Thread
 			try
 			{
 				socket.receive(packet);
-				parsePacket(data);
+				parsePacket(data, packet.getAddress(), packet.getPort());
 			}
 			catch (IOException e)
 			{
@@ -92,7 +92,7 @@ public class Client extends Thread
 		}
 	}
 	
-	public void parsePacket(byte[] data)
+	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
 		
@@ -330,7 +330,7 @@ public class Client extends Thread
 				CFG.p("reveived unhandled packet: " + type + " [" + Packet.readData(data) + "]");
 		}
 		
-		if (Game.currentGame.getActiveLayer() instanceof MPLayer && packet != null) ((MPLayer) Game.currentGame.getActiveLayer()).onPacketReceived(packet);
+		if (Game.currentGame.getActiveLayer() instanceof MPLayer && packet != null) ((MPLayer) Game.currentGame.getActiveLayer()).onPacketReceived(packet, address, port);
 	}
 	
 	private void setDisconnected()
@@ -355,6 +355,16 @@ public class Client extends Thread
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
 		socket.send(packet);
+	}
+	
+	public void broadCast(Packet p) throws IOException
+	{
+		byte[] data = p.getData();
+		DatagramPacket packet = new DatagramPacket(data, data.length, InetAddress.getByName("255.255.255.255"), Server.PORT);
+		
+		socket.setBroadcast(true);
+		socket.send(packet);
+		socket.setBroadcast(false);
 	}
 	
 	public void connectToServer(InetAddress ip)
@@ -398,4 +408,5 @@ public class Client extends Thread
 	{
 		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
+	
 }

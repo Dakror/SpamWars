@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -147,7 +148,7 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{}
 	
 	@Override

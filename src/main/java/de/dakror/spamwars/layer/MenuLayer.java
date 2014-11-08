@@ -2,6 +2,7 @@ package de.dakror.spamwars.layer;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
@@ -131,8 +132,8 @@ public class MenuLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
-		ll.onPacketReceived(p);
+		ll.onPacketReceived(p, ip, port);
 	}
 }

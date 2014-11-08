@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
+import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.ServerUpdater;
 import de.dakror.spamwars.game.entity.Entity;
 import de.dakror.spamwars.game.entity.Player;
@@ -37,6 +38,8 @@ import de.dakror.spamwars.net.packet.Packet09Kill;
 import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet11GameInfo.GameMode;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
+import de.dakror.spamwars.net.packet.Packet13Server;
+import de.dakror.spamwars.net.packet.Packet14Discovery;
 import de.dakror.spamwars.settings.CFG;
 
 /**
@@ -180,6 +183,7 @@ public class Server extends Thread
 		{
 			case INVALID:
 			case ENTITYSTATUS:
+			case SERVER:
 			{
 				break;
 			}
@@ -412,6 +416,24 @@ public class Server extends Thread
 					}
 				}
 				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				break;
+			}
+			case DISCOVERY:
+			{
+				Packet14Discovery p = new Packet14Discovery(data);
+				
+				int value = clients.size();
+				if (!lobby) value = -1;
+				if (p.getVersion() != CFG.VERSION) value = -2;
+				try
+				{
+					sendPacket(new Packet13Server(Game.user.getUsername(), value), new User(null, address, port));
+				}
+				catch (IOException e)
 				{
 					e.printStackTrace();
 				}

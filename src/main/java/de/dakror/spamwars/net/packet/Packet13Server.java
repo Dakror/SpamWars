@@ -8,17 +8,19 @@ public class Packet13Server extends Packet
 {
 	private String hostName;
 	/**
-	 * if joining isn't possible anymore due to the game starting,
-	 * this will be -1
+	 * encoding:<br>
+	 * >= 0 = actual player count<br>
+	 * -1 = game has started already<br>
+	 * -2 = game version not matching<br>
 	 */
-	private int players;
+	private int value;
 	
 	public Packet13Server(byte[] data)
 	{
 		super(13);
 		String[] s = readData(data).split(":");
 		hostName = s[0];
-		players = Integer.parseInt(s[1]);
+		value = Integer.parseInt(s[1]);
 	}
 	
 	public Packet13Server(String hostName, int players)
@@ -26,13 +28,13 @@ public class Packet13Server extends Packet
 		super(13);
 		
 		this.hostName = hostName;
-		this.players = players;
+		this.value = players;
 	}
 	
 	@Override
 	protected byte[] getPacketData()
 	{
-		return (hostName + ":" + players).getBytes();
+		return (hostName + ":" + value).getBytes();
 	}
 	
 	public String getHostName()
@@ -42,11 +44,11 @@ public class Packet13Server extends Packet
 	
 	public int getPlayers()
 	{
-		return players;
+		return value;
 	}
 	
 	public void setPlayers(int players)
 	{
-		this.players = players;
+		this.value = players;
 	}
 }

@@ -2,6 +2,7 @@ package de.dakror.spamwars.layer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
@@ -53,7 +54,7 @@ public class GameStartLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) cd = Integer.parseInt(((Packet03Attribute) p).getValue());
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize") && modal) Game.currentGame.fadeTo(1, 0.05f);

@@ -23,6 +23,8 @@ public abstract class Packet
 		ENTITYSTATUS,
 		GAMEINFO,
 		STOMP,
+		SERVER,
+		DISCOVERY,
 		
 		;
 		public int getID()

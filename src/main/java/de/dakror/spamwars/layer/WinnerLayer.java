@@ -1,6 +1,7 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 import java.util.Arrays;
 
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -45,7 +46,7 @@ public class WinnerLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{}
 	
 	@Override

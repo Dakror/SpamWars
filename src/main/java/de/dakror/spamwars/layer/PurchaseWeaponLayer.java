@@ -2,6 +2,7 @@ package de.dakror.spamwars.layer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 import java.net.URL;
 
 import org.json.JSONObject;
@@ -61,7 +62,7 @@ public class PurchaseWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{}
 	
 	@Override

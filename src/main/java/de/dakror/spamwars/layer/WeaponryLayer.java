@@ -1,6 +1,7 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -87,7 +88,7 @@ public class WeaponryLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{}
 	
 	@Override

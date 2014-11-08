@@ -1,5 +1,7 @@
 package de.dakror.spamwars.layer;
 
+import java.net.InetAddress;
+
 import de.dakror.gamesetup.layer.Layer;
 import de.dakror.spamwars.net.packet.Packet;
 
@@ -8,5 +10,5 @@ import de.dakror.spamwars.net.packet.Packet;
  */
 public abstract class MPLayer extends Layer
 {
-	public abstract void onPacketReceived(Packet p);
+	public abstract void onPacketReceived(Packet p, InetAddress ip, int port);
 }

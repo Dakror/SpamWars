@@ -1,6 +1,7 @@
 package de.dakror.spamwars.layer;
 
 import java.awt.Graphics2D;
+import java.net.InetAddress;
 
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.Checkbox;
@@ -41,7 +42,7 @@ public class SettingsLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p)
+	public void onPacketReceived(Packet p, InetAddress ip, int port)
 	{}
 	
 	@Override
