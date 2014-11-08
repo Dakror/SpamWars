@@ -96,6 +96,7 @@ public class Client extends Thread
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
 		
+		CFG.p("CLIENT < " + type.name() + " < " + address.getHostAddress() + ":" + port);
 		Packet packet = null;
 		
 		switch (type)
@@ -355,6 +356,9 @@ public class Client extends Thread
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
 		socket.send(packet);
+		
+		
+		CFG.p("CLIENT > " + p.getType().name() + " > " + serverIP.getHostAddress() + ":" + Server.PORT);
 	}
 	
 	public void broadCast(Packet p) throws IOException
@@ -364,6 +368,10 @@ public class Client extends Thread
 		
 		socket.setBroadcast(true);
 		socket.send(packet);
+		
+		CFG.p("CLIENT > " + p.getType().name() + " > BROADCAST");
+		
+		
 		socket.setBroadcast(false);
 	}
 	

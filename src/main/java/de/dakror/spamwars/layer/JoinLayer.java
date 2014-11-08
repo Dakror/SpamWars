@@ -47,7 +47,6 @@ public class JoinLayer extends MPLayer
 	public void update(int tick)
 	{
 		updateComponents(tick);
-		
 		if (tick % 60 == 0)
 		{
 			try

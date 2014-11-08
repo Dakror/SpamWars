@@ -179,6 +179,8 @@ public class Server extends Thread
 	public void parsePacket(byte[] data, InetAddress address, int port)
 	{
 		PacketTypes type = Packet.lookupPacket(data[0]);
+		CFG.p("SERVER < " + type.name() + " < " + address.getHostAddress() + ":" + port);
+		
 		switch (type)
 		{
 			case INVALID:
@@ -470,6 +472,7 @@ public class Server extends Thread
 		DatagramPacket packet = new DatagramPacket(data, data.length, u.getIP(), u.getPort());
 		
 		socket.send(packet);
+		CFG.p("SERVER > " + p.getType().name() + " < " + u.getIP().getHostAddress() + ":" + u.getPort());
 	}
 	
 	public void resetScoreboard()
