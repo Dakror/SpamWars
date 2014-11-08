@@ -7,16 +7,16 @@ package de.dakror.spamwars.net.packet;
  */
 public class Packet14Discovery extends Packet
 {
-	private int version;
+	private long version;
 	
 	public Packet14Discovery(byte[] data)
 	{
 		super(14);
 		
-		version = Integer.parseInt(readData(data));
+		version = Long.parseLong(readData(data));
 	}
 	
-	public Packet14Discovery(int version)
+	public Packet14Discovery(long version)
 	{
 		super(14);
 		this.version = version;
@@ -28,7 +28,7 @@ public class Packet14Discovery extends Packet
 		return ("" + version).getBytes();
 	}
 	
-	public int getVersion()
+	public long getVersion()
 	{
 		return version;
 	}

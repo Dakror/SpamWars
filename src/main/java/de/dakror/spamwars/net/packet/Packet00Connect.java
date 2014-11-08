@@ -6,17 +6,17 @@ package de.dakror.spamwars.net.packet;
 public class Packet00Connect extends Packet
 {
 	private String username;
-	private int version;
+	private long version;
 	
 	public Packet00Connect(byte[] data)
 	{
 		super(0);
 		String[] s = readData(data).split(":");
 		username = s[0];
-		version = Integer.parseInt(s[1]);
+		version = Long.parseLong(s[1]);
 	}
 	
-	public Packet00Connect(String username, int version)
+	public Packet00Connect(String username, long version)
 	{
 		super(0);
 		this.version = version;
@@ -29,7 +29,7 @@ public class Packet00Connect extends Packet
 		return (username + ":" + version).getBytes();
 	}
 	
-	public int getVersion()
+	public long getVersion()
 	{
 		return version;
 	}

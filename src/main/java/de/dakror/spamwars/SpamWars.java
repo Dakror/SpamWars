@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
@@ -44,6 +45,8 @@ public class SpamWars
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");
+		
+		DakrorBin.init(Game.w, "SpamWars");
 		try
 		{
 			Game.currentFrame.setFullscreen();
