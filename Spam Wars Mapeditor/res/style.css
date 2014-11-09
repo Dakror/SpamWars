@@ -1,0 +1,53 @@
+html {
+    font-family: sans-serif, Arial;
+}
+td {
+    width: 70px;
+    height: 70px;
+}
+td:hover img {
+    outline: 1px dotted black;
+}
+#map {
+    outline: 1px solid black;
+}
+table,
+tr,
+td {
+    padding: 0;
+    margin: 0;
+}
+button {
+    position: fixed;
+    top: 0;
+    width: 100px;
+}
+#build {
+    list-style-type: none;
+    padding: 0;
+}
+#build-wrap {
+    width: 100%;
+    overflow: auto;
+    outline: 1px solid black;
+    position: fixed;
+    left: 0;
+    bottom: 10px;
+}
+#build li {
+    margin: 1px;
+    display: inline-block;
+}
+#build li:hover {
+    outline: 1px solid black;
+}
+#build li.active {
+    outline: 1px solid blue;
+}
+#wrap {
+    margin-top: 30px;
+    height: 80%;
+    width: 99%;
+    overflow: auto;
+    border: 1px solid black;
+}

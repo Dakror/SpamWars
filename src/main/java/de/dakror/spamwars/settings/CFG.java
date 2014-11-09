@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import de.dakror.gamesetup.GameFrame;
@@ -21,6 +26,9 @@ public class CFG
 	
 	static long time = 0;
 	
+	static InetAddress broadCastAddress;
+	static InetAddress address;
+	
 	public static final void init()
 	{
 		DIR.mkdirs();
@@ -33,6 +41,38 @@ public class CFG
 		
 		for (String s : files)
 			Helper.setFileContent(new File(maps, s), Helper.getURLContent(CFG.class.getResource("/map/" + s)));
+		
+		try
+		{
+			List<NetworkInterface> nis = Collections.list(NetworkInterface.getNetworkInterfaces());
+			
+			for (NetworkInterface ni : nis)
+			{
+				if (!ni.getInetAddresses().hasMoreElements()) continue;
+				
+				for (InterfaceAddress ia : ni.getInterfaceAddresses())
+				{
+					if (ia.getAddress().isLoopbackAddress() || ia.getBroadcast() == null) continue;
+					
+					broadCastAddress = ia.getBroadcast();
+					address = ia.getAddress();
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public static InetAddress getBroadcastAddress()
+	{
+		return broadCastAddress;
+	}
+	
+	public static InetAddress getAddress()
+	{
+		return address;
 	}
 	
 	// -- user settings -- //

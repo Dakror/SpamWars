@@ -38,7 +38,6 @@ import de.dakror.spamwars.net.packet.Packet11GameInfo;
 import de.dakror.spamwars.net.packet.Packet12Stomp;
 import de.dakror.spamwars.net.packet.Packet13Server;
 import de.dakror.spamwars.settings.CFG;
-import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -374,7 +373,7 @@ public class Client extends Thread
 	public void broadCast(Packet p) throws IOException
 	{
 		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, Assistant.getBroadcastAddress(), Server.PORT);
+		DatagramPacket packet = new DatagramPacket(data, data.length, CFG.getBroadcastAddress(), Server.PORT);
 		
 		socket.send(packet);
 		CFG.p("CLIENT > " + p.getType().name() + " > BROADCAST");

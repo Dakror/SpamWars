@@ -1,8 +1,6 @@
 package de.dakror.spamwars;
 
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.dakrorbin.Launch;
@@ -23,21 +21,12 @@ public class SpamWars
 	{
 		CFG.INTERNET = Helper.isInternetReachable();
 		
-		// Launch.init(args);
-		Launch.username = "Dakror";
-		Launch.pwdMd5 = "94ff26c949ee6cfe131e551d802565a9";
+		Launch.init(args);
 		CFG.init();
 		CFG.loadSettings();
 		Part.init();
 		
-		try
-		{
-			Game.ip = InetAddress.getLocalHost();
-		}
-		catch (UnknownHostException e)
-		{
-			e.printStackTrace();
-		}
+		Game.ip = CFG.getAddress();
 		
 		if (!CFG.INTERNET)
 		{
