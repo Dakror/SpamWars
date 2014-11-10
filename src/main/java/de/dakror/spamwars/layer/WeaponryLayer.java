@@ -17,6 +17,7 @@ import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
+import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.ui.weaponry.WeaponryWeaponButton;
 
 /**
@@ -190,7 +191,7 @@ public class WeaponryLayer extends MPLayer
 						{
 							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) id = ((WeaponryWeaponButton) c).id;
 						}
-						if (id == -1) return;
+						if (id == -1 || !CFG.INTERNET) return;
 						
 						try
 						{
