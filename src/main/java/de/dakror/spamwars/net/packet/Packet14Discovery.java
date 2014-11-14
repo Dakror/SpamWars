@@ -5,31 +5,26 @@ package de.dakror.spamwars.net.packet;
  * 
  * @author Dakror
  */
-public class Packet14Discovery extends Packet
-{
+public class Packet14Discovery extends Packet {
 	private long version;
 	
-	public Packet14Discovery(byte[] data)
-	{
+	public Packet14Discovery(byte[] data) {
 		super(14);
 		
 		version = Long.parseLong(readData(data));
 	}
 	
-	public Packet14Discovery(long version)
-	{
+	public Packet14Discovery(long version) {
 		super(14);
 		this.version = version;
 	}
 	
 	@Override
-	public byte[] getPacketData()
-	{
+	public byte[] getPacketData() {
 		return ("" + version).getBytes();
 	}
 	
-	public long getVersion()
-	{
+	public long getVersion() {
 		return version;
 	}
 }

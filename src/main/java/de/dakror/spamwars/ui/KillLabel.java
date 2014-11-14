@@ -18,8 +18,7 @@ import de.dakror.spamwars.game.weapon.WeaponType;
 /**
  * @author Dakror
  */
-public class KillLabel extends Component
-{
+public class KillLabel extends Component {
 	public static final int TIME = 60 * 10; // 10 secs
 	public static final int SPACE = 42;
 	int startTick;
@@ -30,8 +29,7 @@ public class KillLabel extends Component
 	WeaponType type;
 	BufferedImage weapon;
 	
-	public KillLabel(int y, Player killer, Player killed, WeaponType type)
-	{
+	public KillLabel(int y, Player killer, Player killed, WeaponType type) {
 		super(Game.getWidth() - 380, y, 0, 40);
 		
 		dead = false;
@@ -39,8 +37,7 @@ public class KillLabel extends Component
 		this.killed = killed.getUser().getUsername();
 		this.type = type;
 		
-		if (type == WeaponType.WEAPON)
-		{
+		if (type == WeaponType.WEAPON) {
 			weapon = killer.getWeapon().getImage();
 			Dimension dim = Helper.scaleTo(new Dimension(weapon.getWidth(), weapon.getHeight()), new Dimension(150, 20));
 			if (dim.width < weapon.getWidth() || dim.height < weapon.getHeight()) weapon = Helper.toBufferedImage(weapon.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH));
@@ -48,14 +45,12 @@ public class KillLabel extends Component
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (dead) return;
 		Font f = g.getFont();
 		g.setFont(new Font("", Font.PLAIN, 18));
 		
-		if (width == 0)
-		{
+		if (width == 0) {
 			FontMetrics fm = g.getFontMetrics();
 			
 			if (WeaponType.getMessage(type) == null) width = fm.stringWidth(killer) + fm.stringWidth(killed) + 150;
@@ -74,24 +69,18 @@ public class KillLabel extends Component
 		
 		g.setColor(killer.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
 		
-		if (type == WeaponType.WEAPON)
-		{
-			if (killed.equals(killer))
-			{
+		if (type == WeaponType.WEAPON) {
+			if (killed.equals(killer)) {
 				int[] ints = Helper.drawHorizontallyCenteredString(killer, x - 30, width, y + 26, g, 18);
 				g.drawImage(Game.getImage("icon/kill.png"), ints[0] + ints[1] + 25, y + 10, Game.w);
-			}
-			else
-			{
+			} else {
 				Helper.drawString(killer, x + 15, y + 26, g, 18);
 				g.setColor(killed.equals(Game.user.getUsername()) ? Color.decode("#3333ff") : Color.white);
 				Helper.drawRightAlignedString(killed, x + width - 15, y + 26, g, 18);
 				
 				if (weapon != null) g.drawImage(weapon, x + (width - weapon.getWidth()) / 2, y + 10, Game.w);
 			}
-		}
-		else
-		{
+		} else {
 			Helper.drawString(WeaponType.getMessage(type).replace("%killer%", killer).replace("%dead%", killed), x + 15, y + 26, g, 18);
 		}
 		g.setColor(o);
@@ -99,17 +88,14 @@ public class KillLabel extends Component
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (dead) return;
-		if (startTick == 0)
-		{
+		if (startTick == 0) {
 			startTick = tick;
 			return;
 		}
 		
-		if (tick - startTick >= TIME)
-		{
+		if (tick - startTick >= TIME) {
 			if (y > SPACE) y -= SPACE;
 			else dead = true;
 		}

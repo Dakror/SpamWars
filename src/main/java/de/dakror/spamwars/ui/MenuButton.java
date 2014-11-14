@@ -13,8 +13,7 @@ import de.dakror.spamwars.game.Game;
 /**
  * @author Dakror
  */
-public class MenuButton extends ClickableComponent
-{
+public class MenuButton extends ClickableComponent {
 	String image;
 	int y1;
 	Dimension size;
@@ -22,8 +21,7 @@ public class MenuButton extends ClickableComponent
 	float speed = 0.015f;
 	float min = 0.6f;
 	
-	public MenuButton(String image, int y)
-	{
+	public MenuButton(String image, int y) {
 		super(0, 0, 0, 100);
 		this.image = image;
 		y1 = y;
@@ -32,8 +30,7 @@ public class MenuButton extends ClickableComponent
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		Image img = Game.getImage("gui/" + image + ".png");
 		int height = 100;
 		int width = (height * img.getWidth(null)) / img.getHeight(null);
@@ -49,15 +46,11 @@ public class MenuButton extends ClickableComponent
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (!enabled) return;
-		if (state == 2 || state == 1)
-		{
+		if (state == 2 || state == 1) {
 			alpha += speed;
-		}
-		else if (alpha > min + speed)
-		{
+		} else if (alpha > min + speed) {
 			alpha -= speed;
 		}
 		

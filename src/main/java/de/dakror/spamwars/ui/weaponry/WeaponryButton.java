@@ -15,8 +15,7 @@ import de.dakror.spamwars.game.weapon.Part;
 /**
  * @author Dakror
  */
-public class WeaponryButton extends ClickableComponent
-{
+public class WeaponryButton extends ClickableComponent {
 	public static final int SIZE = 128;
 	
 	BufferedImage icon;
@@ -25,8 +24,7 @@ public class WeaponryButton extends ClickableComponent
 	public boolean loseSelectionOnRMB;
 	Part part;
 	
-	public WeaponryButton(Rectangle icon)
-	{
+	public WeaponryButton(Rectangle icon) {
 		super(0, 0, SIZE, SIZE);
 		this.icon = Game.getImage("weapon/explode.png").getSubimage(icon.x, icon.y, icon.width, icon.height);
 		
@@ -38,21 +36,17 @@ public class WeaponryButton extends ClickableComponent
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (state == 0 && !selected)
-		{
+	public void draw(Graphics2D g) {
+		if (state == 0 && !selected) {
 			if (enabled) Helper.drawShadow(x, y, width, height, g);
 			Helper.drawOutline(x, y, width, height, false, g);
-		}
-		else Helper.drawContainer(x, y, width, height, false, state == 1 || selected, g);
+		} else Helper.drawContainer(x, y, width, height, false, state == 1 || selected, g);
 		
 		g.drawImage(icon, x + (width - icon.getWidth()) / 2, y + (height - icon.getHeight()) / 2, Game.w);
 		
 		int m = 9;
 		
-		if (part != null)
-		{
+		if (part != null) {
 			Color c = g.getColor();
 			g.setColor(Color.decode("#c48813"));
 			
@@ -65,18 +59,13 @@ public class WeaponryButton extends ClickableComponent
 	}
 	
 	@Override
-	public void update(int tick)
-	{}
+	public void update(int tick) {}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
-		if (contains(e.getX(), e.getY()) && enabled)
-		{
-			if (e.getButton() == MouseEvent.BUTTON1)
-			{
-				if (selected)
-				{
+	public void mouseReleased(MouseEvent e) {
+		if (contains(e.getX(), e.getY()) && enabled) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (selected) {
 					selected = false;
 					state = 2;
 					return;
@@ -84,14 +73,12 @@ public class WeaponryButton extends ClickableComponent
 				
 				triggerEvents();
 				selected = true;
-			}
-			else if (e.getButton() == MouseEvent.BUTTON3 && loseSelectionOnRMB) selected = false;
+			} else if (e.getButton() == MouseEvent.BUTTON3 && loseSelectionOnRMB) selected = false;
 		}
 	}
 	
 	@Override
-	public void drawTooltip(int x, int y, Graphics2D g)
-	{
+	public void drawTooltip(int x, int y, Graphics2D g) {
 		if (part == null) return;
 		
 		int size = 190, height = 170;
@@ -123,8 +110,7 @@ public class WeaponryButton extends ClickableComponent
 		g.setColor(c);
 	}
 	
-	public void setPart(Part part)
-	{
+	public void setPart(Part part) {
 		this.part = part;
 	}
 }

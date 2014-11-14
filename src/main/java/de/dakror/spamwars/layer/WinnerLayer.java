@@ -14,12 +14,10 @@ import de.dakror.spamwars.net.packet.Packet;
 /**
  * @author Dakror
  */
-public class WinnerLayer extends MPLayer
-{
+public class WinnerLayer extends MPLayer {
 	User winner;
 	
-	public WinnerLayer()
-	{
+	public WinnerLayer() {
 		modal = true;
 		User[] users = Game.client.playerList.getUsers();
 		Arrays.sort(users, HUDLayer.getSorter());
@@ -29,8 +27,7 @@ public class WinnerLayer extends MPLayer
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		
 		Helper.drawHorizontallyCenteredString("1. Platz: ", Game.getWidth(), Game.getHeight() / 3, g, 60);
@@ -40,29 +37,23 @@ public class WinnerLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{}
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		TextButton next = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() / 3 * 2, "Weiter");
-		next.addClickEvent(new ClickEvent()
-		{
+		next.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.world = null;
 				Game.player = null;
 				
-				if (Game.server != null)
-				{
+				if (Game.server != null) {
 					Game.server.lobby = true;
 					Game.server.world = null;
 					Game.server.resetScoreboard();

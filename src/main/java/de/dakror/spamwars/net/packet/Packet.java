@@ -5,10 +5,8 @@ import java.util.Arrays;
 /**
  * @author Dakror
  */
-public abstract class Packet
-{
-	public static enum PacketTypes
-	{
+public abstract class Packet {
+	public static enum PacketTypes {
 		INVALID,
 		CONNECT,
 		DISCONNECT,
@@ -27,23 +25,20 @@ public abstract class Packet
 		DISCOVERY,
 		
 		;
-		public int getID()
-		{
+		public int getID() {
 			return ordinal() - 1;
 		}
 	}
 	
 	public byte packetID;
 	
-	public Packet(int packetID)
-	{
+	public Packet(int packetID) {
 		this.packetID = (byte) packetID;
 	}
 	
 	protected abstract byte[] getPacketData();
 	
-	public byte[] getData()
-	{
+	public byte[] getData() {
 		byte[] strData = getPacketData();
 		
 		byte[] data = new byte[strData.length + 1];
@@ -54,20 +49,16 @@ public abstract class Packet
 		return data;
 	}
 	
-	public static String readData(byte[] data)
-	{
+	public static String readData(byte[] data) {
 		return new String(Arrays.copyOfRange(data, 1, data.length)).trim();
 	}
 	
-	public PacketTypes getType()
-	{
+	public PacketTypes getType() {
 		return Packet.lookupPacket(packetID);
 	}
 	
-	public static PacketTypes lookupPacket(int id)
-	{
-		for (PacketTypes pt : PacketTypes.values())
-		{
+	public static PacketTypes lookupPacket(int id) {
+		for (PacketTypes pt : PacketTypes.values()) {
 			if (pt.getID() == id) return pt;
 		}
 		

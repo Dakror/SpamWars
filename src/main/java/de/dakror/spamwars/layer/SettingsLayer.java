@@ -15,16 +15,13 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class SettingsLayer extends MPLayer
-{
-	public SettingsLayer()
-	{
+public class SettingsLayer extends MPLayer {
+	public SettingsLayer() {
 		modal = true;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		
 		Helper.drawContainer(GameFrame.getWidth() / 2 - 310, Game.getHeight() / 2 - 125, 620, 250, true, false, g);
@@ -36,38 +33,31 @@ public class SettingsLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{}
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		final Checkbox reload = new Checkbox(Game.getWidth() / 2 + 230, Game.getHeight() / 2 - 50);
 		components.add(reload);
 		
 		TextButton cnc = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() / 2 + 30, "Abbruch");
-		cnc.addClickEvent(new ClickEvent()
-		{
+		cnc.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.removeLayer(SettingsLayer.this);
 			}
 		});
 		components.add(cnc);
 		
 		TextButton save = new TextButton(Game.getWidth() / 2, Game.getHeight() / 2 + 30, "Speichern");
-		save.addClickEvent(new ClickEvent()
-		{
+		save.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				CFG.AUTO_RELOAD = reload.isSelected();
 				CFG.saveSettings();
 				Game.currentGame.removeLayer(SettingsLayer.this);

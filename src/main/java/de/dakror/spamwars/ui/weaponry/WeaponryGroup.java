@@ -13,47 +13,40 @@ import de.dakror.spamwars.game.Game;
 /**
  * @author Dakror
  */
-public class WeaponryGroup extends Component
-{
+public class WeaponryGroup extends Component {
 	CopyOnWriteArrayList<WeaponryButton> buttons;
 	
 	public ClickEvent onUnselect;
 	
 	public boolean extending;
 	
-	public WeaponryGroup(int x, int y)
-	{
+	public WeaponryGroup(int x, int y) {
 		super(x, y, WeaponryButton.SIZE, 0);
 		buttons = new CopyOnWriteArrayList<>();
 		extending = false;
 	}
 	
-	public void addButton(WeaponryButton b)
-	{
+	public void addButton(WeaponryButton b) {
 		b.x = 0;
 		b.y = y + height;
 		buttons.add(b);
 		height += WeaponryButton.SIZE;
 	}
 	
-	public int length()
-	{
+	public int length() {
 		return buttons.size();
 	}
 	
-	public WeaponryButton getButton(int index)
-	{
+	public WeaponryButton getButton(int index) {
 		return buttons.get(index);
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		g.translate(x, y);
 		WeaponryButton hov = null;
 		WeaponryButton sel = null;
-		for (WeaponryButton b : buttons)
-		{
+		for (WeaponryButton b : buttons) {
 			b.draw(g);
 			if (b.state != 0) hov = b;
 			if (b.selected) sel = b;
@@ -66,12 +59,9 @@ public class WeaponryGroup extends Component
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		for (WeaponryButton b : buttons)
-		{
-			if (!enabled)
-			{
+	public void update(int tick) {
+		for (WeaponryButton b : buttons) {
+			if (!enabled) {
 				b.state = 0;
 				b.selected = false;
 			}
@@ -79,8 +69,7 @@ public class WeaponryGroup extends Component
 	}
 	
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent e)
-	{
+	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (!enabled) return;
 		
 		if (height < Game.getHeight()) return;
@@ -96,8 +85,7 @@ public class WeaponryGroup extends Component
 	}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		if (!enabled) return;
 		
 		e.translatePoint(-x, -y);
@@ -108,8 +96,7 @@ public class WeaponryGroup extends Component
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		if (!enabled) return;
 		
 		e.translatePoint(-x, -y);
@@ -119,22 +106,18 @@ public class WeaponryGroup extends Component
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		if (!enabled) return;
 		
 		e.translatePoint(-x, -y);
-		for (WeaponryButton c : buttons)
-		{
+		for (WeaponryButton c : buttons) {
 			if (contains(e.getX(), e.getY()) && e.getButton() == MouseEvent.BUTTON1) c.selected = false;
 			c.mouseReleased(e);
 		}
 		
 		boolean unselect = true;
-		for (WeaponryButton c : buttons)
-		{
-			if (c.selected)
-			{
+		for (WeaponryButton c : buttons) {
+			if (c.selected) {
 				unselect = false;
 				break;
 			}
@@ -144,10 +127,8 @@ public class WeaponryGroup extends Component
 		e.translatePoint(x, y);
 	}
 	
-	public void deselectAll()
-	{
-		for (WeaponryButton c : buttons)
-		{
+	public void deselectAll() {
+		for (WeaponryButton c : buttons) {
 			c.selected = false;
 			c.state = 0;
 		}

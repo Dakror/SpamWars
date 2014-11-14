@@ -24,8 +24,7 @@ import de.dakror.spamwars.net.packet.Packet14Discovery;
 /**
  * @author Dakror
  */
-public class JoinLayer extends MPLayer
-{
+public class JoinLayer extends MPLayer {
 	Packet14Discovery discoveryPacket;
 	
 	HashMap<InetAddress, Packet13Server> servers = new HashMap<>();
@@ -37,8 +36,7 @@ public class JoinLayer extends MPLayer
 	Point mouse = new Point();
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/joinGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
@@ -46,18 +44,15 @@ public class JoinLayer extends MPLayer
 		
 		Rectangle rect = new Rectangle();
 		
-		synchronized (servers)
-		{
+		synchronized (servers) {
 			int i = 0;
 			boolean anyoneHovered = false;
-			for (InetAddress key : servers.keySet())
-			{
+			for (InetAddress key : servers.keySet()) {
 				int y = Game.getHeight() / 4 + i * (TextButton.HEIGHT + 50);
 				rect.setBounds(Game.getWidth() / 4, y, Game.getWidth() / 2, TextButton.HEIGHT + 10);
 				
 				boolean hovered = rect.contains(mouse);
-				if (hovered)
-				{
+				if (hovered) {
 					this.hovered = i;
 					anyoneHovered = true;
 					hoveredIp = key;
@@ -79,32 +74,24 @@ public class JoinLayer extends MPLayer
 		drawComponents(g);
 	}
 	
-	public void request()
-	{
-		try
-		{
+	public void request() {
+		try {
 			Game.client.broadCast(discoveryPacket);
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 		if (tick % 300 == 0) request();
 		
-		if (Game.currentFrame.alpha == 1 && enabled)
-		{
+		if (Game.currentFrame.alpha == 1 && enabled) {
 			Game.currentFrame.fadeTo(0, 0.05f);
-			new Thread()
-			{
+			new Thread() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					Game.currentFrame.removeLayer(JoinLayer.this);
 					if (gotoLobby) Game.currentFrame.addLayer(MenuLayer.ll);
 				}
@@ -115,36 +102,27 @@ public class JoinLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{
-		if (p instanceof Packet00Connect && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername()))
-		{
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {
+		if (p instanceof Packet00Connect && ((Packet00Connect) p).getUsername().equals(Game.user.getUsername())) {
 			gotoLobby = true;
 			Game.currentFrame.fadeTo(1, 0.05f);
-		}
-		else if (p instanceof Packet02Reject)
-		{
+		} else if (p instanceof Packet02Reject) {
 			Game.currentGame.addLayer(new Alert(((Packet02Reject) p).getCause().getDescription(), null));
-		}
-		else if (p instanceof Packet13Server)
-		{
+		} else if (p instanceof Packet13Server) {
 			int value = ((Packet13Server) p).getPlayers();
 			if (value >= 0) servers.put(ip, (Packet13Server) p); // if existing, updates value
 			else servers.remove(ip);
-		}
-		else MenuLayer.ll.onPacketReceived(p, ip, port);
+		} else MenuLayer.ll.onPacketReceived(p, ip, port);
 	}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		super.mouseMoved(e);
 		mouse = e.getPoint();
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
 		
 		if (hovered > -1 && e.getButton() == MouseEvent.BUTTON1) selected = hovered;
@@ -152,38 +130,31 @@ public class JoinLayer extends MPLayer
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		discoveryPacket = new Packet14Discovery(DakrorBin.buildTimestamp);
 		request();
 		
 		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
-		back.addClickEvent(new ClickEvent()
-		{
+		back.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		components.add(back);
 		TextButton update = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Suchen");
-		update.addClickEvent(new ClickEvent()
-		{
+		update.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				request();
 			}
 		});
 		components.add(update);
 		
 		TextButton join = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT - 10, "Betreten");
-		join.addClickEvent(new ClickEvent()
-		{
+		join.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.client.connectToServer(hoveredIp);
 			}
 		});

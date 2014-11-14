@@ -23,21 +23,18 @@ import de.dakror.spamwars.ui.weaponry.WeaponryWeaponButton;
 /**
  * @author Dakror
  */
-public class WeaponryLayer extends MPLayer
-{
+public class WeaponryLayer extends MPLayer {
 	int goingto = 0;
 	boolean build;
 	TextButton delete, edit;
 	
-	public WeaponryLayer(boolean build)
-	{
+	public WeaponryLayer(boolean build) {
 		modal = true;
 		this.build = build;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
@@ -47,12 +44,10 @@ public class WeaponryLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 		
-		if (build)
-		{
+		if (build) {
 			boolean sel = false;
 			for (Component c : components)
 				if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) sel = true;
@@ -61,22 +56,16 @@ public class WeaponryLayer extends MPLayer
 			edit.enabled = sel;
 		}
 		
-		if (Game.currentFrame.alpha == 1 && enabled)
-		{
+		if (Game.currentFrame.alpha == 1 && enabled) {
 			Game.currentFrame.fadeTo(0, 0.05f);
-			new Thread()
-			{
+			new Thread() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					if (goingto == 1) Game.currentGame.removeLayer(WeaponryLayer.this);
 					else if (goingto == 2) Game.currentGame.addLayer(new BuildWeaponLayer(null, 0));
-					else if (goingto == 3 && edit.enabled)
-					{
-						for (Component c : components)
-						{
-							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected)
-							{
+					else if (goingto == 3 && edit.enabled) {
+						for (Component c : components) {
+							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) {
 								Game.currentGame.addLayer(new BuildWeaponLayer(((WeaponryWeaponButton) c).data, ((WeaponryWeaponButton) c).id));
 								break;
 							}
@@ -90,32 +79,25 @@ public class WeaponryLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{}
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		components.clear();
 		Game.pullWeapons();
 		int mw = Game.getWidth() - 200;
 		int space = 20;
 		int inRow = Math.round(mw / (float) (WeaponryWeaponButton.WIDTH + space));
 		
-		for (int i = 0; i < Game.weapons.length(); i++)
-		{
-			try
-			{
+		for (int i = 0; i < Game.weapons.length(); i++) {
+			try {
 				final WeaponData wd = WeaponData.load(Game.weapons.getJSONObject(i).getString("WEAPONDATA"));
 				final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space) + Game.getHeight() / 4, wd);
 				wwb.id = Game.weapons.getJSONObject(i).getInt("ID");
-				wwb.addClickEvent(new ClickEvent()
-				{
+				wwb.addClickEvent(new ClickEvent() {
 					@Override
-					public void trigger()
-					{
-						for (Component c : components)
-						{
+					public void trigger() {
+						for (Component c : components) {
 							if (c instanceof WeaponryWeaponButton) ((WeaponryWeaponButton) c).selected = false;
 						}
 						if (!build) Game.activeWeapon = wd;
@@ -124,36 +106,29 @@ public class WeaponryLayer extends MPLayer
 					}
 				});
 				
-				if (!build)
-				{
+				if (!build) {
 					if (Game.activeWeapon != null && Game.activeWeapon.equals(wd)) wwb.selected = true;
 				}
 				
 				components.add(wwb);
-			}
-			catch (JSONException e)
-			{
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 		
 		TextButton back = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (!build ? 0.5f : 1)), Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
-		back.addClickEvent(new ClickEvent()
-		{
+		back.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				goingto = 1;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		components.add(back);
 		TextButton build = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT - 10, "Neu");
-		build.addClickEvent(new ClickEvent()
-		{
+		build.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				goingto = 2;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
@@ -162,11 +137,9 @@ public class WeaponryLayer extends MPLayer
 		
 		edit = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Ändern");
 		edit.enabled = false;
-		edit.addClickEvent(new ClickEvent()
-		{
+		edit.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				goingto = 3;
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
@@ -175,32 +148,24 @@ public class WeaponryLayer extends MPLayer
 		
 		delete = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Löschen");
 		delete.enabled = false;
-		delete.addClickEvent(new ClickEvent()
-		{
+		delete.addClickEvent(new ClickEvent() {
 			
 			@Override
-			public void trigger()
-			{
-				Game.currentGame.addLayer(new Confirm("Bist du sicher, dass du diese Waffe unwiderruflich löschen willst?", new ClickEvent()
-				{
+			public void trigger() {
+				Game.currentGame.addLayer(new Confirm("Bist du sicher, dass du diese Waffe unwiderruflich löschen willst?", new ClickEvent() {
 					@Override
-					public void trigger()
-					{
+					public void trigger() {
 						int id = -1;
-						for (Component c : components)
-						{
+						for (Component c : components) {
 							if (c instanceof WeaponryWeaponButton && ((WeaponryWeaponButton) c).selected) id = ((WeaponryWeaponButton) c).id;
 						}
 						if (id == -1 || !CFG.INTERNET) return;
 						
-						try
-						{
+						try {
 							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&removeweapon=" + id)).trim();
 							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
 							init();
-						}
-						catch (MalformedURLException e)
-						{
+						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
 					}

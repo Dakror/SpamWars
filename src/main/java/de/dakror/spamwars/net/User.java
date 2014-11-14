@@ -10,16 +10,14 @@ import org.json.JSONObject;
 /**
  * @author Dakror
  */
-public class User
-{
+public class User {
 	private InetAddress ip;
 	private int port;
 	private String username;
 	
 	public int K, D;
 	
-	public User(String username, InetAddress ip, int port)
-	{
+	public User(String username, InetAddress ip, int port) {
 		this.ip = ip;
 		this.port = port;
 		this.username = username;
@@ -27,73 +25,58 @@ public class User
 		K = D = 0;
 	}
 	
-	public User(JSONObject o)
-	{
-		try
-		{
+	public User(JSONObject o) {
+		try {
 			if (o.has("i")) ip = InetAddress.getByName(o.getString("i"));
 			if (o.has("p")) port = o.getInt("p");
 			username = o.getString("u");
 			K = o.getInt("K");
 			D = o.getInt("D");
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public User(String username, int K, int D)
-	{
+	public User(String username, int K, int D) {
 		this.username = username;
 		this.K = K;
 		this.D = D;
 	}
 	
-	public InetAddress getIP()
-	{
+	public InetAddress getIP() {
 		return ip;
 	}
 	
-	public void setIP(InetAddress ip)
-	{
+	public void setIP(InetAddress ip) {
 		this.ip = ip;
 	}
 	
-	public int getPort()
-	{
+	public int getPort() {
 		return port;
 	}
 	
-	public void setPort(int port)
-	{
+	public void setPort(int port) {
 		this.port = port;
 	}
 	
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 	
-	public void setUsername(String username)
-	{
+	public void setUsername(String username) {
 		this.username = username;
 	}
 	
-	public String serialize()
-	{
+	public String serialize() {
 		JSONObject o = new JSONObject();
 		
-		try
-		{
+		try {
 			o.put("u", username);
 			o.put("i", ip.getHostAddress());
 			o.put("p", port);
 			o.put("K", K);
 			o.put("D", D);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
@@ -101,8 +84,7 @@ public class User
 		return o.toString();
 	}
 	
-	public byte[] getBytes()
-	{
+	public byte[] getBytes() {
 		ByteBuffer bb = ByteBuffer.allocate(username.length() + 5);
 		bb.putShort((short) K);
 		bb.putShort((short) D);
@@ -113,8 +95,7 @@ public class User
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return serialize().toString();
 	}
 }

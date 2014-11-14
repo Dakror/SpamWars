@@ -14,8 +14,7 @@ import de.dakror.spamwars.game.weapon.WeaponData;
 /**
  * @author Dakror
  */
-public class WeaponryWeaponButton extends ClickableComponent
-{
+public class WeaponryWeaponButton extends ClickableComponent {
 	public static final int WIDTH = 450;
 	public static final int HEIGHT = 300;
 	
@@ -25,8 +24,7 @@ public class WeaponryWeaponButton extends ClickableComponent
 	
 	public boolean selected;
 	
-	public WeaponryWeaponButton(int x, int y, WeaponData data)
-	{
+	public WeaponryWeaponButton(int x, int y, WeaponData data) {
 		super(x, y, WIDTH, HEIGHT);
 		this.data = data;
 		this.data.calculateStats();
@@ -37,27 +35,21 @@ public class WeaponryWeaponButton extends ClickableComponent
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (!selected)
-		{
+	public void draw(Graphics2D g) {
+		if (!selected) {
 			Helper.drawShadow(x, y, width, height, g);
 			Helper.drawOutline(x, y, width, height, state != 0, g);
-		}
-		else
-		{
+		} else {
 			Helper.drawContainer(x, y, width, height, true, false, g);
 		}
 		g.drawImage(image, x + (width - image.getWidth()) / 2, y + (height - image.getHeight()) / 2, Game.w);
 	}
 	
 	@Override
-	public void update(int tick)
-	{}
+	public void update(int tick) {}
 	
 	@Override
-	public void drawTooltip(int x, int y, Graphics2D g)
-	{
+	public void drawTooltip(int x, int y, Graphics2D g) {
 		if (data == null) return;
 		
 		int size = 190, height = 170;

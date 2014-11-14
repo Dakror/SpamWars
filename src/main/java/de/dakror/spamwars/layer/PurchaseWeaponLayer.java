@@ -21,14 +21,12 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class PurchaseWeaponLayer extends MPLayer
-{
+public class PurchaseWeaponLayer extends MPLayer {
 	WeaponData data;
 	int costs;
 	int id;
 	
-	public PurchaseWeaponLayer(WeaponData exisData, int id, WeaponData data)
-	{
+	public PurchaseWeaponLayer(WeaponData exisData, int id, WeaponData data) {
 		modal = true;
 		this.data = data;
 		this.id = id;
@@ -38,8 +36,7 @@ public class PurchaseWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		
 		Helper.drawContainer(GameFrame.getWidth() / 2 - 310, Game.getHeight() / 2 - 125, 620, 250, true, false, g);
@@ -57,40 +54,31 @@ public class PurchaseWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{}
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		TextButton cnc = new TextButton(Game.getWidth() / 2 - (int) (TextButton.WIDTH * (Game.money >= costs ? 1 : 0.5f)), Game.getHeight() / 2 + 30, "Abbruch");
-		cnc.addClickEvent(new ClickEvent()
-		{
+		cnc.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.removeLayer(PurchaseWeaponLayer.this);
 			}
 		});
 		components.add(cnc);
 		
 		TextButton buy = new TextButton(Game.getWidth() / 2, Game.getHeight() / 2 + 30, "Bezahlen");
-		buy.addClickEvent(new ClickEvent()
-		{
+		buy.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
-				try
-				{
+			public void trigger() {
+				try {
 					boolean success = false;
-					if (!CFG.INTERNET)
-					{
+					if (!CFG.INTERNET) {
 						JSONObject o = new JSONObject();
 						o.put("ID", (int) (Math.random() * 1000));
 						o.put("USERID", (int) (Math.random() * 1000));
@@ -98,31 +86,24 @@ public class PurchaseWeaponLayer extends MPLayer
 						
 						Game.weapons.put(o);
 						success = true;
-					}
-					else if (Game.subMoney(costs))
-					{
+					} else if (Game.subMoney(costs)) {
 						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&addweapon=" + data.getSortedData() + "&setweapon=" + id)).trim();
 						success = response.contains("true");
 					}
 					
 					final boolean s = success;
-					Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (success ? "" : " nicht") + " erfolgreich hergestellt.", new ClickEvent()
-					{
+					Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (success ? "" : " nicht") + " erfolgreich hergestellt.", new ClickEvent() {
 						@Override
-						public void trigger()
-						{
+						public void trigger() {
 							Game.currentGame.removeLayer(PurchaseWeaponLayer.this);
-							if (s)
-							{
+							if (s) {
 								Game.currentGame.removeLayer(Game.currentGame.getActiveLayer());
 								Game.currentGame.removeLayer(Game.currentGame.getActiveLayer()); // BuildWeaponLayer
 								Game.currentGame.getActiveLayer().init();
 							}
 						}
 					}));
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

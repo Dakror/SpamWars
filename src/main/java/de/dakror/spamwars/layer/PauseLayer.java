@@ -14,17 +14,14 @@ import de.dakror.spamwars.net.packet.Packet;
 /**
  * @author Dakror
  */
-public class PauseLayer extends MPLayer
-{
-	public PauseLayer()
-	{
+public class PauseLayer extends MPLayer {
+	public PauseLayer() {
 		modal = true;
 		Game.player.stop();
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		drawModality(g);
 		
 		Helper.drawContainer(Game.getWidth() / 2 - 160, Game.getHeight() / 2 - 108, 320, 212, true, false, g);
@@ -33,24 +30,19 @@ public class PauseLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		updateComponents(tick);
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) Game.currentGame.removeLayer(this);
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{
-		for (Layer l : Game.currentGame.layers)
-		{
-			if (l instanceof HUDLayer)
-			{
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {
+		for (Layer l : Game.currentGame.layers) {
+			if (l instanceof HUDLayer) {
 				((HUDLayer) l).onPacketReceived(p, ip, port);
 				break;
 			}
@@ -58,36 +50,29 @@ public class PauseLayer extends MPLayer
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() / 2 - 90, "Weiter");
-		back.addClickEvent(new ClickEvent()
-		{
+		back.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.removeLayer(PauseLayer.this);
 			}
 		});
 		components.add(back);
 		
 		TextButton settings = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() / 2 - 90 + TextButton.HEIGHT, "Optionen");
-		settings.addClickEvent(new ClickEvent()
-		{
+		settings.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.addLayer(new SettingsLayer());
 			}
 		});
 		components.add(settings);
 		
 		TextButton disco = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() / 2 - 90 + TextButton.HEIGHT * 2, "Trennen");
-		disco.addClickEvent(new ClickEvent()
-		{
+		disco.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.client.disconnect();
 				
 				Game.currentGame.setLayer(new MenuLayer());

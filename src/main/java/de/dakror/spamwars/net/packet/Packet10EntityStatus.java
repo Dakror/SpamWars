@@ -5,20 +5,17 @@ import de.dakror.gamesetup.util.Vector;
 /**
  * @author Dakror
  */
-public class Packet10EntityStatus extends Packet
-{
+public class Packet10EntityStatus extends Packet {
 	Vector pos;
 	boolean state;
 	
-	public Packet10EntityStatus(Vector pos, boolean state)
-	{
+	public Packet10EntityStatus(Vector pos, boolean state) {
 		super(10);
 		this.pos = pos;
 		this.state = state;
 	}
 	
-	public Packet10EntityStatus(byte[] data)
-	{
+	public Packet10EntityStatus(byte[] data) {
 		super(10);
 		String[] parts = readData(data).split(":");
 		pos = new Vector(Float.parseFloat(parts[0]), Float.parseFloat(parts[1]));
@@ -26,18 +23,15 @@ public class Packet10EntityStatus extends Packet
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		return (pos.x + ":" + pos.y + ":" + Boolean.toString(state)).getBytes();
 	}
 	
-	public boolean getState()
-	{
+	public boolean getState() {
 		return state;
 	}
 	
-	public Vector getPos()
-	{
+	public Vector getPos() {
 		return pos;
 	}
 }

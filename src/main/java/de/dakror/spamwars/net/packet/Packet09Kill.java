@@ -5,13 +5,11 @@ import de.dakror.spamwars.game.weapon.WeaponType;
 /**
  * @author Dakror
  */
-public class Packet09Kill extends Packet
-{
+public class Packet09Kill extends Packet {
 	String killer, dead;
 	WeaponType weapon;
 	
-	public Packet09Kill(String killer, String dead, WeaponType weapon)
-	{
+	public Packet09Kill(String killer, String dead, WeaponType weapon) {
 		super(9);
 		
 		this.killer = killer;
@@ -19,8 +17,7 @@ public class Packet09Kill extends Packet
 		this.weapon = weapon;
 	}
 	
-	public Packet09Kill(byte[] data)
-	{
+	public Packet09Kill(byte[] data) {
 		super(9);
 		
 		String[] parts = readData(data).split(":");
@@ -30,23 +27,19 @@ public class Packet09Kill extends Packet
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		return (killer + ":" + dead + ":" + weapon.ordinal()).getBytes();
 	}
 	
-	public String getKiller()
-	{
+	public String getKiller() {
 		return killer;
 	}
 	
-	public String getDead()
-	{
+	public String getDead() {
 		return dead;
 	}
 	
-	public WeaponType getWeapon()
-	{
+	public WeaponType getWeapon() {
 		return weapon;
 	}
 }

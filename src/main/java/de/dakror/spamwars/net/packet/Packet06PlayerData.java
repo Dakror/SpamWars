@@ -11,8 +11,7 @@ import de.dakror.spamwars.game.weapon.WeaponData;
 /**
  * @author Dakror
  */
-public class Packet06PlayerData extends Packet
-{
+public class Packet06PlayerData extends Packet {
 	Vector position;
 	boolean left;
 	int style, frame, life, ammo, capacity;
@@ -20,8 +19,7 @@ public class Packet06PlayerData extends Packet
 	WeaponData data;
 	String username;
 	
-	public Packet06PlayerData(Player p)
-	{
+	public Packet06PlayerData(Player p) {
 		super(6);
 		position = p.getPos();
 		left = p.lookingLeft;
@@ -35,8 +33,7 @@ public class Packet06PlayerData extends Packet
 		capacity = p.getWeapon().capacity;
 	}
 	
-	public Packet06PlayerData(byte[] data)
-	{
+	public Packet06PlayerData(byte[] data) {
 		super(6);
 		
 		ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(data, 1, data.length));
@@ -64,8 +61,7 @@ public class Packet06PlayerData extends Packet
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		byte[] comprData = Compressor.compress(data.toString().getBytes());
 		
 		ByteBuffer bb = ByteBuffer.allocate(29 + 4 + 8 + username.length() + comprData.length + 4);
@@ -88,53 +84,43 @@ public class Packet06PlayerData extends Packet
 		return bb.array();
 	}
 	
-	public Vector getPosition()
-	{
+	public Vector getPosition() {
 		return position;
 	}
 	
-	public boolean isLeft()
-	{
+	public boolean isLeft() {
 		return left;
 	}
 	
-	public int getStyle()
-	{
+	public int getStyle() {
 		return style;
 	}
 	
-	public int getFrame()
-	{
+	public int getFrame() {
 		return frame;
 	}
 	
-	public float getRot()
-	{
+	public float getRot() {
 		return rot;
 	}
 	
-	public int getLife()
-	{
+	public int getLife() {
 		return life;
 	}
 	
-	public WeaponData getWeaponData()
-	{
+	public WeaponData getWeaponData() {
 		return data;
 	}
 	
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 	
-	public int getAmmo()
-	{
+	public int getAmmo() {
 		return ammo;
 	}
 	
-	public int getCapacity()
-	{
+	public int getCapacity() {
 		return capacity;
 	}
 }

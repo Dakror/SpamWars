@@ -12,18 +12,15 @@ import de.dakror.spamwars.net.packet.Packet03Attribute;
 /**
  * @author Dakror
  */
-public class GameStartLayer extends MPLayer
-{
+public class GameStartLayer extends MPLayer {
 	int cd = 5;
 	
-	public GameStartLayer(boolean pregame)
-	{
+	public GameStartLayer(boolean pregame) {
 		modal = pregame;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (modal) drawModality(g);
 		
 		Color c = g.getColor();
@@ -38,29 +35,24 @@ public class GameStartLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		if (cd == 0 && Game.server != null && modal)
-		{
+	public void update(int tick) {
+		if (cd == 0 && Game.server != null && modal) {
 			Game.currentGame.removeLayer(this);
 			Game.server.startGame();
 			cd = -1;
 		}
-		if (cd == 0 && !modal)
-		{
+		if (cd == 0 && !modal) {
 			Game.currentGame.removeLayer(this);
 			Game.player.getWeapon().enabled = true;
 		}
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) cd = Integer.parseInt(((Packet03Attribute) p).getValue());
 		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("worldsize") && modal) Game.currentGame.fadeTo(1, 0.05f);
 	}
 	
 	@Override
-	public void init()
-	{}
+	public void init() {}
 }

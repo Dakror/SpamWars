@@ -9,12 +9,10 @@ import de.dakror.spamwars.net.User;
 /**
  * @author Dakror
  */
-public class Packet04PlayerList extends Packet
-{
+public class Packet04PlayerList extends Packet {
 	User[] users;
 	
-	public Packet04PlayerList(byte[] data)
-	{
+	public Packet04PlayerList(byte[] data) {
 		super(4);
 		
 		
@@ -24,8 +22,7 @@ public class Packet04PlayerList extends Packet
 		
 		users = new User[c];
 		
-		for (int i = 0; i < c; i++)
-		{
+		for (int i = 0; i < c; i++) {
 			int K = bb.getShort();
 			int D = bb.getShort();
 			int len = bb.get();
@@ -35,37 +32,29 @@ public class Packet04PlayerList extends Packet
 		}
 	}
 	
-	public Packet04PlayerList(User[] users)
-	{
+	public Packet04PlayerList(User[] users) {
 		super(4);
 		this.users = users;
 	}
 	
-	public Packet04PlayerList()
-	{
+	public Packet04PlayerList() {
 		super(4);
 	}
 	
-	public User[] getUsers()
-	{
+	public User[] getUsers() {
 		return users;
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		if (users == null) return "".getBytes();
 		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write(users.length);
-		for (User u : users)
-		{
-			try
-			{
+		for (User u : users) {
+			try {
 				baos.write(u.getBytes());
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}

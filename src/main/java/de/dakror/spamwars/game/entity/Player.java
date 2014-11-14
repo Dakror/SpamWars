@@ -30,8 +30,7 @@ import de.dakror.spamwars.net.packet.Packet12Stomp;
 /**
  * @author Dakror
  */
-public class Player extends Entity
-{
+public class Player extends Entity {
 	public boolean left, right, up, down;
 	
 	public boolean lookingLeft = false;
@@ -51,8 +50,7 @@ public class Player extends Entity
 	
 	User user;
 	
-	public Player(float x, float y, User user)
-	{
+	public Player(float x, float y, User user) {
 		super(x, y, 72, 97);
 		
 		style = (int) (Math.random() * 3 + 1);
@@ -67,8 +65,7 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (Game.world == null) return;
 		if (weapon == null) return;
 		
@@ -83,23 +80,19 @@ public class Player extends Entity
 		g.setColor(o);
 		
 		AffineTransform old = g.getTransform();
-		if (lookingLeft)
-		{
+		if (lookingLeft) {
 			AffineTransform at = g.getTransform();
 			at.translate((mx + width / 2) * 2, 0);
 			at.scale(-1, 1);
 			g.setTransform(at);
 		}
 		
-		if (frame >= 0 && frame <= 10)
-		{
+		if (frame >= 0 && frame <= 10) {
 			String frame = (this.frame + 1) + "";
 			if (frame.length() == 1) frame = "0" + frame;
 			
 			g.drawImage(Game.getImage("entity/player/p" + getStyle() + "/p" + getStyle() + "_walk" + frame + ".png"), (int) mx, (int) my, Game.w);
-		}
-		else if (frame == 11)
-		{
+		} else if (frame == 11) {
 			g.drawImage(Game.getImage("entity/player/p" + getStyle() + "/p" + getStyle() + "_jump.png"), (int) mx, (int) my, Game.w);
 		}
 		g.setTransform(old);
@@ -115,15 +108,13 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		handleMouse(e, false);
 	}
 	
-	public Vector getWeaponPoint()
-	{
+	public Vector getWeaponPoint() {
 		if (weapon == null) return null;
 		Vector exit = new Vector(weapon.getExit()).mul(Weapon.scale);
 		exit.x = 0;
@@ -134,15 +125,13 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		if (e.getButton() == MouseEvent.BUTTON1) handleMouse(e, true);
 	}
 	
-	public void handleMouse(MouseEvent e, boolean target)
-	{
+	public void handleMouse(MouseEvent e, boolean target) {
 		if (weapon == null) return;
 		
 		lookingLeft = e.getX() < x + width / 2;
@@ -152,14 +141,12 @@ public class Player extends Entity
 		
 		weapon.rot2 = (float) Math.toRadians(dif.getAngleOnXAxis() * (lookingLeft ? -1 : 1));
 		
-		if (target)
-		{
+		if (target) {
 			Point p = new Point((int) x + hand.x, (int) y + hand.y);
 			Point tile = Game.world.getTile(p.x, p.y);
 			Tile t = Tile.values()[Game.world.getTileIdAtPixel(p.x, p.y)];
 			
-			if (t.getBump() != null)
-			{
+			if (t.getBump() != null) {
 				Rectangle r = (Rectangle) t.getBump().clone();
 				r.translate(tile.x * Tile.SIZE, tile.y * Tile.SIZE);
 				if (r.contains(p)) return;
@@ -170,40 +157,33 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent e)
-	{
+	public void mouseDragged(MouseEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0 || !weapon.getData().isAutomatic()) return;
 		
 		if (e.getModifiers() == MouseEvent.BUTTON1_MASK) handleMouse(e, true);
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
 		weapon.target(null);
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
-		switch (e.getKeyCode())
-		{
-			case KeyEvent.VK_A:
-			{
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_A: {
 				left = true;
 				break;
 			}
-			case KeyEvent.VK_D:
-			{
+			case KeyEvent.VK_D: {
 				right = true;
 				break;
 			}
-			case KeyEvent.VK_SPACE:
-			{
+			case KeyEvent.VK_SPACE: {
 				if (!airborne) getVelocity().y = -15;
 				up = true;
 				break;
@@ -217,24 +197,19 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void keyReleased(KeyEvent e)
-	{
+	public void keyReleased(KeyEvent e) {
 		if (!user.getUsername().equals(Game.user.getUsername()) || life <= 0) return;
 		
-		switch (e.getKeyCode())
-		{
-			case KeyEvent.VK_A:
-			{
+		switch (e.getKeyCode()) {
+			case KeyEvent.VK_A: {
 				left = false;
 				break;
 			}
-			case KeyEvent.VK_D:
-			{
+			case KeyEvent.VK_D: {
 				right = false;
 				break;
 			}
-			case KeyEvent.VK_SPACE:
-			{
+			case KeyEvent.VK_SPACE: {
 				up = false;
 				break;
 			}
@@ -247,29 +222,23 @@ public class Player extends Entity
 	}
 	
 	@Override
-	protected void tick(int tick)
-	{
+	protected void tick(int tick) {
 		if (weapon == null) return;
 		
 		int speed = airborne ? 3 : 4;
 		
-		if (user.getUsername().equals(Game.user.getUsername()))
-		{
+		if (user.getUsername().equals(Game.user.getUsername())) {
 			if (left) getVelocity().x = -speed;
 			if (right) getVelocity().x = speed;
-			if (!airborne && getVelocity().x != 0 && tick % 4 == 0)
-			{
+			if (!airborne && getVelocity().x != 0 && tick % 4 == 0) {
 				frame = frame < 0 ? 0 : frame;
 				
 				frame = (frame + 1) % 6;
-			}
-			else if (airborne)
-			{
+			} else if (airborne) {
 				frame = 11;
 			}
 			
-			if (!left && !right)
-			{
+			if (!left && !right) {
 				frame = 3;
 				getVelocity().x = 0;
 			}
@@ -280,8 +249,7 @@ public class Player extends Entity
 			float oldWorldX = Game.world.x;
 			float oldWorldY = Game.world.y;
 			
-			if (life > 0)
-			{
+			if (life > 0) {
 				
 				Game.world.x = mx - x;
 				Game.world.y = my - y;
@@ -293,15 +261,12 @@ public class Player extends Entity
 				
 				if (lookingLeft) bump = new Rectangle(11, 7, 44, 84);
 				else bump = new Rectangle(15, 7, 44, 84);
-			}
-			else
-			{
+			} else {
 				left = right = up = down = false;
 				weapon.target(null);
 			}
 			
-			if (weapon.getTarget() != null)
-			{
+			if (weapon.getTarget() != null) {
 				weapon.getTarget().x -= Game.world.x - oldWorldX;
 				weapon.getTarget().y -= Game.world.y - oldWorldY;
 			}
@@ -312,51 +277,39 @@ public class Player extends Entity
 		if (lookingLeft) hand = new Point(0, 60);
 		else hand = new Point(65, 60);
 		
-		try
-		{
+		try {
 			if (user.getUsername().equals(Game.user.getUsername()) && tick % 2 == 0) Game.client.sendPacket(new Packet06PlayerData(this));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public int getStyle()
-	{
+	public int getStyle() {
 		return style;
 	}
 	
-	public void setStyle(int style2)
-	{
+	public void setStyle(int style2) {
 		style = style2;
 	}
 	
-	public User getUser()
-	{
+	public User getUser() {
 		return user;
 	}
 	
-	public Weapon getWeapon()
-	{
+	public Weapon getWeapon() {
 		return weapon;
 	}
 	
-	public void setWeapon(WeaponData data)
-	{
-		try
-		{
+	public void setWeapon(WeaponData data) {
+		try {
 			data.calculateStats();
 			weapon = new Weapon(data);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void revive()
-	{
+	public void revive() {
 		gravity = true;
 		Vector spawn = Game.world.getBestSpawnPoint();
 		x = spawn.x * Tile.SIZE + (int) (Math.random() * Tile.SIZE - Tile.SIZE / 2);
@@ -366,33 +319,22 @@ public class Player extends Entity
 		weapon.capacity = weapon.capacityMax;
 	}
 	
-	public void dealDamage(float damage, Object source)
-	{
+	public void dealDamage(float damage, Object source) {
 		life -= damage;
 		
 		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER && source instanceof Projectile) life = 0;
 		
-		if (life <= 0 && x > -10000000)
-		{
-			if (source instanceof Projectile)
-			{
-				try
-				{
+		if (life <= 0 && x > -10000000) {
+			if (source instanceof Projectile) {
+				try {
 					Game.client.sendPacket(new Packet09Kill(((Projectile) source).getUsername(), Game.user.getUsername(), WeaponType.WEAPON));
-				}
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-			else if (source instanceof Action)
-			{
-				try
-				{
+			} else if (source instanceof Action) {
+				try {
 					Game.client.sendPacket(new Packet09Kill(((Action) source).username, Game.user.getUsername(), ((Action) source).type));
-				}
-				catch (IOException e)
-				{
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
@@ -406,36 +348,25 @@ public class Player extends Entity
 	}
 	
 	@Override
-	public void updateServer(int tick)
-	{
+	public void updateServer(int tick) {
 		if (weapon == null) return;
-		for (Entity e : Game.server.world.entities)
-		{
-			if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0)))
-			{
-				if (weapon.canRefill() && e instanceof AmmoBox)
-				{
+		for (Entity e : Game.server.world.entities) {
+			if (e.isEnabled() && e.getBump(0, 0).intersects(getBump(0, 0))) {
+				if (weapon.canRefill() && e instanceof AmmoBox) {
 					e.setEnabled(false, true, true);
 					weapon.refill(AmmoBox.AMMO);
-					try
-					{
+					try {
 						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
-					}
-					catch (Exception e1)
-					{
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
-				if (life < maxlife && e instanceof HealthBox)
-				{
+				if (life < maxlife && e instanceof HealthBox) {
 					e.setEnabled(false, true, true);
 					life = life + HealthBox.HEALTH > maxlife ? maxlife : life + HealthBox.HEALTH;
-					try
-					{
+					try {
 						Game.server.sendPacketToAllClients(new Packet06PlayerData(this));
-					}
-					catch (Exception e1)
-					{
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -443,8 +374,7 @@ public class Player extends Entity
 		}
 	}
 	
-	public void stop()
-	{
+	public void stop() {
 		left = false;
 		right = false;
 		up = false;
@@ -452,24 +382,18 @@ public class Player extends Entity
 	}
 	
 	@Override
-	protected void onHitGround(Vector velocity)
-	{
+	protected void onHitGround(Vector velocity) {
 		float maxFall = 20;
 		float dmgFactor = 0.25f;
 		if (velocity.y > maxFall) dealDamage((float) Math.pow((velocity.y - maxFall), 2) * dmgFactor, new Action(WeaponType.FALL_DAMAGE, Game.user.getUsername()));
 	}
 	
 	@Override
-	protected void onHitEntity(Entity e, Vector velocity)
-	{
-		if (e instanceof Player && velocity.y > 5)
-		{
-			try
-			{
+	protected void onHitEntity(Entity e, Vector velocity) {
+		if (e instanceof Player && velocity.y > 5) {
+			try {
 				Game.client.sendPacket(new Packet12Stomp(Game.user.getUsername(), ((Player) e).getUser().getUsername(), velocity.y * 2));
-			}
-			catch (IOException e1)
-			{
+			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}

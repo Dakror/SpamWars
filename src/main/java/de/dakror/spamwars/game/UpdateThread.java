@@ -5,16 +5,13 @@ import de.dakror.gamesetup.Updater;
 /**
  * @author Dakror
  */
-public class UpdateThread extends Updater
-{
-	public UpdateThread()
-	{
+public class UpdateThread extends Updater {
+	public UpdateThread() {
 		super();
 	}
 	
 	@Override
-	public void update()
-	{
+	public void update() {
 		if (Game.world != null) Game.world.update(tick);
 	}
 }

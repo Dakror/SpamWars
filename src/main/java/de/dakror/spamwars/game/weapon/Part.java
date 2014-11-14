@@ -8,10 +8,8 @@ import de.dakror.gamesetup.util.CSVReader;
 /**
  * @author Dakror
  */
-public class Part
-{
-	public enum Category
-	{
+public class Part {
+	public enum Category {
 		HANDLE(202, 1538, 87, 103),
 		TRIGGER(609, 983, 51, 31),
 		BARREL(1484, 1842, 525, 40),
@@ -26,36 +24,30 @@ public class Part
 		;
 		private Rectangle icon;
 		
-		private Category(int x, int y, int width, int height)
-		{
+		private Category(int x, int y, int width, int height) {
 			icon = new Rectangle(x, y, width, height);
 		}
 		
-		public Rectangle getIcon()
-		{
+		public Rectangle getIcon() {
 			return icon;
 		}
 	}
 	
-	public enum FireMode
-	{
+	public enum FireMode {
 		SINGLE,
 		AUTO
 	}
 	
 	public static ArrayList<Part> parts = new ArrayList<>();
 	
-	public static void init()
-	{
+	public static void init() {
 		CSVReader csv = new CSVReader("/weapons.csv");
 		csv.readRow(); // skip headings
 		
 		String cell = "";
 		Part part = null;
-		while ((cell = csv.readNext()) != null)
-		{
-			switch (csv.getIndex())
-			{
+		while ((cell = csv.readNext()) != null) {
+			switch (csv.getIndex()) {
 				case 0:
 					if (part != null) parts.add(part);
 					part = new Part();
@@ -126,8 +118,7 @@ public class Part
 	public Category category;
 	public int id, price, speed, magazine, angle, reload, projectileSpeed, range, damage;
 	
-	public Part()
-	{
+	public Part() {
 		tex = new Rectangle();
 		category = null;
 		price = speed = magazine = reload = projectileSpeed = range = damage = 0;
@@ -135,61 +126,53 @@ public class Part
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "PART#" + id;
 	}
 	
-	public static int getHighestSpeed()
-	{
+	public static int getHighestSpeed() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.speed > x) x = p.speed;
 		return x;
 	}
 	
-	public static int getHighestMagazine()
-	{
+	public static int getHighestMagazine() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.magazine > x) x = p.magazine;
 		return x;
 	}
 	
-	public static int getHighestAngle()
-	{
+	public static int getHighestAngle() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.angle > x) x = p.angle;
 		return x;
 	}
 	
-	public static int getHighestReload()
-	{
+	public static int getHighestReload() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.reload > x) x = p.reload;
 		return x;
 	}
 	
-	public static int getHighestProjectileSpeed()
-	{
+	public static int getHighestProjectileSpeed() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.projectileSpeed > x) x = p.projectileSpeed;
 		return x;
 	}
 	
-	public static int getHighestRange()
-	{
+	public static int getHighestRange() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.range > x) x = p.range;
 		return x;
 	}
 	
-	public static int getHighestDamage()
-	{
+	public static int getHighestDamage() {
 		int x = 0;
 		for (Part p : parts)
 			if (p.damage > x) x = p.damage;

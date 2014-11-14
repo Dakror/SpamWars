@@ -3,10 +3,8 @@ package de.dakror.spamwars.net.packet;
 /**
  * @author Dakror
  */
-public class Packet02Reject extends Packet
-{
-	public static enum Cause
-	{
+public class Packet02Reject extends Packet {
+	public static enum Cause {
 		OUTDATEDCLIENT("Dein Client läuft auf einer älteren Version als der Server."),
 		OUTDATEDSERVER("Der Server läuft auf einer alteren Version als dein Client."),
 		USERNAMETAKEN("Dieser Benutzername ist auf diesem Server bereits vergeben."),
@@ -16,39 +14,33 @@ public class Packet02Reject extends Packet
 		;
 		private String description;
 		
-		private Cause(String desc)
-		{
+		private Cause(String desc) {
 			description = desc;
 		}
 		
-		public String getDescription()
-		{
+		public String getDescription() {
 			return description;
 		}
 	}
 	
 	private Cause cause;
 	
-	public Packet02Reject(Cause cause)
-	{
+	public Packet02Reject(Cause cause) {
 		super(2);
 		this.cause = cause;
 	}
 	
-	public Packet02Reject(byte[] data)
-	{
+	public Packet02Reject(byte[] data) {
 		super(2);
 		cause = Cause.values()[Integer.parseInt(readData(data))];
 	}
 	
-	public Cause getCause()
-	{
+	public Cause getCause() {
 		return cause;
 	}
 	
 	@Override
-	public byte[] getPacketData()
-	{
+	public byte[] getPacketData() {
 		return (cause.ordinal() + "").getBytes();
 	}
 }

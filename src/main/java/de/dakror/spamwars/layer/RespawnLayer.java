@@ -14,23 +14,19 @@ import de.dakror.spamwars.net.packet.Packet;
 /**
  * @author Dakror
  */
-public class RespawnLayer extends MPLayer
-{
+public class RespawnLayer extends MPLayer {
 	public static final int RESPAWN_TIME = 5000; // ms
 	
 	long end;
 	
-	public RespawnLayer()
-	{
+	public RespawnLayer() {
 		modal = false;
 		end = 0;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		if (end == 0)
-		{
+	public void draw(Graphics2D g) {
+		if (end == 0) {
 			end = System.currentTimeMillis() + RESPAWN_TIME;
 		}
 		
@@ -42,35 +38,27 @@ public class RespawnLayer extends MPLayer
 		g.setColor(o);
 		g.setComposite(oc);
 		
-		if (end > 0)
-		{
+		if (end > 0) {
 			Helper.drawHorizontallyCenteredString("RESPAWN in ", Game.getWidth(), Game.getHeight() / 3, g, 70);
 			Helper.drawString((Math.round((end - System.currentTimeMillis()) / 100f) / 10f) + "", Game.getWidth() / 2 - 100, Game.getHeight() / 2, g, 90);
-		}
-		else
-		{
+		} else {
 			Helper.drawHorizontallyCenteredString("Du bist tot", Game.getWidth(), Game.getHeight() / 3, g, 90);
 			Helper.drawHorizontallyCenteredString("Respawn nächste Runde", Game.getWidth(), Game.getHeight() / 3 + 100, g, 40);
 		}
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		if (System.currentTimeMillis() >= end && end > 0)
-		{
+	public void update(int tick) {
+		if (System.currentTimeMillis() >= end && end > 0) {
 			Game.currentGame.removeLayer(this);
 			Game.player.revive();
 		}
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{
-		for (Layer l : Game.currentGame.layers)
-		{
-			if (l instanceof HUDLayer)
-			{
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {
+		for (Layer l : Game.currentGame.layers) {
+			if (l instanceof HUDLayer) {
 				((HUDLayer) l).onPacketReceived(p, ip, port);
 				break;
 			}
@@ -78,6 +66,5 @@ public class RespawnLayer extends MPLayer
 	}
 	
 	@Override
-	public void init()
-	{}
+	public void init() {}
 }

@@ -5,8 +5,7 @@ import java.awt.Rectangle;
 /**
  * @author Dakror
  */
-public enum Tile
-{
+public enum Tile {
 	air(null),
 	box(new Rectangle()),
 	boxAlt(new Rectangle()),
@@ -182,20 +181,16 @@ public enum Tile
 	private Rectangle bump;
 	private float lY, rY;
 	
-	private Tile(Rectangle bump, float... tY)
-	{
+	private Tile(Rectangle bump, float... tY) {
 		this.bump = bump;
 		
-		if (tY.length == 2)
-		{
+		if (tY.length == 2) {
 			lY = tY[1];
 			rY = tY[0];
-		}
-		else lY = rY = -1;
+		} else lY = rY = -1;
 	}
 	
-	public Rectangle getBump()
-	{
+	public Rectangle getBump() {
 		if (bump == null) return null;
 		
 		if (bump.width + bump.height == 0) return new Rectangle(0, 0, SIZE, SIZE);
@@ -203,13 +198,11 @@ public enum Tile
 		return bump;
 	}
 	
-	public int getLeftY()
-	{
+	public int getLeftY() {
 		return Math.round(lY * SIZE);
 	}
 	
-	public int getRightY()
-	{
+	public int getRightY() {
 		return Math.round(rY * SIZE);
 	}
 	

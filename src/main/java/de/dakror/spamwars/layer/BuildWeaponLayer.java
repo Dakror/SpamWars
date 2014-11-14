@@ -29,8 +29,7 @@ import de.dakror.spamwars.util.Assistant;
 /**
  * @author Dakror
  */
-public class BuildWeaponLayer extends MPLayer
-{
+public class BuildWeaponLayer extends MPLayer {
 	WeaponryGroup categories;
 	WeaponryGroup[] groups;
 	
@@ -47,8 +46,7 @@ public class BuildWeaponLayer extends MPLayer
 	
 	int id;
 	
-	public BuildWeaponLayer(WeaponData data, int id)
-	{
+	public BuildWeaponLayer(WeaponData data, int id) {
 		modal = true;
 		
 		exisData = data;
@@ -59,8 +57,7 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
@@ -77,20 +74,16 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		if (selectedPart != null)
-		{
+	public void update(int tick) {
+		if (selectedPart != null) {
 			int x = Game.currentGame.mouse.x - selectedPart.width / 2;
 			int y = Game.currentGame.mouse.y - selectedPart.height / 2;
 			
 			int snap = 10;
 			int fac = 5;
 			
-			for (Component c : components)
-			{
-				if (c instanceof WeaponryPart)
-				{
+			for (Component c : components) {
+				if (c instanceof WeaponryPart) {
 					boolean xIs = Assistant.isBetween(x, c.x, c.x + c.width) || Assistant.isBetween(x + selectedPart.width, c.x, c.x + c.width) || Assistant.isBetween(c.x, x, x + selectedPart.width) || Assistant.isBetween(c.x + c.width, x, x + selectedPart.width);
 					boolean yIs = Assistant.isBetween(y, c.y, c.y + c.height) || Assistant.isBetween(y + selectedPart.height, c.y, c.y + c.height) || Assistant.isBetween(c.y, y, y + selectedPart.height) || Assistant.isBetween(c.y + c.height, y, y + selectedPart.height);
 					if (Math.abs(x - (c.x + c.width)) < snap && yIs) x = c.x + c.width - fac;
@@ -107,19 +100,14 @@ public class BuildWeaponLayer extends MPLayer
 		
 		boolean hasParts = false, hasTrigger = false, hasHandle = false, hasBarrel = false;
 		
-		for (Component c : components)
-		{
-			if (c instanceof WeaponryPart)
-			{
-				if (!c.enabled)
-				{
+		for (Component c : components) {
+			if (c instanceof WeaponryPart) {
+				if (!c.enabled) {
 					categories.getButton(((WeaponryPart) c).part.category.ordinal()).enabled = true;
 					components.remove(c);
 					
 					cacheData = getWeaponData();
-				}
-				else
-				{
+				} else {
 					categories.getButton(((WeaponryPart) c).part.category.ordinal()).enabled = false;
 					hasParts = true;
 					if (((WeaponryPart) c).part.category == Category.BARREL) hasBarrel = true;
@@ -133,14 +121,11 @@ public class BuildWeaponLayer extends MPLayer
 		
 		updateComponents(tick);
 		
-		if (Game.currentFrame.alpha == 1 && enabled)
-		{
+		if (Game.currentFrame.alpha == 1 && enabled) {
 			Game.currentFrame.fadeTo(0, 0.05f);
-			new Thread()
-			{
+			new Thread() {
 				@Override
-				public void run()
-				{
+				public void run() {
 					Game.currentGame.removeLayer(BuildWeaponLayer.this);
 				}
 			}.start();
@@ -148,18 +133,14 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{}
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		
-		if (e.getButton() == MouseEvent.BUTTON1 && selectedPart != null)
-		{
-			if (buildPlate.contains(selectedPart.x, selectedPart.y, selectedPart.width, selectedPart.height))
-			{
+		if (e.getButton() == MouseEvent.BUTTON1 && selectedPart != null) {
+			if (buildPlate.contains(selectedPart.x, selectedPart.y, selectedPart.width, selectedPart.height)) {
 				WeaponryPart p = new WeaponryPart(selectedPart.x, selectedPart.y, selectedPart.part);
 				components.add(p);
 				selectedPart = null;
@@ -169,8 +150,7 @@ public class BuildWeaponLayer extends MPLayer
 				categories.deselectAll();
 			}
 		}
-		if (e.getButton() == MouseEvent.BUTTON3 && selectedPart != null)
-		{
+		if (e.getButton() == MouseEvent.BUTTON3 && selectedPart != null) {
 			selectedPart = null;
 			selectedButton.selected = false;
 			selectedButton = null;
@@ -178,15 +158,13 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
 		
 		cacheData = getWeaponData();
 	}
 	
-	public void renderWeaponStats(WeaponData cacheData)
-	{
+	public void renderWeaponStats(WeaponData cacheData) {
 		int width = 190, height = 170;
 		stats = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) stats.getGraphics();
@@ -224,27 +202,22 @@ public class BuildWeaponLayer extends MPLayer
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		cacheData = getWeaponData();
 		
 		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");
-		back.addClickEvent(new ClickEvent()
-		{
+		back.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentFrame.fadeTo(1, 0.05f);
 			}
 		});
 		components.add(back);
 		
 		TextButton build = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT - 10, "Bauen");
-		build.addClickEvent(new ClickEvent()
-		{
+		build.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				Game.currentGame.addLayer(new PurchaseWeaponLayer(exisData, id, getWeaponData()));
 			}
 		});
@@ -253,33 +226,26 @@ public class BuildWeaponLayer extends MPLayer
 		
 		auto = new TextButton((Game.getWidth() - TextButton.WIDTH) / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Manuell");
 		auto.setToggleMode(true);
-		if (exisData != null)
-		{
+		if (exisData != null) {
 			auto.setSelected(exisData.isAutomatic());
 			if (exisData.isAutomatic()) auto.setText("Automatik");
 		}
 		
-		auto.addClickEvent(new ClickEvent()
-		{
+		auto.addClickEvent(new ClickEvent() {
 			@Override
-			public void trigger()
-			{
+			public void trigger() {
 				auto.setText(!auto.isSelected() ? "Manuell" : "Automatik");
 			}
 		});
 		components.add(auto);
 		
-		new Thread()
-		{
+		new Thread() {
 			@Override
-			public void run()
-			{
+			public void run() {
 				categories = new WeaponryGroup(0, 0);
-				categories.onUnselect = new ClickEvent()
-				{
+				categories.onUnselect = new ClickEvent() {
 					@Override
-					public void trigger()
-					{
+					public void trigger() {
 						removeGroups();
 					}
 				};
@@ -288,8 +254,7 @@ public class BuildWeaponLayer extends MPLayer
 				
 				groups = new WeaponryGroup[Category.values().length];
 				
-				for (Category c : Category.values())
-				{
+				for (Category c : Category.values()) {
 					categories.addButton(new WeaponryButton(c.getIcon()));
 					
 					groups[c.ordinal()] = new WeaponryGroup(WeaponryButton.SIZE + 40, 0);
@@ -297,25 +262,20 @@ public class BuildWeaponLayer extends MPLayer
 				
 				@SuppressWarnings("unchecked")
 				ArrayList<Part> parts = (ArrayList<Part>) Part.parts.clone();
-				Collections.sort(parts, new Comparator<Part>()
-				{
+				Collections.sort(parts, new Comparator<Part>() {
 					@Override
-					public int compare(Part o1, Part o2)
-					{
+					public int compare(Part o1, Part o2) {
 						return o1.price - o2.price;
 					}
 				});
 				
-				for (final Part part : parts)
-				{
+				for (final Part part : parts) {
 					final WeaponryButton b = new WeaponryButton(part.tex);
 					b.setPart(part);
 					b.loseSelectionOnRMB = true;
-					b.addClickEvent(new ClickEvent()
-					{
+					b.addClickEvent(new ClickEvent() {
 						@Override
-						public void trigger()
-						{
+						public void trigger() {
 							selectedPart = new WeaponryPart(Game.currentGame.mouse.x - part.tex.width / 2, Game.currentGame.mouse.y - part.tex.height / 2, part);
 							selectedButton = b;
 						}
@@ -323,16 +283,13 @@ public class BuildWeaponLayer extends MPLayer
 					groups[part.category.ordinal()].addButton(b);
 				}
 				
-				for (int i = 0; i < categories.length(); i++)
-				{
+				for (int i = 0; i < categories.length(); i++) {
 					final int j = i;
 					
 					if (groups[i].length() == 0) categories.getButton(i).enabled = false;
-					else categories.getButton(i).addClickEvent(new ClickEvent()
-					{
+					else categories.getButton(i).addClickEvent(new ClickEvent() {
 						@Override
-						public void trigger()
-						{
+						public void trigger() {
 							removeGroups();
 							components.add(groups[j]);
 						}
@@ -344,20 +301,17 @@ public class BuildWeaponLayer extends MPLayer
 		}.start();
 	}
 	
-	public void loadExistingWeapon()
-	{
+	public void loadExistingWeapon() {
 		if (exisData == null) return;
 		
 		double width = 0, height = 0;
 		
-		for (DataPart dp : exisData.getParts())
-		{
+		for (DataPart dp : exisData.getParts()) {
 			if (dp.x + dp.part.tex.width > width) width = dp.x + dp.part.tex.width;
 			if (dp.y + dp.part.tex.height > height) height = dp.y + dp.part.tex.height;
 		}
 		
-		for (DataPart dp : exisData.getParts())
-		{
+		for (DataPart dp : exisData.getParts()) {
 			WeaponryPart p = new WeaponryPart((int) (dp.x + (buildPlate.width - width) / 2) + buildPlate.x, (int) (dp.y + (buildPlate.height - height) / 2) + buildPlate.y, dp.part);
 			components.add(p);
 		}
@@ -365,22 +319,17 @@ public class BuildWeaponLayer extends MPLayer
 		categories.deselectAll();
 	}
 	
-	public void removeGroups()
-	{
-		for (int i = 4; i < components.size(); i++)
-		{
+	public void removeGroups() {
+		for (int i = 4; i < components.size(); i++) {
 			if (components.get(i) instanceof WeaponryGroup) components.remove(i);
 		}
 	}
 	
-	public WeaponData getWeaponData()
-	{
+	public WeaponData getWeaponData() {
 		WeaponData data = new WeaponData();
 		
-		for (Component c : components)
-		{
-			if (c instanceof WeaponryPart)
-			{
+		for (Component c : components) {
+			if (c instanceof WeaponryPart) {
 				WeaponryPart p = (WeaponryPart) c;
 				data.addPart(p.part, p.x, p.y);
 			}

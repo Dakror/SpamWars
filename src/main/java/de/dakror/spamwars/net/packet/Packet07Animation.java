@@ -9,38 +9,30 @@ import de.dakror.spamwars.game.anim.Animation;
 /**
  * @author Dakror
  */
-public class Packet07Animation extends Packet
-{
+public class Packet07Animation extends Packet {
 	Animation animation;
 	
-	public Packet07Animation(Animation anim)
-	{
+	public Packet07Animation(Animation anim) {
 		super(7);
 		animation = anim;
 	}
 	
-	public Packet07Animation(byte[] data)
-	{
+	public Packet07Animation(byte[] data) {
 		super(7);
 		
-		try
-		{
+		try {
 			animation = new Animation(new JSONObject(readData(data)));
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Animation getAnimation()
-	{
+	public Animation getAnimation() {
 		return animation;
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		return animation.serialize().toString().getBytes();
 	}
 }

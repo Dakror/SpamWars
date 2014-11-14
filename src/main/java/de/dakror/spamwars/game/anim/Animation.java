@@ -15,8 +15,7 @@ import de.dakror.spamwars.game.Game;
 /**
  * @author Dakror
  */
-public class Animation implements Drawable
-{
+public class Animation implements Drawable {
 	String name;
 	Vector pos;
 	
@@ -30,13 +29,11 @@ public class Animation implements Drawable
 	
 	boolean dead;
 	
-	public Animation(String name, Vector pos, float speed, int size, int frames)
-	{
+	public Animation(String name, Vector pos, float speed, int size, int frames) {
 		this(name, pos, speed, 0, size, frames);
 	}
 	
-	public Animation(String name, Vector pos, float speed, float rotation, int size, int frames)
-	{
+	public Animation(String name, Vector pos, float speed, float rotation, int size, int frames) {
 		this.name = name;
 		this.pos = pos;
 		this.speed = speed;
@@ -48,10 +45,8 @@ public class Animation implements Drawable
 		dead = false;
 	}
 	
-	public Animation(JSONObject o)
-	{
-		try
-		{
+	public Animation(JSONObject o) {
+		try {
 			pos = new Vector((float) o.getDouble("x"), (float) o.getDouble("y"));
 			name = o.getString("name");
 			speed = (float) o.getDouble("speed");
@@ -61,18 +56,14 @@ public class Animation implements Drawable
 			frames = o.getInt("frames");
 			
 			dead = false;
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public JSONObject serialize()
-	{
+	public JSONObject serialize() {
 		JSONObject o = new JSONObject();
-		try
-		{
+		try {
 			o.put("x", pos.x);
 			o.put("y", pos.y);
 			o.put("name", name);
@@ -81,17 +72,14 @@ public class Animation implements Drawable
 			o.put("start", startTick);
 			o.put("size", size);
 			o.put("frames", frames);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return o;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (dead) return;
 		
 		Image i = Game.getImage("anim/" + name + ".png");
@@ -108,12 +96,10 @@ public class Animation implements Drawable
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (dead) return;
 		
-		if (startTick == 0)
-		{
+		if (startTick == 0) {
 			startTick = tick;
 			return;
 		}
@@ -123,8 +109,7 @@ public class Animation implements Drawable
 		if (frame >= frames) dead = true;
 	}
 	
-	public boolean isDead()
-	{
+	public boolean isDead() {
 		return dead;
 	}
 }

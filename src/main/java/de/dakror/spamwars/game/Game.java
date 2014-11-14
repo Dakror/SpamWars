@@ -32,8 +32,7 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class Game extends GameFrame implements WindowFocusListener
-{
+public class Game extends GameFrame implements WindowFocusListener {
 	public static World world;
 	public static Game currentGame;
 	public static Client client;
@@ -47,28 +46,24 @@ public class Game extends GameFrame implements WindowFocusListener
 	
 	boolean debug = false;
 	
-	public Game()
-	{
+	public Game() {
 		super();
 		currentGame = this;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (world != null) world.draw(g);
 		
 		drawLayers(g);
 		
-		if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer) && user != null)
-		{
+		if (!(getActiveLayer() instanceof HUDLayer) && !(getActiveLayer() instanceof GameStartLayer) && user != null) {
 			Helper.drawContainer(getWidth() - 200, getHeight() - 60, 200, 60, false, false, g);
 			g.setColor(Color.darkGray);
 			Helper.drawRightAlignedString(money + "$", getWidth() - 10, getHeight() - 20, g, 25);
 		}
 		
-		if (debug && !screenshot)
-		{
+		if (debug && !screenshot) {
 			g.setColor(Color.green);
 			g.setFont(new Font("Arial", Font.PLAIN, 18));
 			Helper.drawString(getFPS() + " FPS", 0, 18, g, 18);
@@ -77,30 +72,23 @@ public class Game extends GameFrame implements WindowFocusListener
 	}
 	
 	@Override
-	public void initGame()
-	{
+	public void initGame() {
 		w.addWindowFocusListener(this);
 		w.setFocusTraversalKeysEnabled(false);
-		w.addWindowListener(new WindowAdapter()
-		{
+		w.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e)
-			{
-				if (client != null)
-				{
+			public void windowClosing(WindowEvent e) {
+				if (client != null) {
 					client.disconnect();
 				}
 			}
 		});
-		try
-		{
+		try {
 			Spinner.h = 33;
 			InputField.h = 8;
 			w.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/SANDBOXB.ttf")));
 			w.setIconImage(getImage("icon/spamwars64.png"));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		w.setBackground(Color.decode("#D0F4F7"));
@@ -109,15 +97,13 @@ public class Game extends GameFrame implements WindowFocusListener
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		if (world != null && !getActiveLayer().isModal()) world.keyPressed(e);
 	}
 	
 	@Override
-	public void keyReleased(KeyEvent e)
-	{
+	public void keyReleased(KeyEvent e) {
 		super.keyReleased(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_F11) debug = !debug;
@@ -126,102 +112,79 @@ public class Game extends GameFrame implements WindowFocusListener
 	}
 	
 	@Override
-	public void mouseMoved(MouseEvent e)
-	{
+	public void mouseMoved(MouseEvent e) {
 		super.mouseMoved(e);
 		if (world != null && !getActiveLayer().isModal()) world.mouseMoved(e);
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
-		if (world != null && !getActiveLayer().isModal())
-		{
+		if (world != null && !getActiveLayer().isModal()) {
 			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
 			world.mousePressed(e);
 		}
 	}
 	
 	@Override
-	public void mouseReleased(MouseEvent e)
-	{
+	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
-		if (world != null && !getActiveLayer().isModal())
-		{
+		if (world != null && !getActiveLayer().isModal()) {
 			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
 			world.mouseReleased(e);
 		}
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent e)
-	{
+	public void mouseDragged(MouseEvent e) {
 		super.mouseDragged(e);
-		if (world != null && !getActiveLayer().isModal())
-		{
+		if (world != null && !getActiveLayer().isModal()) {
 			if (new Rectangle(5, 5, 70, 70).contains(e.getPoint())) return; // pause
 			world.mouseDragged(e);
 		}
 	}
 	
 	@Override
-	public void windowGainedFocus(WindowEvent e)
-	{}
+	public void windowGainedFocus(WindowEvent e) {}
 	
 	@Override
-	public void windowLostFocus(WindowEvent e)
-	{
-		if (player != null)
-		{
+	public void windowLostFocus(WindowEvent e) {
+		if (player != null) {
 			player.stop();
 		}
 	}
 	
-	public static void pullMoney()
-	{
+	public static void pullMoney() {
 		if (!CFG.INTERNET) return;
 		
-		try
-		{
+		try {
 			CFG.p("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5);
 			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)).trim());
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void pullWeapons()
-	{
+	public static void pullWeapons() {
 		if (!CFG.INTERNET) return;
 		
-		try
-		{
+		try {
 			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)).trim());
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static boolean subMoney(int money)
-	{
+	public static boolean subMoney(int money) {
 		if (!CFG.INTERNET) return true;
 		
-		try
-		{
+		try {
 			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5 + "&sub=" + money)).trim();
-			if (!response.contains("false"))
-			{
+			if (!response.contains("false")) {
 				Game.money = Integer.parseInt(response);
 				return true;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;

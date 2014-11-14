@@ -3,10 +3,8 @@ package de.dakror.spamwars.net.packet;
 /**
  * @author Dakror
  */
-public class Packet11GameInfo extends Packet
-{
-	public enum GameMode
-	{
+public class Packet11GameInfo extends Packet {
+	public enum GameMode {
 		DEATHMATCH("Deathmatch"),
 		ONE_IN_THE_CHAMBER("Eine im Lauf"),
 		
@@ -14,13 +12,11 @@ public class Packet11GameInfo extends Packet
 		
 		private String name;
 		
-		private GameMode(String name)
-		{
+		private GameMode(String name) {
 			this.name = name;
 		}
 		
-		public String getName()
-		{
+		public String getName() {
 			return name;
 		}
 	}
@@ -28,15 +24,13 @@ public class Packet11GameInfo extends Packet
 	int minutes;
 	GameMode mode;
 	
-	public Packet11GameInfo(int minutes, GameMode mode)
-	{
+	public Packet11GameInfo(int minutes, GameMode mode) {
 		super(11);
 		this.minutes = minutes;
 		this.mode = mode;
 	}
 	
-	public Packet11GameInfo(byte[] data)
-	{
+	public Packet11GameInfo(byte[] data) {
 		super(11);
 		String[] parts = readData(data).split(":");
 		
@@ -45,18 +39,15 @@ public class Packet11GameInfo extends Packet
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		return (minutes + ":" + mode.ordinal()).getBytes();
 	}
 	
-	public int getMinutes()
-	{
+	public int getMinutes() {
 		return minutes;
 	}
 	
-	public GameMode getGameMode()
-	{
+	public GameMode getGameMode() {
 		return mode;
 	}
 	

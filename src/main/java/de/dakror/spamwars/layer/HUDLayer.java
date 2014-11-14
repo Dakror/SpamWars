@@ -30,8 +30,7 @@ import de.dakror.spamwars.ui.KillLabel;
 /**
  * @author Dakror
  */
-public class HUDLayer extends MPLayer
-{
+public class HUDLayer extends MPLayer {
 	boolean showStats;
 	public boolean reload;
 	public int reloadStarted;
@@ -43,10 +42,8 @@ public class HUDLayer extends MPLayer
 	boolean started = false;
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
-		try
-		{
+	public void draw(Graphics2D g) {
+		try {
 			Helper.drawContainer(Game.getWidth() / 2 - 200, Game.getHeight() - 50, 400, 60, false, false, g);
 			Helper.drawProgressBar(Game.getWidth() / 2 - 180, Game.getHeight() - 30, 360, Game.player.getLife() / (float) Game.player.getMaxlife(), "ff3232", g);
 			Color o = g.getColor();
@@ -67,8 +64,7 @@ public class HUDLayer extends MPLayer
 			else Helper.drawContainer(0, 0, 80, 80, false, true, g);
 			g.drawImage(Game.getImage("gui/pause.png"), 5, 5, 70, 70, Game.w);
 			
-			if (reload && reloadStarted > 0)
-			{
+			if (reload && reloadStarted > 0) {
 				Composite c = g.getComposite();
 				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
 				Helper.drawShadow(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, g);
@@ -79,19 +75,15 @@ public class HUDLayer extends MPLayer
 				g.setComposite(c);
 			}
 			g.setColor(o);
-		}
-		catch (NullPointerException e)
-		{}
+		} catch (NullPointerException e) {}
 		
 		drawComponents(g);
 		
 		drawStats(g);
 	}
 	
-	public void drawStats(Graphics2D g)
-	{
-		if (stats == null || invokeRenderStats)
-		{
+	public void drawStats(Graphics2D g) {
+		if (stats == null || invokeRenderStats) {
 			stats = new BufferedImage(Game.getWidth(), Game.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g1 = (Graphics2D) stats.getGraphics();
@@ -105,8 +97,7 @@ public class HUDLayer extends MPLayer
 		g.drawImage(stats, 0, 0, Game.w);
 	}
 	
-	public void renderStats(Graphics2D g)
-	{
+	public void renderStats(Graphics2D g) {
 		Helper.drawContainer(Game.getWidth() / 2 - 500, Game.getHeight() / 2 - 300, 1000, 600, true, false, g);
 		Color o = g.getColor();
 		g.setColor(Color.gray);
@@ -117,8 +108,7 @@ public class HUDLayer extends MPLayer
 		Helper.drawString("SPIELERNAME", Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 160, g, 30);
 		Helper.drawString("K / D", Game.getWidth() / 2 + 300, Game.getHeight() / 2 - 160, g, 30);
 		
-		for (int i = 0; i < users.length; i++)
-		{
+		for (int i = 0; i < users.length; i++) {
 			g.setColor(Color.white);
 			if (users[i].getUsername().equals(Game.user.getUsername())) g.setColor(Color.decode("#3333ff"));
 			Helper.drawString(users[i].getUsername(), Game.getWidth() / 2 - 450, Game.getHeight() / 2 - 110 + i * 30, g, 30);
@@ -130,25 +120,21 @@ public class HUDLayer extends MPLayer
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		this.tick = tick;
 		
 		if (Game.activeWeapon == null || Game.player.getWeapon() == null) return;
 		
-		if (Game.server != null && !started)
-		{
+		if (Game.server != null && !started) {
 			Game.server.updater.time2 = 0;
 			Game.server.updater.countdown = 5;
 			started = true;
 		}
 		
-		if (reload)
-		{
+		if (reload) {
 			if (reloadStarted == 0) reloadStarted = tick;
 			
-			if (tick - reloadStarted >= Game.player.getWeapon().getData().getReload())
-			{
+			if (tick - reloadStarted >= Game.player.getWeapon().getData().getReload()) {
 				Game.player.getWeapon().reload();
 				reload = false;
 			}
@@ -160,17 +146,12 @@ public class HUDLayer extends MPLayer
 		
 		int killed = 0;
 		
-		for (Component c : components)
-		{
-			if (c instanceof KillLabel)
-			{
-				if (((KillLabel) c).dead)
-				{
+		for (Component c : components) {
+			if (c instanceof KillLabel) {
+				if (((KillLabel) c).dead) {
 					killed++;
 					components.remove(c);
-				}
-				else
-				{
+				} else {
 					c.y -= killed * KillLabel.SPACE;
 					
 					if (c.y + KillLabel.SPACE > killY) killY = c.y + KillLabel.SPACE;
@@ -178,8 +159,7 @@ public class HUDLayer extends MPLayer
 			}
 		}
 		
-		if (Game.client.isGameOver() && !(Game.currentGame.getActiveLayer() instanceof WinnerLayer))
-		{
+		if (Game.client.isGameOver() && !(Game.currentGame.getActiveLayer() instanceof WinnerLayer)) {
 			Game.currentGame.addLayer(new WinnerLayer());
 		}
 		
@@ -187,29 +167,23 @@ public class HUDLayer extends MPLayer
 	}
 	
 	@Override
-	public void onPacketReceived(Packet p, InetAddress ip, int port)
-	{
-		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown"))
-		{
+	public void onPacketReceived(Packet p, InetAddress ip, int port) {
+		if (p instanceof Packet03Attribute && ((Packet03Attribute) p).getKey().equals("countdown")) {
 			Game.currentGame.addLayer(new GameStartLayer(false));
 		}
 		if (p instanceof Packet04PlayerList) invokeRenderStats = true;
-		if (p instanceof Packet09Kill)
-		{
+		if (p instanceof Packet09Kill) {
 			Player killer = null;
 			Player killed = null;
-			for (Entity e : Game.world.entities)
-			{
-				if (e instanceof Player)
-				{
+			for (Entity e : Game.world.entities) {
+				if (e instanceof Player) {
 					if (((Player) e).getUser().getUsername().equals(((Packet09Kill) p).getKiller())) killer = (Player) e;
 					if (((Player) e).getUser().getUsername().equals(((Packet09Kill) p).getDead())) killed = (Player) e;
 				}
 			}
 			if (killer != null && killed != null) components.add(new KillLabel(killY, killer, killed, ((Packet09Kill) p).getWeapon()));
 			
-			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername()))
-			{
+			if (((Packet09Kill) p).getKiller().equals(Game.user.getUsername())) {
 				Game.subMoney(-25);
 			}
 			
@@ -218,8 +192,7 @@ public class HUDLayer extends MPLayer
 	}
 	
 	@Override
-	public void keyPressed(KeyEvent e)
-	{
+	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = true;
@@ -227,39 +200,32 @@ public class HUDLayer extends MPLayer
 	}
 	
 	@Override
-	public void keyReleased(KeyEvent e)
-	{
+	public void keyReleased(KeyEvent e) {
 		super.keyReleased(e);
 		
 		if (e.getKeyCode() == KeyEvent.VK_TAB) showStats = false;
 	}
 	
 	@Override
-	public void mousePressed(MouseEvent e)
-	{
+	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
 		
 		if (new Rectangle(5, 5, 70, 70).contains(e.getPoint()) && !(Game.currentGame.getActiveLayer() instanceof GameStartLayer)) Game.currentGame.addLayer(new PauseLayer());
-		if (e.getButton() == MouseEvent.BUTTON3 && Game.player.getWeapon().canReload() && !reload)
-		{
+		if (e.getButton() == MouseEvent.BUTTON3 && Game.player.getWeapon().canReload() && !reload) {
 			reload = true;
 			reloadStarted = 0;
 		}
 	}
 	
 	@Override
-	public void init()
-	{
+	public void init() {
 		showStats = false;
 	}
 	
-	public static Comparator<User> getSorter()
-	{
-		return new Comparator<User>()
-		{
+	public static Comparator<User> getSorter() {
+		return new Comparator<User>() {
 			@Override
-			public int compare(User o1, User o2)
-			{
+			public int compare(User o1, User o2) {
 				int K1 = o1.K, K2 = o2.K, D1 = o1.D, D2 = o2.D;
 				
 				if (D1 == 3 && Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) return 1;

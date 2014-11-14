@@ -20,8 +20,7 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class Weapon implements Drawable
-{
+public class Weapon implements Drawable {
 	public static final float scale = 0.25f;
 	protected WeaponData data;
 	protected BufferedImage image;
@@ -41,8 +40,7 @@ public class Weapon implements Drawable
 	Vector target;
 	public boolean enabled;
 	
-	public Weapon(WeaponData data)
-	{
+	public Weapon(WeaponData data) {
 		this.data = data;
 		this.data.calculateStats();
 		image = data.getImage();
@@ -58,12 +56,10 @@ public class Weapon implements Drawable
 		left = false;
 	}
 	
-	public void target(Vector target)
-	{
+	public void target(Vector target) {
 		if (!enabled) return;
 		
-		if (overangle)
-		{
+		if (overangle) {
 			this.target = null;
 			return;
 		}
@@ -72,8 +68,7 @@ public class Weapon implements Drawable
 		if (this.target != null) this.target.add(new Vector(Game.w.getInsets().left, Game.w.getInsets().top));
 	}
 	
-	protected void shoot()
-	{
+	protected void shoot() {
 		if (!enabled) return;
 		
 		Vector muzzle = getMuzzle();
@@ -86,8 +81,7 @@ public class Weapon implements Drawable
 		Point tile = Game.world.getTile((int) pos.x, (int) pos.y);
 		Tile t = Tile.values()[Game.world.getTileIdAtPixel((int) pos.x, (int) pos.y)];
 		
-		if (t.getBump() != null)
-		{
+		if (t.getBump() != null) {
 			Rectangle r = (Rectangle) t.getBump().clone();
 			r.translate(tile.x * Tile.SIZE, tile.y * Tile.SIZE);
 			if (r.contains(pos.x, pos.y)) return;
@@ -98,14 +92,10 @@ public class Weapon implements Drawable
 		
 		if (target == null || reloading) return;
 		
-		if (ammo == 0)
-		{
-			if (CFG.AUTO_RELOAD && capacity > 0)
-			{
-				for (Layer l : Game.currentGame.layers)
-				{
-					if (l instanceof HUDLayer)
-					{
+		if (ammo == 0) {
+			if (CFG.AUTO_RELOAD && capacity > 0) {
+				for (Layer l : Game.currentGame.layers) {
+					if (l instanceof HUDLayer) {
 						((HUDLayer) l).reload = true;
 						((HUDLayer) l).reloadStarted = 0;
 						break;
@@ -128,10 +118,8 @@ public class Weapon implements Drawable
 	}
 	
 	@Override
-	public void update(int tick)
-	{
-		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER)
-		{
+	public void update(int tick) {
+		if (Game.client.gameInfo.getGameMode() == GameMode.ONE_IN_THE_CHAMBER) {
 			capacity = 0;
 			magazine = 1;
 			if (ammo > magazine) ammo = 1;
@@ -139,8 +127,7 @@ public class Weapon implements Drawable
 		
 		if (!enabled) return;
 		
-		if (target != null && (tick - lastShot) >= data.getSpeed())
-		{
+		if (target != null && (tick - lastShot) >= data.getSpeed()) {
 			shoot();
 			lastShot = tick;
 			
@@ -150,8 +137,7 @@ public class Weapon implements Drawable
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		AffineTransform old = g.getTransform();
 		AffineTransform at = g.getTransform();
 		
@@ -163,33 +149,22 @@ public class Weapon implements Drawable
 		
 		double rotDeg = Math.toDegrees(rot);
 		
-		if (left)
-		{
-			if (180 - rotDeg > data.getAngle() && rotDeg >= 0)
-			{
+		if (left) {
+			if (180 - rotDeg > data.getAngle() && rotDeg >= 0) {
 				rot = Math.toRadians(180 - data.getAngle());
 				overangle = true;
-			}
-			else if (180 + rotDeg > data.getAngle() && rotDeg <= 0)
-			{
+			} else if (180 + rotDeg > data.getAngle() && rotDeg <= 0) {
 				rot = Math.toRadians(180 + data.getAngle());
 				overangle = true;
-			}
-			else overangle = false;
-		}
-		else
-		{
-			if (rotDeg < -data.getAngle())
-			{
+			} else overangle = false;
+		} else {
+			if (rotDeg < -data.getAngle()) {
 				rot = Math.toRadians(-data.getAngle());
 				overangle = true;
-			}
-			else if (rotDeg > data.getAngle())
-			{
+			} else if (rotDeg > data.getAngle()) {
 				rot = Math.toRadians(data.getAngle());
 				overangle = true;
-			}
-			else overangle = false;
+			} else overangle = false;
 		}
 		
 		this.rot = (float) rot;
@@ -201,13 +176,11 @@ public class Weapon implements Drawable
 		g.setTransform(old);
 	}
 	
-	public BufferedImage getImage()
-	{
+	public BufferedImage getImage() {
 		return image;
 	}
 	
-	public Vector getMuzzle()
-	{
+	public Vector getMuzzle() {
 		Vector v = new Vector(exit).mul(scale).sub(new Vector(grab).mul(scale));
 		
 		float radius = (exit.x - grab.x + 50) * Weapon.scale;
@@ -216,26 +189,22 @@ public class Weapon implements Drawable
 		return new Vector((float) Math.cos(rot2) * radius, (float) Math.sin(rot2) * radius);
 	}
 	
-	public Point getExit()
-	{
+	public Point getExit() {
 		return exit;
 	}
 	
-	public Point getGrab()
-	{
+	public Point getGrab() {
 		return grab;
 	}
 	
-	public boolean canReload()
-	{
+	public boolean canReload() {
 		if (capacity == 0) return false;
 		if (ammo == magazine) return false;
 		
 		return true;
 	}
 	
-	public void reload()
-	{
+	public void reload() {
 		if (capacity == 0) return;
 		
 		int sub = capacity >= magazine ? magazine : capacity;
@@ -243,23 +212,19 @@ public class Weapon implements Drawable
 		capacity -= sub;
 	}
 	
-	public boolean canRefill()
-	{
+	public boolean canRefill() {
 		return capacity < capacityMax;
 	}
 	
-	public void refill(int amount)
-	{
+	public void refill(int amount) {
 		capacity = capacity + amount > capacityMax ? capacityMax : capacity + amount;
 	}
 	
-	public WeaponData getData()
-	{
+	public WeaponData getData() {
 		return data;
 	}
 	
-	public Vector getTarget()
-	{
+	public Vector getTarget() {
 		return target;
 	}
 }

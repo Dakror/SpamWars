@@ -15,10 +15,8 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class SpamWars
-{
-	public static void main(String[] args) throws SocketException
-	{
+public class SpamWars {
+	public static void main(String[] args) throws SocketException {
 		CFG.INTERNET = Helper.isInternetReachable();
 		
 		Launch.init(args);
@@ -28,13 +26,10 @@ public class SpamWars
 		
 		Game.ip = CFG.getAddress();
 		
-		if (!CFG.INTERNET)
-		{
+		if (!CFG.INTERNET) {
 			Game.user = new User("Player" + (int) (Math.random() * 10000), Game.ip, 0);
 			Game.money = 999999;
-		}
-		else
-		{
+		} else {
 			Game.user = new User(Launch.username, Game.ip, 0);
 		}
 		
@@ -42,13 +37,10 @@ public class SpamWars
 		Game.currentFrame.init("Spam Wars");
 		
 		DakrorBin.init(Game.w, "SpamWars");
-		try
-		{
+		try {
 			Game.currentFrame.setFullscreen();
 			// Game.currentFrame.setWindowed(1280, 720);
-		}
-		catch (IllegalStateException e)
-		{
+		} catch (IllegalStateException e) {
 			System.exit(0);
 		}
 		Game.currentGame.addLayer(new MenuLayer());

@@ -22,8 +22,7 @@ import de.dakror.spamwars.util.Assistant;
 /**
  * @author Dakror
  */
-public class Projectile implements Drawable
-{
+public class Projectile implements Drawable {
 	private Vector pos, target;
 	Rectangle tex;
 	int damage, range, speed;
@@ -33,8 +32,7 @@ public class Projectile implements Drawable
 	
 	private float rot;
 	
-	public Projectile(Vector pos, Vector target, String username, int speed, int range, int damage)
-	{
+	public Projectile(Vector pos, Vector target, String username, int speed, int range, int damage) {
 		tex = new Rectangle(275, 89, 20, 10);
 		this.speed = speed;
 		this.range = range;
@@ -48,16 +46,13 @@ public class Projectile implements Drawable
 		this.target = pos.clone().add(dif);
 	}
 	
-	public Projectile(JSONObject o) throws JSONException
-	{
+	public Projectile(JSONObject o) throws JSONException {
 		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), o.getInt("s"), o.getInt("r"), o.getInt("dm"));
 	}
 	
-	public JSONObject serialize()
-	{
+	public JSONObject serialize() {
 		JSONObject o = new JSONObject();
-		try
-		{
+		try {
 			o.put("x", pos.x);
 			o.put("y", pos.y);
 			o.put("tx", target.x);
@@ -67,17 +62,14 @@ public class Projectile implements Drawable
 			o.put("dm", damage);
 			o.put("d", dead);
 			o.put("u", username);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return o;
 	}
 	
 	@Override
-	public void draw(Graphics2D g)
-	{
+	public void draw(Graphics2D g) {
 		if (dead) return;
 		
 		Vector pos = this.pos.clone().add(new Vector(Game.world.x, Game.world.y));
@@ -93,8 +85,7 @@ public class Projectile implements Drawable
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (dead) return;
 		
 		Vector dif = target.clone().sub(pos);
@@ -109,18 +100,14 @@ public class Projectile implements Drawable
 		
 		Line2D line = new Line2D.Float(pos.x, pos.y, nextPos.x, nextPos.y);
 		
-		if (tile.getBump() != null)
-		{
+		if (tile.getBump() != null) {
 			Rectangle b = (Rectangle) tile.getBump().clone();
 			b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
-			if (b.intersectsLine(line))
-			{
+			if (b.intersectsLine(line)) {
 				dead = true;
 				return;
 			}
-		}
-		else if (tile.getLeftY() >= 0)
-		{
+		} else if (tile.getLeftY() >= 0) {
 			Polygon b = new Polygon();
 			b.addPoint(0, tile.getLeftY());
 			b.addPoint(Tile.SIZE, tile.getRightY());
@@ -128,17 +115,14 @@ public class Projectile implements Drawable
 			b.addPoint(0, Tile.SIZE);
 			b.translate(p.x * Tile.SIZE, p.y * Tile.SIZE);
 			
-			if (Assistant.intersection(b, line))
-			{
+			if (Assistant.intersection(b, line)) {
 				dead = true;
 				return;
 			}
 		}
 		
-		for (Entity e : Game.world.entities)
-		{
-			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line))
-			{
+		for (Entity e : Game.world.entities) {
+			if (e instanceof Player && e.getBump(0, 0).intersectsLine(line)) {
 				if (((Player) e).getUser().getUsername().equals(Game.user.getUsername())) Game.player.dealDamage(damage, this);
 				dead = true;
 				return;
@@ -150,13 +134,11 @@ public class Projectile implements Drawable
 		if (pos.equals(target)) dead = true;
 	}
 	
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 	
-	public boolean isDead()
-	{
+	public boolean isDead() {
 		return dead;
 	}
 }

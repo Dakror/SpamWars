@@ -8,39 +8,31 @@ import de.dakror.spamwars.game.projectile.Projectile;
 /**
  * @author Dakror
  */
-public class Packet08Projectile extends Packet
-{
+public class Packet08Projectile extends Packet {
 	Projectile p;
 	
-	public Packet08Projectile(Projectile p)
-	{
+	public Packet08Projectile(Projectile p) {
 		super(8);
 		this.p = p;
 	}
 	
-	public Packet08Projectile(byte[] data)
-	{
+	public Packet08Projectile(byte[] data) {
 		super(8);
 		
-		try
-		{
+		try {
 			JSONObject o = new JSONObject(readData(data));
 			p = new Projectile(o);
-		}
-		catch (JSONException e)
-		{
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Projectile getProjectile()
-	{
+	public Projectile getProjectile() {
 		return p;
 	}
 	
 	@Override
-	protected byte[] getPacketData()
-	{
+	protected byte[] getPacketData() {
 		return p.serialize().toString().getBytes();
 	}
 }

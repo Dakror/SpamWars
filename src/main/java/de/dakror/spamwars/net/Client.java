@@ -42,8 +42,7 @@ import de.dakror.spamwars.settings.CFG;
 /**
  * @author Dakror
  */
-public class Client extends Thread
-{
+public class Client extends Thread {
 	DatagramSocket socket;
 	public boolean running;
 	
@@ -57,60 +56,47 @@ public class Client extends Thread
 	
 	ArrayList<Packet05Chunk> chunkPackets = new ArrayList<>();
 	
-	public Client()
-	{
-		try
-		{
+	public Client() {
+		try {
 			socket = new DatagramSocket();
 			socket.setBroadcast(true);
 			setName("Client-Thread");
 			setPriority(MAX_PRIORITY);
 			connected = false;
 			start();
-		}
-		catch (SocketException e)
-		{
+		} catch (SocketException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
-	public void run()
-	{
+	public void run() {
 		running = true;
-		while (running)
-		{
+		while (running) {
 			byte[] data = new byte[Server.PACKETSIZE];
 			
 			DatagramPacket packet = new DatagramPacket(data, data.length);
-			try
-			{
+			try {
 				socket.receive(packet);
 				parsePacket(data, packet.getAddress(), packet.getPort());
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public void parsePacket(byte[] data, InetAddress address, int port)
-	{
+	public void parsePacket(byte[] data, InetAddress address, int port) {
 		PacketTypes type = Packet.lookupPacket(data[0]);
 		
 		CFG.p("CLIENT < " + type.name() + " < " + address.getHostAddress() + ":" + port);
 		Packet packet = null;
 		
-		switch (type)
-		{
-			case INVALID:
-			{
+		switch (type) {
+			case INVALID: {
 				CFG.p("received invalid packet: " + new String(data));
 				return;
 			}
-			case CONNECT:
-			{
+			case CONNECT: {
 				Packet00Connect p = new Packet00Connect(data);
 				if (p.getUsername().equals(Game.user.getUsername())) connected = true;
 				else if (Game.world != null) Game.world.addEntity(new Player(0, 0, new User(p.getUsername(), null, 0)));
@@ -118,37 +104,25 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case DISCONNECT:
-			{
+			case DISCONNECT: {
 				Packet01Disconnect p = new Packet01Disconnect(data);
-				if (p.getUsername().equals("##") && serverIP != null)
-				{
+				if (p.getUsername().equals("##") && serverIP != null) {
 					setDisconnected();
 					Game.currentGame.addLayer(new Alert(p.getCause().getDescription(), null));
-				}
-				else if (p.getUsername().equals(Game.user.getUsername()))
-				{
+				} else if (p.getUsername().equals(Game.user.getUsername())) {
 					setDisconnected();
-				}
-				else if (Game.world != null)
-				{
-					for (Entity e : Game.world.entities)
-					{
-						if (e instanceof Player)
-						{
-							if (((Player) e).getUser().getUsername().equals(p.getUsername()))
-							{
+				} else if (Game.world != null) {
+					for (Entity e : Game.world.entities) {
+						if (e instanceof Player) {
+							if (((Player) e).getUser().getUsername().equals(p.getUsername())) {
 								Game.world.entities.remove(e);
 								break;
 							}
 						}
 					}
-					try
-					{
+					try {
 						sendPacket(new Packet04PlayerList());
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
@@ -156,8 +130,7 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case REJECT:
-			{
+			case REJECT: {
 				connected = false;
 				playerList = null;
 				serverIP = null;
@@ -165,14 +138,11 @@ public class Client extends Thread
 				
 				break;
 			}
-			case PLAYERLIST:
-			{
+			case PLAYERLIST: {
 				Packet04PlayerList p = new Packet04PlayerList(data);
 				
-				for (User u : p.getUsers())
-				{
-					if (u.getUsername().equals(Game.user.getUsername()))
-					{
+				for (User u : p.getUsers()) {
+					if (u.getUsername().equals(Game.user.getUsername())) {
 						Game.user = u;
 						break;
 					}
@@ -182,8 +152,7 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case CHUNK:
-			{
+			case CHUNK: {
 				Packet05Chunk p = new Packet05Chunk(data);
 				
 				chunkPackets.add(p);
@@ -191,43 +160,32 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case ATTRIBUTE:
-			{
+			case ATTRIBUTE: {
 				Packet03Attribute p = new Packet03Attribute(data);
-				if (p.getKey().equals("pos"))
-				{
+				if (p.getKey().equals("pos")) {
 					int x = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf(",")));
 					int y = Integer.parseInt(p.getValue().substring(p.getValue().indexOf(",") + 1));
 					
-					if (Game.player == null)
-					{
+					if (Game.player == null) {
 						Game.player = new Player(x, y, Game.user);
-					}
-					else
-					{
+					} else {
 						Game.player.x = x;
 						Game.player.y = y;
 					}
 				}
-				if (p.getKey().equals("user"))
-				{
-					try
-					{
+				if (p.getKey().equals("user")) {
+					try {
 						Game.user = new User(new JSONObject(p.getValue()));
-					}
-					catch (JSONException e)
-					{
+					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				}
-				if (p.getKey().equals("worldsize"))
-				{
+				if (p.getKey().equals("worldsize")) {
 					int w = Integer.parseInt(p.getValue().substring(0, p.getValue().indexOf("_")));
 					int h = Integer.parseInt(p.getValue().substring(p.getValue().indexOf("_") + 1));
 					Game.world = new World(w, h);
 					
-					for (Packet05Chunk chunk : chunkPackets)
-					{
+					for (Packet05Chunk chunk : chunkPackets) {
 						Game.world.setData(chunk.getChunk().x, chunk.getChunk().y, Packet05Chunk.SIZE, chunk.getWorldData());
 					}
 					
@@ -242,15 +200,12 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case PLAYER:
-			{
+			case PLAYER: {
 				Packet06PlayerData p = new Packet06PlayerData(data);
 				if (Game.world == null) break;
 				
-				for (Entity e : Game.world.entities)
-				{
-					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername()))
-					{
+				for (Entity e : Game.world.entities) {
+					if (e instanceof Player && ((Player) e).getUser().getUsername().equals(p.getUsername())) {
 						e.setPos(p.getPosition());
 						((Player) e).frame = p.getFrame();
 						((Player) e).lookingLeft = p.isLeft();
@@ -269,8 +224,7 @@ public class Client extends Thread
 				}
 				break;
 			}
-			case ANIMATION:
-			{
+			case ANIMATION: {
 				Packet07Animation p = new Packet07Animation(data);
 				
 				if (Game.world == null) break;
@@ -279,31 +233,26 @@ public class Client extends Thread
 				
 				break;
 			}
-			case PROJECTILE:
-			{
+			case PROJECTILE: {
 				Packet08Projectile p = new Packet08Projectile(data);
 				if (Game.world == null) break;
 				Game.world.addProjectile(p.getProjectile(), false);
 				
 				break;
 			}
-			case KILL:
-			{
+			case KILL: {
 				if (Game.world == null) break;
 				packet = new Packet09Kill(data);
 				
 				break;
 			}
-			case ENTITYSTATUS:
-			{
+			case ENTITYSTATUS: {
 				Packet10EntityStatus p = new Packet10EntityStatus(data);
 				
 				if (Game.world == null) break;
 				
-				for (Entity e : Game.world.entities)
-				{
-					if (!(e instanceof Player) && e.getPos().equals(p.getPos()))
-					{
+				for (Entity e : Game.world.entities) {
+					if (!(e instanceof Player) && e.getPos().equals(p.getPos())) {
 						e.setEnabled(p.getState(), false, false);
 					}
 				}
@@ -311,8 +260,7 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case GAMEINFO:
-			{
+			case GAMEINFO: {
 				Packet11GameInfo p = new Packet11GameInfo(data);
 				
 				gameStarted = System.currentTimeMillis();
@@ -321,8 +269,7 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case STOMP:
-			{
+			case STOMP: {
 				Packet12Stomp p = new Packet12Stomp(data);
 				
 				Game.player.dealDamage(p.getDamage(), new Action(WeaponType.STOMP, p.getUsername()));
@@ -330,8 +277,7 @@ public class Client extends Thread
 				packet = p;
 				break;
 			}
-			case SERVER:
-			{
+			case SERVER: {
 				Packet13Server p = new Packet13Server(data);
 				
 				packet = p;
@@ -344,8 +290,7 @@ public class Client extends Thread
 		if (Game.currentGame.getActiveLayer() instanceof MPLayer && packet != null) ((MPLayer) Game.currentGame.getActiveLayer()).onPacketReceived(packet, address, port);
 	}
 	
-	private void setDisconnected()
-	{
+	private void setDisconnected() {
 		connected = false;
 		gameStarted = 0;
 		playerList = null;
@@ -359,8 +304,7 @@ public class Client extends Thread
 		Game.currentGame.setLayer(new MenuLayer());
 	}
 	
-	public void sendPacket(Packet p) throws IOException
-	{
+	public void sendPacket(Packet p) throws IOException {
 		if (serverIP == null) return;
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
@@ -370,8 +314,7 @@ public class Client extends Thread
 		CFG.p("CLIENT > " + p.getType().name() + " > " + serverIP.getHostAddress() + ":" + Server.PORT);
 	}
 	
-	public void broadCast(Packet p) throws IOException
-	{
+	public void broadCast(Packet p) throws IOException {
 		byte[] data = p.getData();
 		DatagramPacket packet = new DatagramPacket(data, data.length, CFG.getBroadcastAddress(), Server.PORT);
 		
@@ -379,45 +322,34 @@ public class Client extends Thread
 		CFG.p("CLIENT > " + p.getType().name() + " > BROADCAST");
 	}
 	
-	public void connectToServer(InetAddress ip)
-	{
-		if (connected)
-		{
+	public void connectToServer(InetAddress ip) {
+		if (connected) {
 			CFG.p("Client is already connected to a server. Disconnect first!");
 			return;
 		}
 		
 		serverIP = ip;
-		try
-		{
+		try {
 			sendPacket(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean isConnected()
-	{
+	public boolean isConnected() {
 		return connected;
 	}
 	
-	public void disconnect()
-	{
+	public void disconnect() {
 		if (!connected) return;
-		try
-		{
+		try {
 			sendPacket(new Packet01Disconnect(Game.user.getUsername(), Cause.USER_DISCONNECT));
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public boolean isGameOver()
-	{
+	public boolean isGameOver() {
 		return System.currentTimeMillis() - Game.client.gameStarted >= Game.client.gameInfo.getMinutes() * 60000;
 	}
 }

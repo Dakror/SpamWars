@@ -16,8 +16,7 @@ import de.dakror.spamwars.net.packet.Packet10EntityStatus;
 /**
  * @author Dakror
  */
-public abstract class Entity extends EventListener implements Drawable
-{
+public abstract class Entity extends EventListener implements Drawable {
 	public float x, y;
 	public int width, height;
 	protected boolean gravity;
@@ -32,8 +31,7 @@ public abstract class Entity extends EventListener implements Drawable
 	
 	protected Rectangle bump;
 	
-	public Entity(float x, float y, int width, int height)
-	{
+	public Entity(float x, float y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -51,8 +49,7 @@ public abstract class Entity extends EventListener implements Drawable
 	@Override
 	public abstract void draw(Graphics2D g);
 	
-	public Rectangle getTileSizeBump(float tX, float tY)
-	{
+	public Rectangle getTileSizeBump(float tX, float tY) {
 		Rectangle r = new Rectangle();
 		r.x = (int) (Math.floor((bump.x + x + tX) / Tile.SIZE) * Tile.SIZE);
 		r.y = (int) (Math.floor((bump.y + y + tY) / Tile.SIZE) * Tile.SIZE);
@@ -66,8 +63,7 @@ public abstract class Entity extends EventListener implements Drawable
 		return r;
 	}
 	
-	public Rectangle getGridBump(float tX, float tY)
-	{
+	public Rectangle getGridBump(float tX, float tY) {
 		Rectangle r = getTileSizeBump(tX, tY);
 		r.x /= Tile.SIZE;
 		r.y /= Tile.SIZE;
@@ -77,14 +73,12 @@ public abstract class Entity extends EventListener implements Drawable
 	}
 	
 	@Override
-	public void update(int tick)
-	{
+	public void update(int tick) {
 		if (Game.world == null) return;
 		
 		tick(tick);
 		
-		if (update)
-		{
+		if (update) {
 			float nx = getVelocity().x;
 			float ny = getVelocity().y;
 			
@@ -105,17 +99,14 @@ public abstract class Entity extends EventListener implements Drawable
 	/**
 	 * @return new nx and ny
 	 */
-	public Point2D checkAndResolveCollisions(float nx, float ny)
-	{
+	public Point2D checkAndResolveCollisions(float nx, float ny) {
 		float x = nx;
 		float y = ny;
 		
 		// -- world -- //
 		Rectangle g = getGridBump(nx, ny);
-		for (int i = g.x; i < g.x + g.width; i++)
-		{
-			for (int j = g.y; j < g.y + g.height; j++)
-			{
+		for (int i = g.x; i < g.x + g.width; i++) {
+			for (int j = g.y; j < g.y + g.height; j++) {
 				Tile t = Tile.values()[Game.world.getTileId(i, j)];
 				
 				if (t.getBump() == null && t.getLeftY() < 0) continue;
@@ -137,29 +128,24 @@ public abstract class Entity extends EventListener implements Drawable
 					int mx = 0;
 					int my = 0;
 					
-					if (p.contains(bump.x, bump.y))
-					{
+					if (p.contains(bump.x, bump.y)) {
 						mx = bump.x;
 						my = bump.y;
 					}
-					if (p.contains(bump.x + bump.width, bump.y))
-					{
+					if (p.contains(bump.x + bump.width, bump.y)) {
 						mx = bump.x + bump.width;
 						my = bump.y;
 					}
-					if (p.contains(bump.x, bump.y + bump.height))
-					{
+					if (p.contains(bump.x, bump.y + bump.height)) {
 						mx = bump.x;
 						my = bump.y + bump.height;
 					}
-					if (p.contains(bump.x + bump.width, bump.y + bump.height))
-					{
+					if (p.contains(bump.x + bump.width, bump.y + bump.height)) {
 						mx = bump.x + bump.width;
 						my = bump.y + bump.height;
 					}
 					
-					if (mx + my != 0)
-					{
+					if (mx + my != 0) {
 						int xInSlope = mx % Tile.SIZE;
 						int yInSlope = my % Tile.SIZE;
 						float yInSlopeM = m * xInSlope;
@@ -169,27 +155,21 @@ public abstract class Entity extends EventListener implements Drawable
 						getVelocity().y = 0;
 						airborne = false;
 					}
-				}
-				else
-				{
+				} else {
 					Rectangle b = (Rectangle) t.getBump().clone();
 					b.translate(i * Tile.SIZE, j * Tile.SIZE);
 					
 					Rectangle is = bump.intersection(b);
 					
 					if (is.height < 0 || is.width < 0) continue; // no intersection
-					if (is.height <= is.width)
-					{
+					if (is.height <= is.width) {
 						y += is.y == bump.y ? is.height : -is.height;
 						
-						if (is.y == bump.y)
-						{
+						if (is.y == bump.y) {
 							airborne = true;
 							getVelocity().y = 0;
-						}
-						else airborne = false;
-					}
-					else x += is.x == bump.x ? is.width : -is.width;
+						} else airborne = false;
+					} else x += is.x == bump.x ? is.width : -is.width;
 				}
 			}
 		}
@@ -197,17 +177,12 @@ public abstract class Entity extends EventListener implements Drawable
 		return new Point2D.Float(x, y);
 	}
 	
-	public void checkAndHandleStomp()
-	{
-		if (getVelocity().y > 0)
-		{
+	public void checkAndHandleStomp() {
+		if (getVelocity().y > 0) {
 			Rectangle bump = getBump(velocity.x, velocity.y);
-			for (Entity e : Game.world.entities)
-			{
-				if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername()))
-				{
-					if (!e.getBump(0, 0).contains(bump.x, bump.y) && (e.getBump(0, 0).contains(bump.x, bump.y + bump.height) || e.getBump(0, 0).contains(x + bump.width, y + bump.height)))
-					{
+			for (Entity e : Game.world.entities) {
+				if (e instanceof Player && !((Player) e).getUser().getUsername().equals(Game.user.getUsername())) {
+					if (!e.getBump(0, 0).contains(bump.x, bump.y) && (e.getBump(0, 0).contains(bump.x, bump.y + bump.height) || e.getBump(0, 0).contains(x + bump.width, y + bump.height))) {
 						onHitEntity(e, velocity);
 						velocity.y = 0;
 						airborne = false;
@@ -217,15 +192,13 @@ public abstract class Entity extends EventListener implements Drawable
 		}
 	}
 	
-	public void affectByGravity()
-	{
+	public void affectByGravity() {
 		float G = 0.5f;
 		
 		Rectangle g = getGridBump(0, getVelocity().y + 2 * G);
 		Rectangle b = getBump(0, getVelocity().y + 2 * G);
 		
-		if (Game.world.intersects(g, b))
-		{
+		if (Game.world.intersects(g, b)) {
 			if (Math.abs(velocity.y) != 0) onHitGround(velocity);
 			airborne = false;
 			getVelocity().y = 0;
@@ -243,8 +216,7 @@ public abstract class Entity extends EventListener implements Drawable
 		getVelocity().y += G;
 	}
 	
-	public Rectangle getBump(float tX, float tY)
-	{
+	public Rectangle getBump(float tX, float tY) {
 		Rectangle r = (Rectangle) bump.clone();
 		r.translate((int) x, (int) y);
 		r.translate((int) tX, (int) tY);
@@ -252,85 +224,67 @@ public abstract class Entity extends EventListener implements Drawable
 		return r;
 	}
 	
-	public Vector getPos()
-	{
+	public Vector getPos() {
 		return new Vector(x, y);
 	}
 	
-	public Vector getVelocity()
-	{
+	public Vector getVelocity() {
 		return velocity;
 	}
 	
-	public void setVelocity(Vector velocity)
-	{
+	public void setVelocity(Vector velocity) {
 		this.velocity = velocity;
 	}
 	
-	public void setPos(Vector position)
-	{
+	public void setPos(Vector position) {
 		x = position.x;
 		y = position.y;
 	}
 	
-	public int getLife()
-	{
+	public int getLife() {
 		return life;
 	}
 	
-	public void setLife(int life)
-	{
+	public void setLife(int life) {
 		this.life = life;
 	}
 	
-	public int getMaxlife()
-	{
+	public int getMaxlife() {
 		return maxlife;
 	}
 	
-	public void setMaxlife(int maxlife)
-	{
+	public void setMaxlife(int maxlife) {
 		this.maxlife = maxlife;
 	}
 	
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return enabled;
 	}
 	
-	public void setEnabled(boolean enabled, boolean send, boolean server)
-	{
+	public void setEnabled(boolean enabled, boolean send, boolean server) {
 		this.enabled = enabled;
-		if (send)
-		{
-			try
-			{
+		if (send) {
+			try {
 				if (server) Game.server.sendPacketToAllClients(new Packet10EntityStatus(getPos(), enabled));
 				else Game.client.sendPacket(new Packet10EntityStatus(getPos(), enabled));
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public boolean isMassive()
-	{
+	public boolean isMassive() {
 		return massive;
 	}
 	
-	public void setMassive(boolean m)
-	{
+	public void setMassive(boolean m) {
 		massive = m;
 	}
 	
 	// -- abstract event methods -- //
 	
-	protected void onHitGround(Vector velocity)
-	{}
+	protected void onHitGround(Vector velocity) {}
 	
-	protected void onHitEntity(Entity e, Vector velocity)
-	{}
+	protected void onHitEntity(Entity e, Vector velocity) {}
 	
 }

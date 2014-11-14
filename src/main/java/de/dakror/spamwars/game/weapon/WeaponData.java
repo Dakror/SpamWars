@@ -12,32 +12,27 @@ import de.dakror.spamwars.game.weapon.Part.Category;
 /**
  * @author Dakror
  */
-public class WeaponData
-{
+public class WeaponData {
 	ArrayList<DataPart> parts;
 	
 	int speed, magazine, reload, angle, projectileSpeed, range, damage;
 	
 	boolean automatic;
 	
-	public WeaponData()
-	{
+	public WeaponData() {
 		parts = new ArrayList<>();
 		automatic = false;
 	}
 	
-	public void addPart(Part p, double x, double y)
-	{
+	public void addPart(Part p, double x, double y) {
 		parts.add(new DataPart(p, x, y));
 	}
 	
-	public void addPart(DataPart dp)
-	{
+	public void addPart(DataPart dp) {
 		parts.add(dp);
 	}
 	
-	public int getPrice()
-	{
+	public int getPrice() {
 		int price = 0;
 		
 		for (DataPart p : parts)
@@ -49,11 +44,9 @@ public class WeaponData
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		String s = "";
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			s += p.toString() + ";";
 		}
 		
@@ -62,10 +55,8 @@ public class WeaponData
 		return s;
 	}
 	
-	public DataPart getPart(Category category)
-	{
-		for (DataPart p : parts)
-		{
+	public DataPart getPart(Category category) {
+		for (DataPart p : parts) {
 			if (p.part.category == category) return p;
 		}
 		
@@ -75,19 +66,16 @@ public class WeaponData
 	/**
 	 * Call after any modification to data is done!
 	 */
-	public WeaponData getSortedData()
-	{
+	public WeaponData getSortedData() {
 		WeaponData wd = new WeaponData();
 		double minX = -1337, minY = -1337;
 		
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			if (minX == -1337 || p.x < minX) minX = p.x;
 			if (minY == -1337 || p.y < minY) minY = p.y;
 		}
 		
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			p.x -= minX;
 			p.y -= minY;
 			wd.addPart(p.part, p.x, p.y);
@@ -98,12 +86,10 @@ public class WeaponData
 		return wd;
 	}
 	
-	public void calculateStats()
-	{
+	public void calculateStats() {
 		int speed = 0, magazine = 0, reload = 0, angle = 0, projectileSpeed = 0, range = 0, damage = 0;
 		
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			speed += p.part.speed;
 			magazine += p.part.magazine;
 			reload += p.part.reload;
@@ -124,41 +110,33 @@ public class WeaponData
 		this.damage = Math.round(damage / c);
 	}
 	
-	public DataPart getOrigin()
-	{
-		for (DataPart p : parts)
-		{
+	public DataPart getOrigin() {
+		for (DataPart p : parts) {
 			if (p.x == 0 && p.y == 0) return p;
 		}
 		
 		return null;
 	}
 	
-	public Point getGrab()
-	{
-		for (DataPart p : parts)
-		{
+	public Point getGrab() {
+		for (DataPart p : parts) {
 			if (p.part.category == Category.HANDLE) return new Point((int) p.x + p.part.tex.width / 2, (int) p.y + p.part.tex.height / 2);
 		}
 		
 		return null;
 	}
 	
-	public Point getExit()
-	{
-		for (DataPart p : parts)
-		{
+	public Point getExit() {
+		for (DataPart p : parts) {
 			if (p.part.category == Category.BARREL) return new Point((int) p.x + p.part.tex.width, (int) p.y + p.part.tex.height / 2);
 		}
 		
 		return null;
 	}
 	
-	public BufferedImage getImage()
-	{
+	public BufferedImage getImage() {
 		int width = 0, height = 0;
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			if (p.x + p.part.tex.width > width) width = (int) (p.x + p.part.tex.width);
 			if (p.y + p.part.tex.height > height) height = (int) (p.y + p.part.tex.height);
 		}
@@ -166,83 +144,68 @@ public class WeaponData
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) bi.getGraphics();
 		
-		for (DataPart p : parts)
-		{
+		for (DataPart p : parts) {
 			Helper.drawImage2(Game.getImage("weapon/explode.png"), (int) p.x, (int) p.y, p.part.tex.width, p.part.tex.height, p.part.tex.x, p.part.tex.y, p.part.tex.width, p.part.tex.height, g);
 		}
 		
 		return bi;
 	}
 	
-	public ArrayList<DataPart> getParts()
-	{
+	public ArrayList<DataPart> getParts() {
 		return parts;
 	}
 	
-	public int getSpeed()
-	{
+	public int getSpeed() {
 		return speed;
 	}
 	
-	public int getMagazine()
-	{
+	public int getMagazine() {
 		return magazine;
 	}
 	
-	public int getReload()
-	{
+	public int getReload() {
 		return reload;
 	}
 	
-	public int getAngle()
-	{
+	public int getAngle() {
 		return angle;
 	}
 	
-	public int getProjectileSpeed()
-	{
+	public int getProjectileSpeed() {
 		return projectileSpeed;
 	}
 	
-	public int getRange()
-	{
+	public int getRange() {
 		return range;
 	}
 	
-	public int getDamage()
-	{
+	public int getDamage() {
 		return damage;
 	}
 	
-	public boolean isAutomatic()
-	{
+	public boolean isAutomatic() {
 		return automatic;
 	}
 	
-	public void setAutomatic(boolean automatic)
-	{
+	public void setAutomatic(boolean automatic) {
 		this.automatic = automatic;
 	}
 	
 	@Override
-	public boolean equals(Object obj)
-	{
-		if (obj instanceof WeaponData)
-		{
+	public boolean equals(Object obj) {
+		if (obj instanceof WeaponData) {
 			return toString().equals(obj.toString());
 		}
 		
 		return false;
 	}
 	
-	public static WeaponData load(String s)
-	{
+	public static WeaponData load(String s) {
 		WeaponData wd = new WeaponData();
 		
 		String[] parts = s.split(";");
 		
-		for (int i = 0; i < parts.length - 1; i++)
-		{
+		for (int i = 0; i < parts.length - 1; i++) {
 			wd.addPart(DataPart.load(parts[i]));
 		}
 		
