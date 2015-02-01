@@ -87,7 +87,8 @@ public class PurchaseWeaponLayer extends MPLayer {
 						Game.weapons.put(o);
 						success = true;
 					} else if (Game.subMoney(costs)) {
-						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5 + "&addweapon=" + data.getSortedData() + "&setweapon=" + id)).trim();
+						String response = Helper.getURLContent(	new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5
+																												+ "&addweapon=" + data.getSortedData() + "&setweapon=" + id)).trim();
 						success = response.contains("true");
 					}
 					

@@ -57,7 +57,9 @@ public class HUDLayer extends MPLayer {
 			
 			// -- time panel -- //
 			Helper.drawContainer(Game.getWidth() / 2 - 150, 0, 300, 80, true, true, g);
-			Helper.drawHorizontallyCenteredString(Game.client.isGameOver() ? "00:00" : new SimpleDateFormat("mm:ss").format(new Date((Game.client.gameStarted + Game.client.gameInfo.getMinutes() * 60000) - System.currentTimeMillis())), Game.getWidth(), 56, g, 50);
+			Helper.drawHorizontallyCenteredString(Game.client.isGameOver() ? "00:00"
+																								: new SimpleDateFormat("mm:ss").format(new Date((Game.client.gameStarted + Game.client.gameInfo.getMinutes() * 60000)
+																										- System.currentTimeMillis())), Game.getWidth(), 56, g, 50);
 			
 			
 			if (!new Rectangle(5, 5, 70, 70).contains(Game.currentGame.mouse) || !Game.currentGame.getActiveLayer().equals(this)) Helper.drawContainer(5, 5, 70, 70, false, false, g);
@@ -69,7 +71,8 @@ public class HUDLayer extends MPLayer {
 				g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
 				Helper.drawShadow(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, g);
 				Helper.drawOutline(Game.getWidth() / 2 - 260, Game.getHeight() / 3 * 2 - 10, 520, 40, false, g);
-				Helper.drawProgressBar(Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().getData().getReload(), "2a86e7", g);
+				Helper.drawProgressBar(	Game.getWidth() / 2 - 251, Game.getHeight() / 3 * 2 - 1, 500, (tick - reloadStarted) / (float) Game.player.getWeapon().getData().getReload(),
+																"2a86e7", g);
 				g.setColor(Color.black);
 				Helper.drawHorizontallyCenteredString("Nachladen", Game.getWidth(), Game.getHeight() / 3 * 2 + 16, g, 20);
 				g.setComposite(c);

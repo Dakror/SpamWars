@@ -40,7 +40,8 @@ public class JoinLayer extends MPLayer {
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/joinGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
+		Helper.drawContainer(	Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false,
+													false, g);
 		
 		Rectangle rect = new Rectangle();
 		

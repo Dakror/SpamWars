@@ -33,7 +33,8 @@ public class HealthBox extends Entity {
 	public void draw(Graphics2D g) {
 		if (Game.world == null) return;
 		
-		g.drawImage(Game.getImage("tile/boxExplosive.png"), (int) (x + Game.world.x) + 10, (int) (y + Game.world.y + 5 * Math.sin((tick + random) / 13f) + 10), width - 20, height - 20, Game.w);
+		g.drawImage(Game.getImage("tile/boxExplosive.png"), (int) (x + Game.world.x) + 10, (int) (y + Game.world.y + 5 * Math.sin((tick + random) / 13f) + 10), width - 20,
+								height - 20, Game.w);
 	}
 	
 	@Override

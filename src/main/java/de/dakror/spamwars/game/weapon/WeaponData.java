@@ -145,7 +145,8 @@ public class WeaponData {
 		Graphics2D g = (Graphics2D) bi.getGraphics();
 		
 		for (DataPart p : parts) {
-			Helper.drawImage2(Game.getImage("weapon/explode.png"), (int) p.x, (int) p.y, p.part.tex.width, p.part.tex.height, p.part.tex.x, p.part.tex.y, p.part.tex.width, p.part.tex.height, g);
+			Helper.drawImage2(Game.getImage("weapon/explode.png"), (int) p.x, (int) p.y, p.part.tex.width, p.part.tex.height, p.part.tex.x, p.part.tex.y, p.part.tex.width,
+												p.part.tex.height, g);
 		}
 		
 		return bi;
