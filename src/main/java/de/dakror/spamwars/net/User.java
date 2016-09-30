@@ -31,6 +31,7 @@ public class User {
 	private InetAddress ip;
 	private int port;
 	private String username;
+	private String token;
 	
 	public int K, D;
 	
@@ -99,6 +100,14 @@ public class User {
 		
 		
 		return o.toString();
+	}
+	
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	public String getToken() {
+		return token;
 	}
 	
 	public byte[] getBytes() {

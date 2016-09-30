@@ -19,8 +19,9 @@ package de.dakror.spamwars;
 
 import java.net.SocketException;
 
+import javax.swing.UIManager;
+
 import de.dakror.dakrorbin.DakrorBin;
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
@@ -34,9 +35,14 @@ import de.dakror.spamwars.settings.CFG;
  */
 public class SpamWars {
 	public static void main(String[] args) throws SocketException {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		CFG.INTERNET = Helper.isInternetReachable();
 		
-		Launch.init(args);
 		CFG.init();
 		CFG.loadSettings();
 		Part.init();
@@ -47,7 +53,10 @@ public class SpamWars {
 			Game.user = new User("Player" + (int) (Math.random() * 10000), Game.ip, 0);
 			Game.money = 999999;
 		} else {
-			Game.user = new User(Launch.username, Game.ip, 0);
+			Game.user = new User("", Game.ip, 0);
+			String[] s = CFG.initUsername();
+			Game.user.setUsername(s[0]);
+			Game.user.setToken(s[1]);
 		}
 		
 		new Game();
@@ -56,7 +65,6 @@ public class SpamWars {
 		DakrorBin.init(Game.w, "SpamWars");
 		try {
 			Game.currentFrame.setFullscreen();
-			// Game.currentFrame.setWindowed(1280, 720);
 		} catch (IllegalStateException e) {
 			System.exit(0);
 		}

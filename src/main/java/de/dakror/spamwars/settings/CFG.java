@@ -29,8 +29,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.util.Helper;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -45,10 +48,32 @@ public class CFG {
 	static InetAddress broadCastAddress;
 	static InetAddress address;
 	
+	public static final String[] initUsername() {
+		File us = new File(DIR, "username");
+		if (!us.exists() || us.length() == 0) {
+			String user = JOptionPane.showInputDialog("Bitte gib deinen Benutzernamen an.");
+			
+			if (user == null) System.exit(0);
+			
+			try {
+				us.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			String token = Assistant.getSha1Hex(System.nanoTime() + user);
+			
+			Helper.setFileContent(us, user + "\n" + token);
+			return new String[] { user, token };
+		} else {
+			String s = Helper.getFileContent(us);
+			return s.split("\r\n");
+		}
+	}
+	
 	public static final void init() {
 		DIR.mkdirs();
 		GameFrame.screenshotDir = new File(DIR, "screenshots");
-		
 		
 		File maps = new File(DIR, "maps");
 		maps.mkdir();

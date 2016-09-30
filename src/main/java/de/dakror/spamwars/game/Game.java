@@ -175,8 +175,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return;
 		
 		try {
-			CFG.p("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5);
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)).trim());
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?token=" + user.getToken())).trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -186,7 +185,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return;
 		
 		try {
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + user.getUsername() + "&password=" + Launch.pwdMd5)).trim());
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?token=" + user.getToken())).trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
