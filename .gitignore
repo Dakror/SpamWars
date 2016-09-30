@@ -213,3 +213,5 @@ pip-log.txt
 .mr.developer.cfg
 /bin1
 /build.xml
+/SpamWars.jar
+/mapping.txt
