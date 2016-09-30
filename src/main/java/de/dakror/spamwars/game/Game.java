@@ -185,7 +185,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return;
 		
 		try {
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + user.getToken())).trim());
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken())).trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,7 +195,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return true;
 		
 		try {
-			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + user.getToken() + "&sub=" + money)).trim();
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken() + "&sub=" + money)).trim();
 			if (!response.contains("false")) {
 				Game.money = Integer.parseInt(response);
 				return true;

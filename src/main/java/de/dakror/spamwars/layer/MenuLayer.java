@@ -82,8 +82,8 @@ public class MenuLayer extends MPLayer {
 	@Override
 	public void init() {
 		ll = new LobbyLayer();
-		Game.pullWeapons();
 		Game.pullMoney();
+		Game.pullWeapons();
 		
 		MenuButton start = new MenuButton("startGame", 0);
 		start.addClickEvent(new ClickEvent() {

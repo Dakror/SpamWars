@@ -54,7 +54,7 @@ public class SpamWars {
 			Game.money = 999999;
 		} else {
 			Game.user = new User("", Game.ip, 0);
-			String[] s = CFG.initUsername();
+			String[] s = CFG.initUsername(false);
 			Game.user.setUsername(s[0]);
 			Game.user.setToken(s[1]);
 		}

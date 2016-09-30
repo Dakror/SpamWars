@@ -23,7 +23,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
+import java.net.MalformedURLException;
 import java.net.NetworkInterface;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,10 +50,11 @@ public class CFG {
 	static InetAddress broadCastAddress;
 	static InetAddress address;
 	
-	public static final String[] initUsername() {
+	public static final String[] initUsername(boolean force) {
 		File us = new File(DIR, "username");
-		if (!us.exists() || us.length() == 0) {
-			String user = JOptionPane.showInputDialog("Bitte gib deinen Benutzernamen an.");
+		String[] st = null;
+		if (!us.exists() || us.length() == 0 || force) {
+			String user = JOptionPane.showInputDialog((force ? "Dieser Name ist bereits vergeben, wähle einen anderen." : "Bitte gib deinen Benutzernamen an."));
 			
 			if (user == null) System.exit(0);
 			
@@ -64,11 +67,21 @@ public class CFG {
 			String token = Assistant.getSha1Hex(System.nanoTime() + user);
 			
 			Helper.setFileContent(us, user + "\n" + token);
-			return new String[] { user, token };
+			st = new String[] { user, token };
 		} else {
 			String s = Helper.getFileContent(us);
-			return s.split("\r\n");
+			st = s.split("\r\n");
 		}
+		
+		try {
+			if (Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Assistant.urlencode(st[0]) + "&token=" + st[1])).trim().equals("taken")) {
+				return initUsername(true);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
+		return st;
 	}
 	
 	public static final void init() {
