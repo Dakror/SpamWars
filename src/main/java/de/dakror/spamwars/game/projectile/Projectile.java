@@ -64,8 +64,7 @@ public class Projectile implements Drawable {
 	}
 	
 	public Projectile(JSONObject o) throws JSONException {
-		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), o.getInt("s"),
-					o.getInt("r"), o.getInt("dm"));
+		this(new Vector((float) o.getDouble("x"), (float) o.getDouble("y")), new Vector((float) o.getDouble("tx"), (float) o.getDouble("ty")), o.getString("u"), o.getInt("s"), o.getInt("r"), o.getInt("dm"));
 	}
 	
 	public JSONObject serialize() {

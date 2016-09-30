@@ -31,7 +31,6 @@ import java.net.URL;
 
 import org.json.JSONArray;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.ui.InputField;
 import de.dakror.gamesetup.ui.button.Spinner;
@@ -45,6 +44,7 @@ import de.dakror.spamwars.net.Client;
 import de.dakror.spamwars.net.Server;
 import de.dakror.spamwars.net.User;
 import de.dakror.spamwars.settings.CFG;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -175,7 +175,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return;
 		
 		try {
-			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?token=" + user.getToken())).trim());
+			money = Integer.parseInt(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + user.getToken())).trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -185,7 +185,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return;
 		
 		try {
-			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?token=" + user.getToken())).trim());
+			weapons = new JSONArray(Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + user.getToken())).trim());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,7 +195,7 @@ public class Game extends GameFrame implements WindowFocusListener {
 		if (!CFG.INTERNET) return true;
 		
 		try {
-			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + user.getUsername() + "&password=" + Launch.pwdMd5 + "&sub=" + money)).trim();
+			String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/money?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + user.getToken() + "&sub=" + money)).trim();
 			if (!response.contains("false")) {
 				Game.money = Integer.parseInt(response);
 				return true;

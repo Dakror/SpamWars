@@ -137,38 +137,6 @@ public class CFG {
 		}
 	}
 	
-	public static Properties loadLogin() {
-		try {
-			File s = new File(DIR, ".login");
-			
-			if (!s.exists()) return null;
-			
-			Properties properties = new Properties();
-			properties.load(new FileReader(s));
-			return properties;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static void deleteLogin() {
-		File s = new File(DIR, ".login");
-		s.delete();
-	}
-	
-	public static void saveLogin(String username, String pwd) {
-		try {
-			File s = new File(DIR, ".login");
-			Properties properties = new Properties();
-			properties.setProperty("username", username);
-			properties.setProperty("pwd", pwd);
-			properties.store(new FileWriter(s), "");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	// -- debug profiling -- //
 	public static void u() {
 		if (time == 0) time = System.currentTimeMillis();

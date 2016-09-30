@@ -24,7 +24,6 @@ import java.net.URL;
 
 import org.json.JSONObject;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.GameFrame;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -34,6 +33,7 @@ import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.settings.CFG;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -104,8 +104,7 @@ public class PurchaseWeaponLayer extends MPLayer {
 						Game.weapons.put(o);
 						success = true;
 					} else if (Game.subMoney(costs)) {
-						String response = Helper.getURLContent(	new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5
-																												+ "&addweapon=" + data.getSortedData() + "&setweapon=" + id)).trim();
+						String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken() + "&addweapon=" + Assistant.urlencode(data.getSortedData().toString()) + "&setweapon=" + id)).trim();
 						success = response.contains("true");
 					}
 					

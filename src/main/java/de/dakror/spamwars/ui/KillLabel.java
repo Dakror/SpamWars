@@ -57,8 +57,7 @@ public class KillLabel extends Component {
 		if (type == WeaponType.WEAPON) {
 			weapon = killer.getWeapon().getImage();
 			Dimension dim = Helper.scaleTo(new Dimension(weapon.getWidth(), weapon.getHeight()), new Dimension(150, 20));
-			if (dim.width < weapon.getWidth() || dim.height < weapon.getHeight())
-				weapon = Helper.toBufferedImage(weapon.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH));
+			if (dim.width < weapon.getWidth() || dim.height < weapon.getHeight()) weapon = Helper.toBufferedImage(weapon.getScaledInstance(dim.width, dim.height, BufferedImage.SCALE_SMOOTH));
 		}
 	}
 	

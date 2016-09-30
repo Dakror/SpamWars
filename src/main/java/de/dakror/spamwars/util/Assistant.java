@@ -19,6 +19,8 @@ package de.dakror.spamwars.util;
 
 import java.awt.Polygon;
 import java.awt.geom.Line2D;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 
 /**
@@ -54,6 +56,15 @@ public class Assistant {
 			return buffer.toString();
 		} catch (Exception ignored) {
 			ignored.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static String urlencode(String s) {
+		try {
+			return URLEncoder.encode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

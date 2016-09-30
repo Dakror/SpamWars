@@ -24,7 +24,6 @@ import java.net.URL;
 
 import org.json.JSONException;
 
-import de.dakror.dakrorbin.Launch;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.layer.Confirm;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -36,6 +35,7 @@ import de.dakror.spamwars.game.weapon.WeaponData;
 import de.dakror.spamwars.net.packet.Packet;
 import de.dakror.spamwars.settings.CFG;
 import de.dakror.spamwars.ui.weaponry.WeaponryWeaponButton;
+import de.dakror.spamwars.util.Assistant;
 
 /**
  * @author Dakror
@@ -55,8 +55,7 @@ public class WeaponryLayer extends MPLayer {
 		g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
 		Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
 		
-		Helper.drawContainer(	Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false,
-													false, g);
+		Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
 		
 		drawComponents(g);
 	}
@@ -110,8 +109,7 @@ public class WeaponryLayer extends MPLayer {
 		for (int i = 0; i < Game.weapons.length(); i++) {
 			try {
 				final WeaponData wd = WeaponData.load(Game.weapons.getJSONObject(i).getString("WEAPONDATA"));
-				final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space)
-						+ Game.getHeight() / 4, wd);
+				final WeaponryWeaponButton wwb = new WeaponryWeaponButton((i % inRow) * (WeaponryWeaponButton.WIDTH + space), i / inRow * (WeaponryWeaponButton.HEIGHT + space) + Game.getHeight() / 4, wd);
 				wwb.id = Game.weapons.getJSONObject(i).getInt("ID");
 				wwb.addClickEvent(new ClickEvent() {
 					@Override
@@ -181,8 +179,7 @@ public class WeaponryLayer extends MPLayer {
 						if (id == -1 || !CFG.INTERNET) return;
 						
 						try {
-							final String response = Helper.getURLContent(	new URL("http://dakror.de/spamwars/api/weapons?username=" + Game.user.getUsername() + "&password=" + Launch.pwdMd5
-																																+ "&removeweapon=" + id)).trim();
+							final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken() + "&removeweapon=" + id)).trim();
 							Game.currentGame.addLayer(new Alert("Deine Waffe wurde " + (response.contains("true") ? "" : " nicht") + " erfolgreich gelöscht.", null));
 							init();
 						} catch (MalformedURLException e) {
