@@ -159,7 +159,9 @@ public class Client extends Thread {
 				
 				for (User u : p.getUsers()) {
 					if (u.getUsername().equals(Game.user.getUsername())) {
+						String token = Game.user.getToken();
 						Game.user = u;
+						Game.user.setToken(token);
 						break;
 					}
 				}
@@ -191,7 +193,9 @@ public class Client extends Thread {
 				}
 				if (p.getKey().equals("user")) {
 					try {
+						String token = Game.user.getToken();
 						Game.user = new User(new JSONObject(p.getValue()));
+						Game.user.setToken(token);
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
