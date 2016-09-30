@@ -21,7 +21,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.net.InetAddress;
 
-import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
@@ -48,8 +47,6 @@ public class MenuLayer extends MPLayer {
 			Helper.drawHorizontallyCenteredString("Offline-Modus: " + Game.user.getUsername() + " (" + Game.user.getIP().getHostAddress() + ")", Game.getWidth(), 20, g, 20);
 			g.setFont(old);
 		}
-		
-		Helper.drawString(DakrorBin.buildDate, 10, Game.getHeight() - 10, g, 18);
 		
 		drawComponents(g);
 	}

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.entity.Entity;
@@ -347,7 +346,7 @@ public class Client extends Thread {
 		
 		serverIP = ip;
 		try {
-			sendPacket(new Packet00Connect(Game.user.getUsername(), DakrorBin.buildTimestamp));
+			sendPacket(new Packet00Connect(Game.user.getUsername(), CFG.VERSION));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

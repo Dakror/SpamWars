@@ -31,7 +31,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.gamesetup.util.Vector;
 import de.dakror.spamwars.game.Game;
@@ -182,13 +181,13 @@ public class Server extends Thread {
 			case CONNECT: {
 				Packet00Connect packet = new Packet00Connect(data);
 				User user = new User(packet.getUsername(), address, port);
-				if (packet.getVersion() < DakrorBin.buildTimestamp) {
+				if (packet.getVersion() < CFG.VERSION) {
 					try {
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated client");
 						sendPacket(new Packet02Reject(Cause.OUTDATEDCLIENT), user);
 						return;
 					} catch (Exception e) {}
-				} else if (packet.getVersion() > DakrorBin.buildTimestamp) {
+				} else if (packet.getVersion() > CFG.VERSION) {
 					try {
 						CFG.p("[SERVER]: Rejected " + packet.getUsername() + " (" + address.getHostAddress() + ":" + port + "): outdated server");
 						sendPacket(new Packet02Reject(Cause.OUTDATEDSERVER), user);
@@ -352,7 +351,7 @@ public class Server extends Thread {
 				
 				int value = clients.size();
 				if (!lobby) value = -1;
-				if (p.getVersion() != DakrorBin.buildTimestamp) value = -2;
+				if (p.getVersion() != CFG.VERSION) value = -2;
 				try {
 					sendPacket(new Packet13Server(Game.user.getUsername(), value), new User(null, address, port));
 				} catch (IOException e) {

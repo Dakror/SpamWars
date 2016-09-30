@@ -50,6 +50,8 @@ public class CFG {
 	static InetAddress broadCastAddress;
 	static InetAddress address;
 	
+	public static long VERSION = 16300923;
+	
 	public static final String[] initUsername(boolean force) {
 		File us = new File(DIR, "username");
 		String[] st = null;

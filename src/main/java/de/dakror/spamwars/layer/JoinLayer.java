@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
 
-import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.ui.ClickEvent;
 import de.dakror.gamesetup.ui.button.TextButton;
@@ -37,6 +36,7 @@ import de.dakror.spamwars.net.packet.Packet00Connect;
 import de.dakror.spamwars.net.packet.Packet02Reject;
 import de.dakror.spamwars.net.packet.Packet13Server;
 import de.dakror.spamwars.net.packet.Packet14Discovery;
+import de.dakror.spamwars.settings.CFG;
 
 /**
  * @author Dakror
@@ -148,7 +148,7 @@ public class JoinLayer extends MPLayer {
 	
 	@Override
 	public void init() {
-		discoveryPacket = new Packet14Discovery(DakrorBin.buildTimestamp);
+		discoveryPacket = new Packet14Discovery(CFG.VERSION);
 		request();
 		
 		TextButton back = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT - 10, "Zurück");

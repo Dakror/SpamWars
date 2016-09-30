@@ -21,7 +21,6 @@ import java.net.SocketException;
 
 import javax.swing.UIManager;
 
-import de.dakror.dakrorbin.DakrorBin;
 import de.dakror.gamesetup.util.Helper;
 import de.dakror.spamwars.game.Game;
 import de.dakror.spamwars.game.UpdateThread;
@@ -61,8 +60,6 @@ public class SpamWars {
 		
 		new Game();
 		Game.currentFrame.init("Spam Wars");
-		
-		DakrorBin.init(Game.w, "SpamWars");
 		try {
 			Game.currentFrame.setFullscreen();
 		} catch (IllegalStateException e) {
