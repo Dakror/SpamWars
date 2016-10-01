@@ -17,8 +17,6 @@
 
 package de.dakror.spamwars;
 
-import java.net.SocketException;
-
 import javax.swing.UIManager;
 
 import de.dakror.gamesetup.util.Helper;
@@ -33,7 +31,7 @@ import de.dakror.spamwars.settings.CFG;
  * @author Dakror
  */
 public class SpamWars {
-	public static void main(String[] args) throws SocketException {
+	public static void main(String[] args) throws Exception {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {

@@ -24,6 +24,9 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.regex.Pattern;
+
+import javax.swing.JOptionPane;
 
 import de.dakror.gamesetup.layer.Alert;
 import de.dakror.gamesetup.ui.ClickEvent;
@@ -51,6 +54,7 @@ public class JoinLayer extends MPLayer {
 	boolean gotoLobby;
 	
 	Point mouse = new Point();
+	static final Pattern ipRegex = Pattern.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 	
 	@Override
 	public void draw(Graphics2D g) {
@@ -102,7 +106,7 @@ public class JoinLayer extends MPLayer {
 	@Override
 	public void update(int tick) {
 		updateComponents(tick);
-		if (tick % 300 == 0) request();
+		//		if (tick % 300 == 0) request();
 		
 		if (Game.currentFrame.alpha == 1 && enabled) {
 			Game.currentFrame.fadeTo(0, 0.05f);
@@ -115,7 +119,7 @@ public class JoinLayer extends MPLayer {
 			}.start();
 		}
 		
-		components.get(2).enabled = selected > -1;
+		components.get(3).enabled = selected > -1;
 	}
 	
 	@Override
@@ -159,7 +163,7 @@ public class JoinLayer extends MPLayer {
 			}
 		});
 		components.add(back);
-		TextButton update = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Suchen");
+		TextButton update = new TextButton(Game.getWidth() / 2 - TextButton.WIDTH, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Suche");
 		update.addClickEvent(new ClickEvent() {
 			@Override
 			public void trigger() {
@@ -167,6 +171,22 @@ public class JoinLayer extends MPLayer {
 			}
 		});
 		components.add(update);
+		TextButton enter = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT * 2 - 10, "Direkt");
+		enter.addClickEvent(new ClickEvent() {
+			@Override
+			public void trigger() {
+				String ip = JOptionPane.showInputDialog("Bitte gib die IP-Adresse des gewünschten Servers ein");
+				if (ip != null) {
+					try {
+						InetAddress addr = InetAddress.getByName(ip);
+						if (addr != null) Game.client.sendPacketToAddress(discoveryPacket, addr);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		components.add(enter);
 		
 		TextButton join = new TextButton(Game.getWidth() / 2, Game.getHeight() - TextButton.HEIGHT - 10, "Betreten");
 		join.addClickEvent(new ClickEvent() {

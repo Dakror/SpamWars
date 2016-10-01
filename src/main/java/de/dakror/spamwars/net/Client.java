@@ -326,12 +326,7 @@ public class Client extends Thread {
 	
 	public void sendPacket(Packet p) throws IOException {
 		if (serverIP == null) return;
-		byte[] data = p.getData();
-		DatagramPacket packet = new DatagramPacket(data, data.length, serverIP, Server.PORT);
-		socket.send(packet);
-		
-		
-		CFG.p("CLIENT > " + p.getType().name() + " > " + serverIP.getHostAddress() + ":" + Server.PORT);
+		sendPacketToAddress(p, serverIP);
 	}
 	
 	public void broadCast(Packet p) throws IOException {
@@ -340,6 +335,14 @@ public class Client extends Thread {
 		
 		socket.send(packet);
 		CFG.p("CLIENT > " + p.getType().name() + " > BROADCAST");
+	}
+	
+	public void sendPacketToAddress(Packet p, InetAddress addr) throws IOException {
+		byte[] data = p.getData();
+		DatagramPacket packet = new DatagramPacket(data, data.length, addr, Server.PORT);
+		socket.send(packet);
+		
+		CFG.p("CLIENT > " + p.getType().name() + " > " + addr.getHostAddress() + ":" + Server.PORT);
 	}
 	
 	public void connectToServer(InetAddress ip) {

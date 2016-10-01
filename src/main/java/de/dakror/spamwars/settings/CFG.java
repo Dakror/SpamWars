@@ -104,13 +104,25 @@ public class CFG {
 				if (!ni.getInetAddresses().hasMoreElements()) continue;
 				
 				for (InterfaceAddress ia : ni.getInterfaceAddresses()) {
+					if (address != null) break;
 					if (ia.getAddress().isLoopbackAddress() || ia.getBroadcast() == null) continue;
-					
 					broadCastAddress = ia.getBroadcast();
 					address = ia.getAddress();
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		File ip = new File(DIR, "ip");
+		try {
+			if (!ip.exists() || ip.length() == 0) {
+				ip.createNewFile();
+				Helper.setFileContent(ip, address.getHostAddress());
+			} else {
+				address = InetAddress.getByName(Helper.getFileContent(ip).trim());
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
