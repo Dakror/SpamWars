@@ -38,7 +38,8 @@ public class SpamWars {
 			e.printStackTrace();
 		}
 		
-		CFG.INTERNET = Helper.isInternetReachable();
+		if (args.length > 0 && args[0].equalsIgnoreCase("-lan")) CFG.INTERNET = false;
+		else CFG.INTERNET = Helper.isInternetReachable();
 		
 		CFG.init();
 		CFG.loadSettings();

@@ -119,7 +119,7 @@ public class CFG {
 			if (!ip.exists() || ip.length() == 0) {
 				ip.createNewFile();
 				Helper.setFileContent(ip, address.getHostAddress());
-			} else {
+			} else if (CFG.INTERNET) {
 				address = InetAddress.getByName(Helper.getFileContent(ip).trim());
 			}
 		} catch (IOException e) {
