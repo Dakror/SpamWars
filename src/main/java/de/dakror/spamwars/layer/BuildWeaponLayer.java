@@ -250,7 +250,7 @@ public class BuildWeaponLayer extends MPLayer {
         auto.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {
-                auto.setText(!auto.isSelected() ? "Manuell" : "Automatik");
+                auto.setText(!auto.isSelected() ? "Manual" : "Automatic");
             }
         });
         components.add(auto);

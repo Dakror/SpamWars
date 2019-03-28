@@ -178,7 +178,7 @@ public class WeaponryLayer extends MPLayer {
                         if (id == -1 || !CFG.INTERNET) return;
 
                         try {
-                            final String response = Helper.getURLContent(new URL("http://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken() + "&removeweapon=" + id)).trim();
+                            final String response = Helper.getURLContent(new URL("https://dakror.de/spamwars/api/weapons?username=" + Assistant.urlencode(Game.user.getUsername()) + "&token=" + Game.user.getToken() + "&removeweapon=" + id)).trim();
                             Game.currentGame.addLayer(new Alert("Your weapon was " + (response.contains("true") ? "" : " not") + " deleted successfully.", null));
                             init();
                         } catch (MalformedURLException e) {
