@@ -208,7 +208,7 @@ public class BuildWeaponLayer extends MPLayer {
         Helper.drawHorizontallyCenteredString("Reload", 0, width, 0 + 91, g, 15);
 
         Helper.drawProgressBar(0 + 15, 0 + 95, width - 30, cacheData.getProjectileSpeed() / (float) Part.highest_projectileSpeed, "2a86e7", g);
-        Helper.drawHorizontallyCenteredString("Projectile speed", 0, width, 0 + 111, g, 15);
+        Helper.drawHorizontallyCenteredString("Speed", 0, width, 0 + 111, g, 15);
 
         Helper.drawProgressBar(0 + 15, 0 + 115, width - 30, cacheData.getRange() / (float) Part.highest_range, "7dd33c", g);
         Helper.drawHorizontallyCenteredString("Range", 0, width, 0 + 131, g, 15);
