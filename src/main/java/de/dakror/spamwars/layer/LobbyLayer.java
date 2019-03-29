@@ -58,7 +58,7 @@ public class LobbyLayer extends MPLayer {
     @Override
     public void draw(Graphics2D g) {
         g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
-        Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/startGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+        Helper.drawHorizontallyCenteredString("Create Game", Game.getWidth(), 120, g, 64);
 
         Helper.drawContainer(Game.getWidth() / 2 - 305, Game.getHeight() / 4 * 3 - 20, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 2 + 40, false, false, g);
 

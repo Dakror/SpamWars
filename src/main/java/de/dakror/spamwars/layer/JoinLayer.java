@@ -58,7 +58,7 @@ public class JoinLayer extends MPLayer {
     @Override
     public void draw(Graphics2D g) {
         g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
-        Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/joinGame.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+        Helper.drawHorizontallyCenteredString("Join Game", Game.getWidth(), 120, g, 64);
 
         Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
 
@@ -83,7 +83,7 @@ public class JoinLayer extends MPLayer {
                 Packet13Server p = servers.get(key);
 
                 Helper.drawString(p.getHostName(), Game.getWidth() / 4 + 20, y + 45, g, 30);
-                Helper.drawRightAlignedString(p.getPlayers() + " / " + Server.MAX_PLAYERS + " Spieler", Game.getWidth() / 4 * 3 - 20, y + 45, g, 30);
+                Helper.drawRightAlignedString(p.getPlayers() + " / " + Server.MAX_PLAYERS + " Players", Game.getWidth() / 4 * 3 - 20, y + 45, g, 30);
 
                 i++;
             }

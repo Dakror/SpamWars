@@ -81,7 +81,7 @@ public class MenuLayer extends MPLayer {
         Game.pullMoney();
         Game.pullWeapons();
 
-        MenuButton start = new MenuButton("startGame", 0);
+        MenuButton start = new MenuButton("startGame", "Create Game", 0);
         start.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {
@@ -90,7 +90,7 @@ public class MenuLayer extends MPLayer {
             }
         });
         components.add(start);
-        MenuButton joingame = new MenuButton("joinGame", 1);
+        MenuButton joingame = new MenuButton("joinGame", "Join Game", 1);
         joingame.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {
@@ -99,7 +99,7 @@ public class MenuLayer extends MPLayer {
             }
         });
         components.add(joingame);
-        MenuButton wpn = new MenuButton("weaponry", 2);
+        MenuButton wpn = new MenuButton("weaponry", "Weaponry", 2);
         wpn.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {
@@ -108,7 +108,7 @@ public class MenuLayer extends MPLayer {
             }
         });
         components.add(wpn);
-        MenuButton opt = new MenuButton("options", 3);
+        MenuButton opt = new MenuButton("options", "Options", 3);
         opt.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {
@@ -116,7 +116,7 @@ public class MenuLayer extends MPLayer {
             }
         });
         components.add(opt);
-        MenuButton end = new MenuButton("endGame", 4);
+        MenuButton end = new MenuButton("endGame", "Exit Game", 4);
         end.addClickEvent(new ClickEvent() {
             @Override
             public void trigger() {

@@ -52,7 +52,7 @@ public class WeaponryLayer extends MPLayer {
     @Override
     public void draw(Graphics2D g) {
         g.drawImage(Game.getImage("gui/menu.png"), 0, 0, Game.getWidth(), Game.getHeight(), Game.w);
-        Helper.drawImageCenteredRelativeScaled(Game.getImage("gui/weaponry.png"), 80, 1920, 1080, Game.getWidth(), Game.getHeight(), g);
+        Helper.drawHorizontallyCenteredString("Weaponry", Game.getWidth(), 120, g, 64);
 
         Helper.drawContainer(Game.getWidth() / 2 - TextButton.WIDTH - 15, Game.getHeight() - TextButton.HEIGHT * 2 - 30, TextButton.WIDTH * 2 + 30, TextButton.HEIGHT * 3, false, false, g);
 
